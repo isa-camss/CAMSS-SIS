@@ -1,4 +1,3 @@
-import cfg.ctt as ctt
 import com.ntt.dgi.util.io as io
 from flask_restx import Namespace, Resource
 

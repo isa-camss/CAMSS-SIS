@@ -13,3 +13,8 @@ END_POINT_SWAGGER = f'{API_PREFIX}/swagger'
 END_POINT_SWAGGER_JSON = f'{API_PREFIX}/swagger.json'
 NAME_BLUEPRINT = 'swaggerCAMSS-SIS'
 
+# EIRA THESAURI JOINUP
+
+EIRA_THESAURI = 'https://joinup.ec.europa.eu/sites/default/files/distribution/access_url/2021-08/8adc381e-6997-4d66' \
+                '-8ea3-b3d9edc6c42c/EIRA_SKOS.rdf '
+

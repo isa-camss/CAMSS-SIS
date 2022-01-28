@@ -1,9 +1,8 @@
-import cfg.ctt as ctt
 import com.ntt.dgi.util.io as io
 from flask_restx import Namespace, Resource
 
 api = Namespace('gov_thes_processor',
-                description='Download and process thesaurus')
+                description='Download and process Thesaurus')
 
 # ping_args = api.parser()
 
