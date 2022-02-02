@@ -13,8 +13,13 @@ END_POINT_SWAGGER = f'{API_PREFIX}/swagger'
 END_POINT_SWAGGER_JSON = f'{API_PREFIX}/swagger.json'
 NAME_BLUEPRINT = 'swaggerCAMSS-SIS'
 
-# EIRA THESAURI JOINUP
+#ARTIFACTS PATH
+ARTIFACTS_DIR = "./arti"
 
-EIRA_THESAURI = 'https://joinup.ec.europa.eu/sites/default/files/distribution/access_url/2021-08/8adc381e-6997-4d66' \
-                '-8ea3-b3d9edc6c42c/EIRA_SKOS.rdf '
+RDF_DIR = ARTIFACTS_DIR + "/rdf"
 
+# EIRA THESAURUS DETAILS
+EIRA_THESAURUS_NAME = "eira.rdf"
+EIRA_THESAURUS_URL = "https://joinup.ec.europa.eu/sites/default/files/distribution/access_url/2021-08/8adc381e-6997" \
+                    "-4d66-8ea3-b3d9edc6c42c/EIRA_SKOS.rdf "
+EIRA_THESAURUS_DETAILS = {"url": EIRA_THESAURUS_URL, "path": RDF_DIR+"/"+EIRA_THESAURUS_NAME}

@@ -1,7 +1,7 @@
 import unittest
 import sys
 import logging
-import com.ntt.dgi.util.io as io
+import com.nttdata.dgi.util.io as io
 
 
 LOG = '../log/test_logger.log'

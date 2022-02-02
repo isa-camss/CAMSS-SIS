@@ -23,6 +23,7 @@ api.add_namespace(index_processor)
 
 # NLP API
 api.add_namespace(basics)
+api.add_namespace(lem)
 
 # SEARCH API
 api.add_namespace(searcher)
