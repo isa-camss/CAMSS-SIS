@@ -1,7 +1,7 @@
 import com.nttdata.dgi.util.io as io
 from flask_restx import Namespace, Resource, fields
 from flask import request
-from com.nttdata.dgi.rdf.skos_mirror import SKOSMirror
+from com.nttdata.dgi.rdf.skos_mapper import SKOSMirror
 import cfg.ctt as ctt
 
 api = Namespace('SKOS Mapper',

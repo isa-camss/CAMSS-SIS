@@ -25,3 +25,7 @@ class ThesauriManager:
     def load_thesauri(self, thesauri_details) -> dict:
         self.thesauri_details = thesauri_details
         return {}
+
+    def persist_thesauri(self):
+        return self
+
