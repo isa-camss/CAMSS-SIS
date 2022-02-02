@@ -1,4 +1,4 @@
-from com.ntt.dgi.util.report import Report
+from com.nttdata.dgi.util.report import Report
 
 
 class Resource:

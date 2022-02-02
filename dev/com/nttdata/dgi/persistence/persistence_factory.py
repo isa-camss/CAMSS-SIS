@@ -1,4 +1,4 @@
-from com.ntt.dgi.persistence.persistor import Persistor
+from com.nttdata.dgi.persistence.persistor import Persistor
 
 
 class PersistenceFactory:

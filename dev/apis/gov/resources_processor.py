@@ -1,5 +1,5 @@
 import cfg.ctt as ctt
-import com.ntt.dgi.util.io as io
+import com.nttdata.dgi.util.io as io
 from flask_restx import Namespace, Resource
 
 api = Namespace('gov_rsc_processor',
