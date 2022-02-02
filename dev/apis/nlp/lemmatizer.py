@@ -11,7 +11,7 @@ from spacy.tokens import Doc
 api = Namespace('nlp',
                 description='NLP-related operations, e.g. lemmatization, stemming, bag of terms extraction, etc.')
 
-model: LangModel = LangModel(lang_models=ctt.DEFAULT_LANGUAGE_MODELS)
+model: LangModel = LangModel(lang_models=ctt.MAIN_DEFAULT_LANGUAGE_MODEL)
 
 lem_args = api.parser()
 lem_args.add_argument('phrase', required=True)

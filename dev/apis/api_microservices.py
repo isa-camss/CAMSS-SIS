@@ -8,7 +8,7 @@ from apis.gov.resources_processor import api as resources_processor
 from apis.gov.index_processor import api as index_processor
 from apis.nlp.basics import api as basics
 from apis.nlp.lemmatizer import api as lemmatizer
-from apis.nlp.skosmapper import api as skos_mapper
+# from apis.nlp.skosmapper import api as skos_mapper
 from apis.gse.searcher import api as searcher
 
 blueprint = Blueprint(name=ctt.API_NAME, import_name=__name__, url_prefix=ctt.API_PREFIX)
@@ -26,7 +26,7 @@ api.add_namespace(index_processor)
 # NLP API
 api.add_namespace(basics)
 api.add_namespace(lemmatizer)
-api.add_namespace(skos_mapper)
+# api.add_namespace(skos_mapper)
 
 # SEARCH API
 api.add_namespace(searcher)

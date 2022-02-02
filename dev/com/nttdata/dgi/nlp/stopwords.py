@@ -1,6 +1,6 @@
 from __future__ import annotations
 import langdetect
-import com.nttdata.digi.util.io as io
+import com.nttdata.dgi.util.io as io
 import spacy.lang.en.stop_words as en_stoppers
 import spacy.lang.es.stop_words as es_stoppers
 import spacy.lang.fr.stop_words as fr_stoppers

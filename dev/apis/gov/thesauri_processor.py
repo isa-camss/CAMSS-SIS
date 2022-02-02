@@ -1,6 +1,7 @@
 import com.nttdata.dgi.util.io as io
 from flask_restx import Namespace, Resource
 from com.nttdata.dgi.thes.thesauri_manager import ThesauriManager
+from apis.nlp.lemmatizer import Lematize
 import cfg.ctt as ctt
 
 api = Namespace('gov_thes_processor',
@@ -13,7 +14,8 @@ def process_thesauri() -> dict:
     eira_thesaurus_details = ctt.EIRA_THESAURUS_DETAILS
     thesauri_details = [eira_thesaurus_details]
     thesauri_manager = ThesauriManager(thesauri_details)
-    thesauri_manager.download_thesauri()
+    eira = thesauri_manager.download_thesauri()
+    Lematize(eira)
     return {}
 
 
