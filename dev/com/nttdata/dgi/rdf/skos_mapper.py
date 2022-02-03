@@ -10,7 +10,7 @@ CRLF = '\n'
 EOF = ''
 
 
-class SKOSMirror:
+class SKOSMapper:
     lemmatization_details: dict     # A dictionary with every data required for the lemmatization
     store_details: dict             # A dictionary with data to establish the connection to a Data Base
     report: dict

@@ -23,7 +23,7 @@ class Downloader(unittest.TestCase):
         thesauri.get_thesauri()
         return
 
-    def test_001_thesauri_manager(self):
+    def test_002_thesauri_manager(self):
         eira_uri = ctt.EIRA_THESAURI
         eira_local_path = '../arti/rdf/eira_410.rdf'
         eira_thesaurus_details = {"url": eira_uri, "path": eira_local_path}

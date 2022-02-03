@@ -2,8 +2,6 @@ from main import app
 import cfg.ctt as ctt
 import sys
 import logging
-from flask import Flask
-from apis.nlp.lemmatizer import api
 import com.nttdata.dgi.util.io as io
 
 LOG_FILE = './log/nlp.log'
@@ -13,10 +11,6 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
 logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 logger = logging.getLogger("nlp")
 logger.setLevel(level=logging.WARNING)
-
-app = Flask(__name__)
-api.init_app(app)
-app.logger = logger
 
 
 if __name__ == '__main__':
