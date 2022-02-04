@@ -22,8 +22,8 @@ RDF_DIR = ARTIFACTS_DIR + "/rdf"
 
 # EIRA THESAURUS DETAILS
 EIRA_THESAURUS_NAME = "eira_thesaurus.rdf"
-EIRA_THESAURUS_URL = "https://joinup.ec.europa.eu/sites/default/files/distribution/access_url/2021-08/8adc381e-6997" \
-                     "-4d66-8ea3-b3d9edc6c42c/EIRA_SKOS.rdf "
+EIRA_THESAURUS_URL = "https://joinup.ec.europa.eu/sites/default/files/distribution/access_url/2022-02/eec825b6-f6e8" \
+                     "-4a4f-9dfd-4fd47b7a744c/EIRA_SKOS.rdf "
 EIRA_THESAURUS_DETAILS = {"url": EIRA_THESAURUS_URL, "path": RDF_DIR + "/" + EIRA_THESAURUS_NAME}
 
 # EIRA THESAURUS LEMMATIZATION DETAILS
