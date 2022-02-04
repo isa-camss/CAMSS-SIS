@@ -193,6 +193,7 @@ def file_to_str(path_filename: str, bytes_number: int = 0) -> str:
     with so.open(path_filename, 'rb') as fin:
         return fin.read(offset).decode('utf-8')
 
+
 def get_file(path_filename: str) -> (str, str):
     name, ext = file_split_name_ext(get_file_name_from_path(path_filename))
     return name, ext

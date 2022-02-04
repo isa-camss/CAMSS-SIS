@@ -7,7 +7,7 @@ VERSION = 'v1.0'
 
 # API
 API_PORT = 5000
-API_DEBUG = True
+API_DEBUG = False
 API_NAME = 'apiCAMSS-SIS'
 API_PREFIX = f'/{PROJECT_NAME}/{VERSION[:2]}'
 API_TITLE = 'CAMSS-SIS.API - Development'
@@ -40,6 +40,12 @@ EIRA_THESAURUS_LEMMA_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get('path'),
                                 "target": RDF_DIR + "/" + EIRA_LEMMA_NAME,
                                 "graph": '',
                                 "function": LEMMATIZATION_FUNCTIONS[1]}
+
+TEST_EIRA_THESAURUS_LEMMA_DETAILS = {"source": '/home/mfaju/Escritorio/IDB/backend-blg/dev/kg/thesauri/'
+                                               'pp_project_gsfthesaurus.concepts.rdf',
+                                     "target": RDF_DIR + "/" + EIRA_LEMMA_NAME,
+                                     "graph": '',
+                                     "function": LEMMATIZATION_FUNCTIONS[1]}
 
 # LANGUAGES
 
