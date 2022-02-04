@@ -1,43 +1,31 @@
 import com.nttdata.dgi.util.io as io
 from flask_restx import Namespace, Resource, fields
 from flask import request
-from com.nttdata.dgi.rdf.skos_mirror import SKOSMirror
+from com.nttdata.dgi.rdf.skos_mapper import SKOSMapper
 import cfg.ctt as ctt
 
-api = Namespace('SKOS Mapper',
+api = Namespace('SKOS_Mapper',
                 description='Maps labels from one '
                             'or more SKOS or SKOS-XL thesauri to the result returned by an endpoint '
                             'given as an argument.')
 
 
-t1l = api.model("GSF lemmas", {"source": fields.String(default='./arti/kg/pp_project_gsfthesaurus.concepts.rdf'),
-                               "target": fields.String(default='./arti/kg/pp_project_gsfthesaurus.lemmas.rdf'),
-                               "graph": fields.String(default='http://thesaurus.iadb.org/rsc/gsf-thesaurus/lemmas/'),
-                               "function": fields.String(default="lemma")})
+t1l = api.model("GSF lemmas", {"source": fields.String(default=ctt.EIRA_THESAURUS_LEMMA_DETAILS.get('source')),
+                               "target": fields.String(default=ctt.EIRA_THESAURUS_LEMMA_DETAILS.get('target')),
+                               "function": fields.String(default=ctt.EIRA_THESAURUS_LEMMA_DETAILS.get('function'))})
 
-t1md5 = api.model("GSF md5 lemmas", {"source": fields.String(default='./arti/kg/pp_project_gsfthesaurus.concepts.rdf'),
-                                     "target": fields.String(default='./arti/kg/pp_project_gsfthesaurus.md5lemmas.rdf'),
-                                     "graph": fields.String(default='http://thesaurus.iadb.org/rsc/gsf-thesaurus/md5lemmas/'),
-                                     "function": fields.String(default="md5lemma")})
-
-t2l = api.model("EuroSciVoc lemmas", {"source": fields.String(default='./arti/kg/EuroSciVoc-skos-ap-eu.rdf'),
-                                      "target": fields.String(default='./arti/kg/EuroSciVoc-skos-ap-eu.lemmas.rdf'),
-                                      "graph": fields.String(default='http://data.europa.eu/8mn/euroscivoc/lemmas/'),
-                                      "function": fields.String(default="lemma")})
-
-t2md5 = api.model("EuroSciVoc md5 lemmas", {"source": fields.String(default='./arti/kg/EuroSciVoc-skos-ap-eu.rdf'),
-                                            "target": fields.String(default='./arti/kg/EuroSciVoc-skos-ap-eu.md5lemmas.rdf'),
-                                            "graph": fields.String(default='http://data.europa.eu/8mn/euroscivoc/md5lemmas/'),
-                                            "function": fields.String(default="md5lemma")})
+t1md5 = api.model("GSF md5 lemmas", {"source": fields.String(default=ctt.EIRA_THESAURUS_MD5_DETAILS.get('source')),
+                                     "target": fields.String(default=ctt.EIRA_THESAURUS_MD5_DETAILS.get('target')),
+                                     "function": fields.String(default=ctt.EIRA_THESAURUS_MD5_DETAILS.get('function'))})
 
 model = api.model("SKOS Mapper",
-                  {'endpoint': fields.String(default='http://localhost:5000/nlp/lemmatize'),
-                   'thesauri': fields.List(fields.Nested(t1md5))})
+                  {'endpoint': fields.String(default='http://localhost:5000/camss-sis/v1/lemmatize'),
+                   'thesauri': fields.List(fields.Nested(t1l))})
 
 
 @api.route('/skos_map')
 @api.expect(model)
-class SKOSMapper(Resource):
+class SKOSMirror(Resource):
     @api.doc(
         """"
         Given an endpoint and a list of thesauri, returns a mirror of each thesaurus where the SKOS label has been replaced with the value returned by the endpoint."
@@ -92,6 +80,7 @@ class SKOSMapper(Resource):
         t0 = io.log(f'Mapping started...(now: {io.now()})')
         code = 200
         args = request.json
+        print(args)
         endpoint = args.get('endpoint')
         if not endpoint:
             m = f"FAILED -> Endpoint not supplied. Please check the documentation."
@@ -104,9 +93,14 @@ class SKOSMapper(Resource):
             io.log(m, 'e')
             return {'message': m}, 404
         try:
-            sm = SKOSMirror(lemmatization_details=ctt.LEMMATIZATION_DETAILS)
+            sm = SKOSMapper(lemmatization_details=ctt.LEMMATIZATION_DETAILS)
             sm.mirror(thesauri=td)
-            sm.store(thesauri=td, store_details=ctt.STORE_DETAILS)
+
+            '''
+            # Thesauri_processor is responsible to invoke a persistor specialized in loading files into a concrete tripestore
+            sm.store(thesauri=td, store_details=ctt.STORE_DETAILS) 
+            '''
+
             io.log(f'Process finished. It took {io.now() - t0} (now: {io.now()}')
             ret = sm.report
         except Exception as ex:

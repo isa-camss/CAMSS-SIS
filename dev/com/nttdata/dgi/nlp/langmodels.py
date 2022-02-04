@@ -24,7 +24,7 @@ class SingletonMeta(type):
 class DynamicLangModel:
     """
     Dynamic instantiation of the Language Models pool,
-    used to load the language models once. Make sur that the instance is created in a safe thread context.
+    used to load the language models once. Make sure that the instance is created in a safe thread context.
     See example below.
     """
 
