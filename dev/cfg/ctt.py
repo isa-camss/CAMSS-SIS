@@ -41,12 +41,6 @@ EIRA_THESAURUS_LEMMA_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get('path'),
                                 "graph": '',
                                 "function": LEMMATIZATION_FUNCTIONS[1]}
 
-TEST_EIRA_THESAURUS_LEMMA_DETAILS = {"source": '/home/mfaju/Escritorio/IDB/backend-blg/dev/kg/thesauri/'
-                                               'pp_project_gsfthesaurus.concepts.rdf',
-                                     "target": RDF_DIR + "/" + EIRA_LEMMA_NAME,
-                                     "graph": '',
-                                     "function": LEMMATIZATION_FUNCTIONS[1]}
-
 # LANGUAGES
 
 # The default language needs to be set compulsorily. Basic functionality would not work without it (e.g.,
