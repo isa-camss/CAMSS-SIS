@@ -1,17 +1,13 @@
 import unittest
-import sys
-import logging
-import com.nttdata.dgi.util.io as io
 from com.nttdata.dgi.io.down.thesaurus_downloader import ThesaurusDownloader
 from com.nttdata.dgi.thes.thesauri_manager import ThesauriManager
-from urllib import request
 import cfg.ctt as ctt
 
 
-class Downloader(unittest.TestCase):
+class Thesauri(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
-        super(Downloader, self).__init__(*args, **kwargs)
+        super(Thesauri, self).__init__(*args, **kwargs)
 
     def setUp(self) -> None:
         return

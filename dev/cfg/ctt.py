@@ -25,12 +25,40 @@ URL_NLP_LEMMATIZE = BASE_URL + '/nlp/lemmatize'
 # ARTIFACTS PATH
 ARTIFACTS_DIR = "./arti"
 RDF_DIR = ARTIFACTS_DIR + "/rdf"
+CORPORA_DIR = ARTIFACTS_DIR + "/corpora"
 
 # EIRA THESAURUS DETAILS
 EIRA_THESAURUS_NAME = "eira_thesaurus.rdf"
 EIRA_THESAURUS_URL = "https://joinup.ec.europa.eu/sites/default/files/distribution/access_url/2021-03/d72a664c-70ea" \
                      "-4dd7-91ee-3768d44cc079/EIRA_SKOS.rdf "
 EIRA_THESAURUS_DETAILS = {"url": EIRA_THESAURUS_URL, "path": RDF_DIR + "/" + EIRA_THESAURUS_NAME}
+
+# EURLEX CORPORA DETAILS
+# EURLEX_DOCUMENT_NAME = "corpora.txt"
+EURLEX_CORPORA_URL = "https://eur-lex.europa.eu/EURLexWebService"
+EURLEX_CORPORA_QUERY_HEADERS = {'content-type': 'application/soap+xml'}
+EURLEX_CORPORA_QUERY_BODY = (
+            "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:sear=\"http://eur-lex.europa.eu/search\">\n"
+            "    <soap:Header>\n"
+            "        <wsse:Security soap:mustUnderstand=\"true\" xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\">\n"
+            "            <wsse:UsernameToken wsu:Id=\"UsernameToken-3\" xmlns:wsu=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\">\n"
+            "                <wsse:Username>n008j19f</wsse:Username>\n"
+            "                <wsse:Password Type=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText\">CKZNYdSty5t</wsse:Password>\n"
+            "            </wsse:UsernameToken>\n"
+            "        </wsse:Security>\n"
+            "    </soap:Header> \n"
+            "    <soap:Body>\n"
+            "    <sear:searchRequest>\n"
+            "      <sear:expertQuery><![CDATA[DTS_SUBDOM = \"TREATIES\" OR \"INTER_AGREE\" OR \"LEGISLATION\" OR \"EFTA\" OR \"EU_LAW_ALL\" AND PD >= 01/01/2012 <= 07/02/2022]]></sear:expertQuery>\n"
+            "      <sear:page>1</sear:page>\n"
+            "      <sear:pageSize>10</sear:pageSize>\n"
+            "      <sear:searchLanguage>en</sear:searchLanguage>\n"
+            "    </sear:searchRequest>\n"
+            "    </soap:Body>\n"
+            "</soap:Envelope>")
+EURLEX_COPORA_DETAILS = {"url": EURLEX_CORPORA_URL,
+                         "body":EURLEX_CORPORA_QUERY_BODY,
+                         "headers": EURLEX_CORPORA_QUERY_HEADERS}
 
 # EIRA THESAURUS LEMMATIZATION DETAILS
 

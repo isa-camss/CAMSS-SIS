@@ -2,12 +2,8 @@ from com.nttdata.dgi.io.down.thesaurus_downloader import ThesaurusDownloader
 import requests
 
 
-class ThesauriManager:
-    source_thesaurus_persistor_details: dict
-    target_thesaurus_persistor_details: dict
+class CorporaManager:
     thesauri_details: list  # List of dicts with thesaurus url and path to save it
-    thesauri_processed: str
-    skos_mapper_details: dict
     http_downloader: ThesaurusDownloader
 
     def __init__(self, list_dicts_thesaurus_details, dict_skos_mapper_details):
