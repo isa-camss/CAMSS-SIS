@@ -1,7 +1,6 @@
 import com.nttdata.dgi.util.io as io
 from flask_restx import Namespace, Resource
 from com.nttdata.dgi.thes.thesauri_manager import ThesauriManager
-from apis.nlp.lemmatizer import Lematize
 import cfg.ctt as ctt
 from com.nttdata.dgi.util.io import make_file_dirs
 import requests
@@ -21,21 +20,13 @@ def process_thesauri() -> dict:
     make_file_dirs(ctt.EIRA_THESAURUS_DETAILS.get('path'))
 
     # Create ThesaurusManager with the configuration for EIRA
-    thesauri_manager = ThesauriManager(thesauri_details)
+    thesauri_manager = ThesauriManager(thesauri_details, ctt.SKOS_MAPPER_DETAILS)
 
     # Download Thesaurus
     thesauri_manager.download_thesauri()
 
-    # Analyze downloaded Thesaurus
-    url = 'http://localhost:5000/camss-sis/v1/SKOS_Mapper/skos_map'
-    thesauri = {
-        "endpoint": "http://localhost:5000/camss-sis/v1/nlp/lemmatize",
-        "thesauri": [
-            ctt.EIRA_THESAURUS_MD5_DETAILS
-        ]
-    }
-    skos_mapper_response = requests.post(url, json=thesauri)
-
+    # Lemmatization and SKOS mapping of downloaded Thesaurus
+    thesauri_manager.analyse()
     return {}
 
 
