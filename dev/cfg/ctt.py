@@ -7,7 +7,7 @@ VERSION = 'v1.0'
 
 # API
 API_PORT = 5000
-API_DEBUG = True
+API_DEBUG = False
 API_NAME = 'apiCAMSS-SIS'
 API_PREFIX = f'/{PROJECT_NAME}/{VERSION[:2]}'
 API_TITLE = 'CAMSS-SIS.API - Development'
@@ -16,14 +16,20 @@ END_POINT_SWAGGER = f'{API_PREFIX}/swagger'
 END_POINT_SWAGGER_JSON = f'{API_PREFIX}/swagger.json'
 NAME_BLUEPRINT = 'swaggerCAMSS-SIS'
 
+# API ENDPOINTS
+API_HOST = 'http://localhost:5000'
+BASE_URL = API_HOST + API_PREFIX
+URL_SKOS_MAP = BASE_URL + '/SKOS_Mapper/skos_map'
+URL_NLP_LEMMATIZE = BASE_URL + '/nlp/lemmatize'
+
 # ARTIFACTS PATH
 ARTIFACTS_DIR = "./arti"
 RDF_DIR = ARTIFACTS_DIR + "/rdf"
 
 # EIRA THESAURUS DETAILS
 EIRA_THESAURUS_NAME = "eira_thesaurus.rdf"
-EIRA_THESAURUS_URL = "https://joinup.ec.europa.eu/sites/default/files/distribution/access_url/2021-08/8adc381e-6997" \
-                     "-4d66-8ea3-b3d9edc6c42c/EIRA_SKOS.rdf "
+EIRA_THESAURUS_URL = "https://joinup.ec.europa.eu/sites/default/files/distribution/access_url/2021-03/d72a664c-70ea" \
+                     "-4dd7-91ee-3768d44cc079/EIRA_SKOS.rdf "
 EIRA_THESAURUS_DETAILS = {"url": EIRA_THESAURUS_URL, "path": RDF_DIR + "/" + EIRA_THESAURUS_NAME}
 
 # EIRA THESAURUS LEMMATIZATION DETAILS
@@ -40,6 +46,17 @@ EIRA_THESAURUS_LEMMA_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get('path'),
                                 "target": RDF_DIR + "/" + EIRA_LEMMA_NAME,
                                 "graph": '',
                                 "function": LEMMATIZATION_FUNCTIONS[1]}
+
+SKOS_MAPPER_REQUEST_DETAILS = {
+        "endpoint": URL_NLP_LEMMATIZE,
+        "thesauri": [
+            EIRA_THESAURUS_MD5_DETAILS
+        ]
+    }
+
+SKOS_MAPPER_DETAILS = {'url': URL_SKOS_MAP,
+                       'body': SKOS_MAPPER_REQUEST_DETAILS
+    }
 
 # LANGUAGES
 
