@@ -1,5 +1,4 @@
 from com.nttdata.dgi.persistence.ipersistor import PersistorTypes
-from flask_restx import fields
 
 # PROJECT CONFIG
 PROJECT_NAME = 'camss-sis'
@@ -15,6 +14,10 @@ API_DESCRIPTION = 'It is an API...'
 END_POINT_SWAGGER = f'{API_PREFIX}/swagger'
 END_POINT_SWAGGER_JSON = f'{API_PREFIX}/swagger.json'
 NAME_BLUEPRINT = 'swaggerCAMSS-SIS'
+
+# USER CREDENTIALS
+EURLEX_WEB_SERVICE_USER_NAME = 'n0037rne'
+EURLEX_WEB_SERVICE_PASSWORD = 'ewRU4D6I3rW'
 
 # API ENDPOINTS
 API_HOST = 'http://localhost:5000'
@@ -42,8 +45,8 @@ EURLEX_CORPORA_QUERY_BODY = (
             "    <soap:Header>\n"
             "        <wsse:Security soap:mustUnderstand=\"true\" xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\">\n"
             "            <wsse:UsernameToken wsu:Id=\"UsernameToken-3\" xmlns:wsu=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\">\n"
-            "                <wsse:Username>n008j19f</wsse:Username>\n"
-            "                <wsse:Password Type=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText\">CKZNYdSty5t</wsse:Password>\n"
+            "                <wsse:Username>n0037rne</wsse:Username>\n"
+            "                <wsse:Password Type=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText\">ewRU4D6I3rW</wsse:Password>\n"
             "            </wsse:UsernameToken>\n"
             "        </wsse:Security>\n"
             "    </soap:Header> \n"
@@ -56,8 +59,9 @@ EURLEX_CORPORA_QUERY_BODY = (
             "    </sear:searchRequest>\n"
             "    </soap:Body>\n"
             "</soap:Envelope>")
+
 EURLEX_COPORA_DETAILS = {"url": EURLEX_CORPORA_URL,
-                         "body":EURLEX_CORPORA_QUERY_BODY,
+                         "body": EURLEX_CORPORA_QUERY_BODY,
                          "headers": EURLEX_CORPORA_QUERY_HEADERS}
 
 # EIRA THESAURUS LEMMATIZATION DETAILS
@@ -84,7 +88,7 @@ SKOS_MAPPER_REQUEST_DETAILS = {
 
 SKOS_MAPPER_DETAILS = {'url': URL_SKOS_MAP,
                        'body': SKOS_MAPPER_REQUEST_DETAILS
-    }
+                       }
 
 # LANGUAGES
 
