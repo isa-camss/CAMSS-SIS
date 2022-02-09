@@ -50,7 +50,7 @@ EIRA_THESAURUS_LEMMA_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get('path'),
 SKOS_MAPPER_REQUEST_DETAILS = {
         "endpoint": URL_NLP_LEMMATIZE,
         "thesauri": [
-            EIRA_THESAURUS_MD5_DETAILS
+            EIRA_THESAURUS_LEMMA_DETAILS
         ]
     }
 
