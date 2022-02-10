@@ -2,6 +2,7 @@ import unittest
 import requests
 from bs4 import BeautifulSoup as bs
 import cfg.ctt as ctt
+import hashlib
 from urllib import request
 
 
@@ -14,24 +15,29 @@ class Corpora(unittest.TestCase):
         return
 
     def test_001_corpora_downloader(self):
+        query = ctt.EURLEX_CORPORA_QUERY_BODY % (ctt.EURLEX_WEB_SERVICE_USER_NAME,
+                                                 ctt.EURLEX_WEB_SERVICE_PASSWORD,
+                                                 ctt.PAGE_NUMBER,
+                                                 ctt.RESULTS_NUMBER_BY_PAGE)
         # request to EURLEX API
-        eurlex_request = requests.post(ctt.EURLEX_CORPORA_URL, data=ctt.EURLEX_CORPORA_QUERY_BODY,
+        eurlex_request = requests.post(ctt.EURLEX_CORPORA_URL, data=query,
                                        headers=ctt.EURLEX_CORPORA_QUERY_HEADERS)
 
         # Parse the EURLEX query response
         soup = bs(eurlex_request.content, 'xml')
 
-        # Extract attribute with the document link
-        tag_link = soup.find_all("document_link", {"type": "pdf"})
+        # Extract reference and url of the resource
+        request_result = soup.find_all('result')
 
-        # save in a list the document link
-        corpora_list_links = []
-        for link in tag_link:
-            link_pdf = link.get_text()
-            corpora_list_links.append(link_pdf)
-        print(corpora_list_links)
+        corpus = []
+        for result in request_result:
+            reference = result.find('reference').text
+            reference_md5 = hashlib.md5(reference.encode())
+            reference_hash = reference_md5.hexdigest()
 
-        # download the list of the EURLEX documents
-        for i, url in enumerate(corpora_list_links):
-            save_path = f'C:/SEMBUdev/Github/CAMSS/CAMSS-SIS/dev/arti/corpus/corpus_{i}.pdf'
-            request.urlretrieve(url, save_path)
+            link = [reference_hash]
+            for document_type in ctt.CORPORA_DOCUMENT_TYPE:
+                link += result.find("document_link", {"type": document_type})
+            corpus.append(link)
+
+        print(corpus)

@@ -39,30 +39,33 @@ EIRA_THESAURUS_DETAILS = {"url": EIRA_THESAURUS_URL, "path": RDF_DIR + "/" + EIR
 # EURLEX CORPORA DETAILS
 # EURLEX_DOCUMENT_NAME = "corpora.txt"
 EURLEX_CORPORA_URL = "https://eur-lex.europa.eu/EURLexWebService"
+PAGE_NUMBER = '1'
+RESULTS_NUMBER_BY_PAGE = '10'
 EURLEX_CORPORA_QUERY_HEADERS = {'content-type': 'application/soap+xml'}
-EURLEX_CORPORA_QUERY_BODY = (
-            "<soap:Envelope xmlns:soap=\"http://www.w3.org/2003/05/soap-envelope\" xmlns:sear=\"http://eur-lex.europa.eu/search\">\n"
-            "    <soap:Header>\n"
-            "        <wsse:Security soap:mustUnderstand=\"true\" xmlns:wsse=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd\">\n"
-            "            <wsse:UsernameToken wsu:Id=\"UsernameToken-3\" xmlns:wsu=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd\">\n"
-            "                <wsse:Username>n0037rne</wsse:Username>\n"
-            "                <wsse:Password Type=\"http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText\">ewRU4D6I3rW</wsse:Password>\n"
-            "            </wsse:UsernameToken>\n"
-            "        </wsse:Security>\n"
-            "    </soap:Header> \n"
-            "    <soap:Body>\n"
-            "    <sear:searchRequest>\n"
-            "      <sear:expertQuery><![CDATA[DTS_SUBDOM = \"TREATIES\" OR \"INTER_AGREE\" OR \"LEGISLATION\" OR \"EFTA\" OR \"EU_LAW_ALL\" AND PD >= 01/01/2012 <= 07/02/2022]]></sear:expertQuery>\n"
-            "      <sear:page>1</sear:page>\n"
-            "      <sear:pageSize>10</sear:pageSize>\n"
-            "      <sear:searchLanguage>en</sear:searchLanguage>\n"
-            "    </sear:searchRequest>\n"
-            "    </soap:Body>\n"
-            "</soap:Envelope>")
+EURLEX_CORPORA_QUERY_BODY = """<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:sear="http://eur-lex.europa.eu/search">
+    <soap:Header>
+        <wsse:Security soap:mustUnderstand="true" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+            <wsse:UsernameToken wsu:Id="UsernameToken-3" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+                <wsse:Username>%s</wsse:Username>
+                <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">%s</wsse:Password>
+            </wsse:UsernameToken>
+        </wsse:Security>
+    </soap:Header> 
+    <soap:Body>
+    <sear:searchRequest>
+      <sear:expertQuery><![CDATA[DTS_SUBDOM = "TREATIES" OR "INTER_AGREE" OR "LEGISLATION" OR "EFTA" OR "EU_LAW_ALL" AND PD >= 01/01/2012 <= 07/02/2022]]></sear:expertQuery>
+      <sear:page>%s</sear:page>
+      <sear:pageSize>%s</sear:pageSize>
+      <sear:searchLanguage>en</sear:searchLanguage>
+    </sear:searchRequest>
+    </soap:Body>
+</soap:Envelope>"""
 
 EURLEX_COPORA_DETAILS = {"url": EURLEX_CORPORA_URL,
                          "body": EURLEX_CORPORA_QUERY_BODY,
                          "headers": EURLEX_CORPORA_QUERY_HEADERS}
+
+CORPORA_DOCUMENT_TYPE = ['pdf', 'html']
 
 # EIRA THESAURUS LEMMATIZATION DETAILS
 
