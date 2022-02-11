@@ -1,5 +1,3 @@
-from com.nttdata.dgi.persistence.ipersistor import PersistorTypes
-
 # PROJECT CONFIG
 PROJECT_NAME = 'camss-sis'
 VERSION = 'v1.0'
@@ -146,13 +144,3 @@ STORE_DETAILS = {
     }
 }
 
-# PERSISTENCE CONFIGURATION
-THESAURI_FILE_PERSISTENCE_DETAILS = {'type': PersistorTypes.FILE,
-                                     'source_path': EIRA_THESAURUS_DETAILS.get('path'),
-                                     'target_path': ''}
-
-THESAURI_VIRTUOSO_PERSISTENCE_DETAILS = {'type': PersistorTypes.VIRTUOSO,
-                                         'source_path': EIRA_THESAURUS_DETAILS.get('path'),
-                                         'endpoint': 'http://',
-                                         'user': '',
-                                         'password': ''}

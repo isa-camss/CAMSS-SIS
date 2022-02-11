@@ -35,9 +35,13 @@ class Corpora(unittest.TestCase):
             reference_md5 = hashlib.md5(reference.encode())
             reference_hash = reference_md5.hexdigest()
 
-            link = [reference_hash]
-            for document_type in ctt.CORPORA_DOCUMENT_TYPE:
-                link += result.find("document_link", {"type": document_type})
-            corpus.append(link)
+            # resources_link = [reference_hash]
+            resources_link = []
 
+            for document_type in ctt.CORPORA_DOCUMENT_TYPE:
+                resources_link = result.find("document_link", {"type": document_type})
+
+            corpus.append(resources_link)
+
+        print(resources_link)
         print(corpus)
