@@ -32,26 +32,19 @@ class Corpora(unittest.TestCase):
         corpus = []
         for result in request_result:
             reference = result.find('reference').text
-            reference_md5 = hashlib.md5(reference.encode())
-            reference_hash = reference_md5.hexdigest()
+            reference = hashlib.md5(reference.encode())
+            reference_hash = reference.hexdigest()
 
-            # resources_link = [reference_hash]
+            # Extraction all interesting document links by resources
             document_link = []
-
             for document_type in ctt.CORPORA_DOCUMENT_TYPE:
                 document_link += result.find("document_link", {"type": document_type})
 
-            link_by_type = {}
+            document_link_by_type = {}
             for i in range(len(document_link)):
-                link_by_type[document_type[i]] = document_link[i]
-            print(link_by_type)
+                document_link_by_type[ctt.CORPORA_DOCUMENT_TYPE[i]] = document_link[i]
 
-                # documents = dict(zip(document_type, document_link))
-                # print(documents)
-            # print(document_link)
+            corpus.append(dict({reference_hash: document_link_by_type}))
 
-            # corpus += dict(zip(reference_hash, document_link))
 
-            corpus.append(document_link)
-
-        # print(corpus)
+        print(corpus)
