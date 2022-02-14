@@ -44,7 +44,6 @@ class Corpora(unittest.TestCase):
             for i in range(len(document_link)):
                 document_link_by_type[ctt.CORPORA_DOCUMENT_TYPE[i]] = document_link[i]
 
-            corpus.append(dict({reference_hash: document_link_by_type}))
-
+            corpus.append(dict({'resource_reference': reference_hash, 'resource_links': document_link_by_type}))
 
         print(corpus)
