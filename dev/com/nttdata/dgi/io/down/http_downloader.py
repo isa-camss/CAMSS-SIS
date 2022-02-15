@@ -11,6 +11,10 @@ class HTTPDownloader(Downloader):
         self.http_url = downloader_url
         self.http_content_path = content_path
 
+    def __call__(self, url, content_path):
+        self.__init__(url, content_path)
+        return self
+
     def download(self):
         request.urlretrieve(url=self.http_url, filename=self.http_content_path)
         return self

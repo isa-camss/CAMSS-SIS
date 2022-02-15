@@ -1,27 +1,24 @@
-from urllib import request
 import requests
 from com.nttdata.dgi.io.down.downloader import Downloader
 import cfg.ctt as ctt
 
 
 class RequestDownloader(Downloader):
-    request_url = str
-    document_url: list
-    document_content_path: str
+    url: str
+    body: dict
+    headers: dict
+    response: requests.Response
 
-    def __init__(self, downloader_url: list = None, content_path: str = None):
+    def __init__(self, request_url: str = None, request_body: dict = None, request_headers: dict = None):
         super().__init__()
 
-        self.document_url = downloader_url
-        self.document_content_path = content_path
-
-
-    def request_corpus(self):
-        response = requests.post(ctt.EURLEX_CORPORA_URL, data=ctt.EURLEX_CORPORA_QUERY_BODY, headers=ctt.EURLEX_CORPORA_QUERY_HEADERS)
-        print(response.content)
-        # TODO make a for loop to get a list of url from the response
+        self.url = request_url
+        self.body = request_body
+        self.headers = request_headers
+        self.response = None
 
     def download(self):
-        # TODO make a for loop to name the files downloaded
-        request.urlretrieve(url=self.document_url, filename=self.document_content_path)
+        # request to EURLEX API
+        self.response = requests.post(url=self.url, data=self.body, headers=self.headers)
+
         return self
