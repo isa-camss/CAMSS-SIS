@@ -44,7 +44,10 @@ class TestifierTest(unittest.TestCase):
                       'exclude-ext': ['.html', '.ppt'],
                       'lang?': True}
 
-        for index, path, error, _, _, _, _, _ in Textify.textify(args):
+        Textify.textify(args)
+
+        """for index, path, error, _, _, _, _, _ in Textify.textify(args):
+            io.log(f'{index}. {path}', logger=log)
 
             if error:
                 io.log(f'{index}. FILE {path} COULD NOT BE READ NOR TRANSFORMED.')
@@ -53,5 +56,5 @@ class TestifierTest(unittest.TestCase):
                 io.log(f'{index}. {path}', logger=log)
 
         io.log(f'Done. It took {io.now() - t0} to transform {index} files', logger=log)
-        io.log(f'{len(flawed)} files could not be transformed. Here they are: {flawed}')
+        io.log(f'{len(flawed)} files could not be transformed. Here they are: {flawed}')"""
         return
