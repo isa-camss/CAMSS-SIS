@@ -1,13 +1,9 @@
 import unittest
-import requests
-from bs4 import BeautifulSoup as bs
 import cfg.ctt as ctt
 import cfg.credentials as cred
 import com.nttdata.dgi.util.io as io
 import os
 from org.camss.corpora.corpora_manager import CorporaManager
-import json
-from urllib import request
 
 
 class Corpora(unittest.TestCase):
@@ -20,12 +16,12 @@ class Corpora(unittest.TestCase):
 
     def test_001_corpora_downloader(self):
         corpora_manager = CorporaManager(ctt.CORPORA_DETAILS).prepare_corpus_folders().download_corpus()
-        return corpora_manager
+        return self, corpora_manager
 
     def test_002_credentials(self):
         user = cred.EURLEX_WEB_SERVICE_USER_NAME
         password = cred.EURLEX_WEB_SERVICE_PASSWORD
-        return
+        return self
 
     def test_003_create_file(self):
         file_path = '.' + ctt.CORPORA_DETAILS.get('corpora_metadata_file')
@@ -33,4 +29,4 @@ class Corpora(unittest.TestCase):
         io.drop_file(file_path)
         os.makedirs(corpora_path, exist_ok=True)
         open(file_path, 'w+')
-        return
+        return self

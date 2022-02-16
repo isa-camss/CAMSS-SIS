@@ -36,6 +36,5 @@ class ProcessThesaurus(Resource):
     # @api.expect(ping_args, validate=True)
     def post(self):
         report = process_thesauri()
-
         t0 = io.now()
         return {'message': f'{str(io.now() - t0)}'}, 200

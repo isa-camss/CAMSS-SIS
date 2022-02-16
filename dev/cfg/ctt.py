@@ -26,8 +26,8 @@ URL_NLP_LEMMATIZE = BASE_URL + '/nlp/lemmatize'
 
 ARTIFACTS_DIR = "./arti"
 RDF_DIR = ARTIFACTS_DIR + "/rdf"
-JSON_DIR = '.' + ARTIFACTS_DIR + "/json"
-CORPORA_DIR = '../' + '../../corpora'
+JSON_DIR = ARTIFACTS_DIR + "/json"
+CORPORA_DIR = '../../corpora'
 
 # EIRA THESAURUS DETAILS
 EIRA_THESAURUS_NAME = "eira_thesaurus.rdf"
