@@ -1,5 +1,5 @@
-from com.nttdata.dgi.persistence.ipersistor import PersistorTypes
-from flask_restx import fields
+import cfg.credentials as cred
+import cfg.queries as queries
 
 # PROJECT CONFIG
 PROJECT_NAME = 'camss-sis'
@@ -16,15 +16,68 @@ END_POINT_SWAGGER = f'{API_PREFIX}/swagger'
 END_POINT_SWAGGER_JSON = f'{API_PREFIX}/swagger.json'
 NAME_BLUEPRINT = 'swaggerCAMSS-SIS'
 
+# API ENDPOINTS
+API_HOST = 'http://localhost:5000'
+BASE_URL = API_HOST + API_PREFIX
+URL_SKOS_MAP = BASE_URL + '/SKOS_Mapper/skos_map'
+URL_NLP_LEMMATIZE = BASE_URL + '/nlp/lemmatize'
+
 # ARTIFACTS PATH
+
 ARTIFACTS_DIR = "./arti"
 RDF_DIR = ARTIFACTS_DIR + "/rdf"
+JSON_DIR = ARTIFACTS_DIR + "/json"
+CORPORA_DIR = '../../corpora'
 
 # EIRA THESAURUS DETAILS
 EIRA_THESAURUS_NAME = "eira_thesaurus.rdf"
-EIRA_THESAURUS_URL = "https://joinup.ec.europa.eu/sites/default/files/distribution/access_url/2022-02/eec825b6-f6e8" \
-                     "-4a4f-9dfd-4fd47b7a744c/EIRA_SKOS.rdf "
+EIRA_THESAURUS_URL = "https://joinup.ec.europa.eu/sites/default/files/distribution/access_url/2021-03/d72a664c-70ea" \
+                     "-4dd7-91ee-3768d44cc079/EIRA_SKOS.rdf "
 EIRA_THESAURUS_DETAILS = {"url": EIRA_THESAURUS_URL, "path": RDF_DIR + "/" + EIRA_THESAURUS_NAME}
+# ------------------------------------------- CORPORA -----------------------------------------------------------------
+CORPORA_DOCUMENT_TYPE = ['pdf', 'html']
+CORPORA_METADATA_JSON = JSON_DIR + '/corpora_metadata.jsonl'
+
+# EURLEX CORPORA DETAILS
+# EURLEX_DOCUMENT_NAME = "corpora.txt"
+EURLEX_CORPORA_URL = "https://eur-lex.europa.eu/EURLexWebService"
+PAGE_NUMBER = 1
+RESULTS_NUMBER_BY_PAGE = 10
+MAX_DOWNLOAD_DOCUMENT = 20
+EURLEX_CORPORA_QUERY_HEADERS = {'content-type': 'application/soap+xml'}
+EURLEX_CORPORA_QUERY_BODY = f"""<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:sear="http://eur-lex.europa.eu/search">
+    <soap:Header>
+        <wsse:Security soap:mustUnderstand="true" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
+            <wsse:UsernameToken wsu:Id="UsernameToken-3" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+                <wsse:Username>{cred.EURLEX_WEB_SERVICE_USER_NAME}</wsse:Username>
+                <wsse:Password Type="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-username-token-profile-1.0#PasswordText">{cred.EURLEX_WEB_SERVICE_PASSWORD}</wsse:Password>
+            </wsse:UsernameToken>
+        </wsse:Security>
+    </soap:Header> 
+    <soap:Body>
+    <sear:searchRequest>
+      <sear:expertQuery><{queries.EURLEX_EXPERT_QUERY}></sear:expertQuery>
+      <sear:page>%s</sear:page>
+      <sear:pageSize>%s</sear:pageSize>
+      <sear:searchLanguage>en</sear:searchLanguage>
+    </sear:searchRequest>
+    </soap:Body>
+</soap:Envelope>"""
+
+EURLEX_COPORA_DETAILS = {'url': EURLEX_CORPORA_URL,
+                         'body': EURLEX_CORPORA_QUERY_BODY,
+                         'headers': EURLEX_CORPORA_QUERY_HEADERS,
+                         'initial_page_number': PAGE_NUMBER,
+                         'initial_page_size': RESULTS_NUMBER_BY_PAGE
+}
+
+CORPORA_DETAILS = {
+    'eurlex_details': EURLEX_COPORA_DETAILS,
+    'max_documents': MAX_DOWNLOAD_DOCUMENT,
+    'download_types': CORPORA_DOCUMENT_TYPE,
+    'corpora_dir': CORPORA_DIR,
+    'corpora_metadata_file': CORPORA_METADATA_JSON
+}
 
 # EIRA THESAURUS LEMMATIZATION DETAILS
 
@@ -40,6 +93,17 @@ EIRA_THESAURUS_LEMMA_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get('path'),
                                 "target": RDF_DIR + "/" + EIRA_LEMMA_NAME,
                                 "graph": '',
                                 "function": LEMMATIZATION_FUNCTIONS[1]}
+
+SKOS_MAPPER_REQUEST_DETAILS = {
+        "endpoint": URL_NLP_LEMMATIZE,
+        "thesauri": [
+            EIRA_THESAURUS_MD5_DETAILS
+        ]
+    }
+
+SKOS_MAPPER_DETAILS = {'url': URL_SKOS_MAP,
+                       'body': SKOS_MAPPER_REQUEST_DETAILS
+                       }
 
 # LANGUAGES
 
@@ -94,13 +158,3 @@ STORE_DETAILS = {
     }
 }
 
-# PERSISTENCE CONFIGURATION
-THESAURI_FILE_PERSISTENCE_DETAILS = {'type': PersistorTypes.FILE,
-                                     'source_path': EIRA_THESAURUS_DETAILS.get('path'),
-                                     'target_path': ''}
-
-THESAURI_VIRTUOSO_PERSISTENCE_DETAILS = {'type': PersistorTypes.VIRTUOSO,
-                                         'source_path': EIRA_THESAURUS_DETAILS.get('path'),
-                                         'endpoint': 'http://',
-                                         'user': '',
-                                         'password': ''}
