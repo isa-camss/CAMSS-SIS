@@ -29,11 +29,13 @@ RDF_DIR = ARTIFACTS_DIR + "/rdf"
 JSON_DIR = ARTIFACTS_DIR + "/json"
 CORPORA_DIR = '../../corpora'
 
+# __________________________________________ THESAURI _________________________________________________________________
 # EIRA THESAURUS DETAILS
 EIRA_THESAURUS_NAME = "eira_thesaurus.rdf"
 EIRA_THESAURUS_URL = "https://joinup.ec.europa.eu/sites/default/files/distribution/access_url/2021-03/d72a664c-70ea" \
                      "-4dd7-91ee-3768d44cc079/EIRA_SKOS.rdf "
 EIRA_THESAURUS_DETAILS = {"url": EIRA_THESAURUS_URL, "path": RDF_DIR + "/" + EIRA_THESAURUS_NAME}
+
 # ------------------------------------------- CORPORA -----------------------------------------------------------------
 CORPORA_DOCUMENT_TYPE = ['pdf', 'html']
 CORPORA_METADATA_JSON = JSON_DIR + '/corpora_metadata.jsonl'
@@ -69,16 +71,15 @@ EURLEX_COPORA_DETAILS = {'url': EURLEX_CORPORA_URL,
                          'headers': EURLEX_CORPORA_QUERY_HEADERS,
                          'initial_page_number': PAGE_NUMBER,
                          'initial_page_size': RESULTS_NUMBER_BY_PAGE
-}
+                         }
 
-CORPORA_DETAILS = {
-    'eurlex_details': EURLEX_COPORA_DETAILS,
-    'max_documents': MAX_DOWNLOAD_DOCUMENT,
-    'download_types': CORPORA_DOCUMENT_TYPE,
-    'corpora_dir': CORPORA_DIR,
-    'corpora_metadata_file': CORPORA_METADATA_JSON
-}
-
+CORPORA_DETAILS = {'eurlex_details': EURLEX_COPORA_DETAILS,
+                   'max_documents': MAX_DOWNLOAD_DOCUMENT,
+                   'download_types': CORPORA_DOCUMENT_TYPE,
+                   'corpora_dir': CORPORA_DIR,
+                   'corpora_metadata_file': CORPORA_METADATA_JSON
+                   }
+# _______________________________________________ LEMMATIZATION ______________________________________________________
 # EIRA THESAURUS LEMMATIZATION DETAILS
 
 LEMMATIZATION_FUNCTIONS = ["md5lemma", "lemma"]
@@ -86,20 +87,19 @@ EIRA_MD5_NAME = "eira_thesaurus.md5lemmas.rdf"
 EIRA_THESAURUS_MD5_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get('path'),
                               "target": RDF_DIR + "/" + EIRA_MD5_NAME,
                               "graph": '',
-                              "function": LEMMATIZATION_FUNCTIONS[0]}
+                              "function": LEMMATIZATION_FUNCTIONS[0]
+                              }
 
 EIRA_LEMMA_NAME = "eira_thesaurus.lemmas.rdf"
-EIRA_THESAURUS_LEMMA_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get('path'),
-                                "target": RDF_DIR + "/" + EIRA_LEMMA_NAME,
-                                "graph": '',
-                                "function": LEMMATIZATION_FUNCTIONS[1]}
+EIRA_THESAURUS_LEMMA_DETAILS = {'source': EIRA_THESAURUS_DETAILS.get('path'),
+                                'target': RDF_DIR + "/" + EIRA_LEMMA_NAME,
+                                'graph': '',
+                                'function': LEMMATIZATION_FUNCTIONS[1]
+                                }
 
-SKOS_MAPPER_REQUEST_DETAILS = {
-        "endpoint": URL_NLP_LEMMATIZE,
-        "thesauri": [
-            EIRA_THESAURUS_MD5_DETAILS
-        ]
-    }
+SKOS_MAPPER_REQUEST_DETAILS = {'endpoint': URL_NLP_LEMMATIZE,
+                               'thesauri': [EIRA_THESAURUS_MD5_DETAILS]
+                               }
 
 SKOS_MAPPER_DETAILS = {'url': URL_SKOS_MAP,
                        'body': SKOS_MAPPER_REQUEST_DETAILS
@@ -157,4 +157,3 @@ STORE_DETAILS = {
         "database": "accelerators"
     }
 }
-

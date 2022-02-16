@@ -28,9 +28,10 @@ class CorporaManager:
         request_downloader = CorpusDownloader()
 
         while num_documents_download < self.corpora_details.get('max_documents'):
+            # Create a dynamic query
             query = self.corpora_details.get('eurlex_details').get('body') % (initial_page_number, initial_page_size)
 
-            # request to EURLEX API
+            # Request to the website
             eurlex_document_request = request_downloader(self.corpora_details.get('eurlex_details').get('url'),
                                                        query,
                                                        self.corpora_details.get('eurlex_details').get('headers')).download()
@@ -38,12 +39,13 @@ class CorporaManager:
                 raise Exception(f"Query to EURLex returned {eurlex_document_request.response.status_code}. "
                                 f"Content: {eurlex_document_request.response.content}")
 
-            # Parse the EURLEX query response
+            # Parse the content response
             soup = bs(eurlex_document_request.response.content, 'xml')
 
-            # Extract reference and url of the resource
+            # Access to the result tag
             request_result = soup.find_all('result')
 
+            # Extract and generate the identification for each object result
             for result in request_result:
                 reference = result.find('reference').text
                 reference_hash = io.hash(reference)
@@ -51,9 +53,11 @@ class CorporaManager:
                                     'reference_hash': reference_hash,
                                     'reference_links': []}
 
-                # Extraction all interesting document links by resources
+                # Access to the links for each result
                 for document in result.find_all('document_link'):
                     document_type = document['type'].lower()
+
+                    #
                     if document_type in self.corpora_details.get('download_types'):
                         textification_hash = io.hash(reference+document_type)
                         save_document_path = os.path.join(self.corpora_details.get('corpora_dir'), document_type,

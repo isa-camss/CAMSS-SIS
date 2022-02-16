@@ -12,6 +12,8 @@ import shutil
 import smart_open as so
 import pathlib as pl
 import unidecode
+import glob
+from tika import parser, language
 
 
 def url_tail(url: str, sep: str = '/'):
@@ -19,6 +21,7 @@ def url_tail(url: str, sep: str = '/'):
     Returns the tail of a path
     """
     return url.rsplit(sep, 1)[1]
+
 
 def base64_(file: str) -> str:
     """
@@ -128,6 +131,12 @@ def to_json(dic: dict, file: str):
         json.dump(dic, fp, indent=4)
 
 
+def to_file(txt: str, path: str):
+    with open(path, 'w+', encoding="utf-8") as file:
+        if txt:
+            file.write(txt)
+
+
 def alpha2(lang: str) -> str:
     """
     WARNING: MOVED INTO util.string.py for generalization
@@ -174,6 +183,7 @@ def wc(words: tuple, text: str = None) -> int:
         total += len(re.findall(word, text))
     return total
 
+
 def xst_file(path: str) -> bool:
     """
     Checks whether a file or directory exists or not.
@@ -199,6 +209,28 @@ def get_file(path_filename: str) -> (str, str):
     return name, ext
 
 
+def get_files(root_dir: str, exclude: [] = None) -> (int, str, str, str):
+    """
+    Returns lazily and recursively each path file name, the file name, extension and an index number from
+    inside the folders of a root folder
+    :param root_dir: the initial folder with the directories and files
+    :param exclude: list of files or directories to not get into
+    :return: file absolute path, file name, extension, and its index number
+    """
+    exclude = [] if not exclude else exclude
+    i: int = 0
+    # dir?
+    xst_file(root_dir)
+    # For every file in the directory structure
+    for path in glob.iglob(root_dir + '**/**', recursive=True):
+        xpath = pl.PurePath(path)
+        if xpath.name not in exclude:
+            if os.path.isfile(path):
+                i += 1
+                name, ext = get_file(path)
+                yield i, path, name, ext
+
+
 def file_split_name_ext(file_name: str) -> (str, str):
     v = os.path.splitext(file_name)
     return v[0], v[1]
@@ -207,3 +239,18 @@ def file_split_name_ext(file_name: str) -> (str, str):
 def get_file_name_from_path(path) -> str:
     head, tail = ntpath.split(path)
     return tail or ntpath.basename(head)
+
+
+def slash(path):
+    """
+    Will add the trailing slash if it's not already there.
+    :param path: path file name
+    :return: slashed path file name
+    """
+    return os.path.join(path, '')
+
+def get_content_from_file(path: object, lang: object = True) -> object:
+    content = parser.from_file(path)['content']
+    lang_ = language.from_buffer(content)
+    return content, lang_
+
