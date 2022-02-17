@@ -15,7 +15,7 @@ class Corpora(unittest.TestCase):
         return
 
     def test_001_corpora_downloader(self):
-        corpora_manager = CorporaManager(ctt.CORPORA_DETAILS).prepare_corpus_folders().download_corpus()
+        corpora_manager = CorporaManager(ctt.DOWNLOAD_CORPORA_DETAILS).prepare_corpus_folders().download_corpus()
         return self, corpora_manager
 
     def test_002_credentials(self):

@@ -75,17 +75,17 @@ EURLEX_COPORA_DETAILS = {'url': EURLEX_CORPORA_URL,
                          }
 
 DOWNLOAD_CORPORA_DETAILS = {'eurlex_details': EURLEX_COPORA_DETAILS,
-                   'max_documents': MAX_DOWNLOAD_DOCUMENT,
-                   'download_types': CORPORA_DOCUMENT_TYPE,
-                   'corpora_dir': CORPORA_DIR,
-                   'corpora_metadata_file': CORPORA_METADATA_JSON
-                   }
+                            'max_documents': MAX_DOWNLOAD_DOCUMENT,
+                            'download_types': CORPORA_DOCUMENT_TYPE,
+                            'corpora_dir': CORPORA_DIR,
+                            'corpora_metadata_file': CORPORA_METADATA_JSON
+                            }
 # ______________________________________________ TEXTIFICATION _______________________________________________________
 TEXTIFICATION_DIR = CORPORA_DIR + '/txt'
-TEXTIFICATION_CORPORA_DETAILS = {'corpus_dir': '../' + CORPORA_DIR,
-                         'textification_dir': '../' + TEXTIFICATION_DIR,
-                         'exclude_extensions_type': CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE,
-                         'lang?': True}
+TEXTIFICATION_CORPORA_DETAILS = {'corpus_dir': CORPORA_DIR,
+                                 'textification_dir': TEXTIFICATION_DIR,
+                                 'exclude_extensions_type': CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE,
+                                 'textification_lang': True}
 # _______________________________________________ LEMMATIZATION ______________________________________________________
 # EIRA THESAURUS LEMMATIZATION DETAILS
 

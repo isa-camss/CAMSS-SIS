@@ -1,17 +1,23 @@
-
 import com.nttdata.dgi.util.io as io
 
 
 class Textify:
+    corpus_dir: str
+    textification_dir: str
+    textification_lang: bool
 
-    def textify(self, args: dict):
-        source_dir = args['source_dir']
-        target_dir = args['target_dir']
-        lang = args['lang?']
+    def __init__(self, resources_dir: str = None, target_dir: str = None, lang: bool = None):
+        super().__init__()
 
-        for index, path, name, ext in io.get_files(source_dir):
-            content, lang_ = io.get_content_from_file(path, lang)
-            new_path = io.slash(target_dir) + name + '.txt'
+        self.corpus_dir = resources_dir
+        self.textification_dir = target_dir
+        self.textification_lang = lang
+
+    def textify(self):
+
+        for index, path, name, ext in io.get_files(self.corpus_dir):
+            content, lang_ = io.get_content_from_file(path, self.textification_lang)
+            new_path = io.slash(self.textification_dir) + name + '.txt'
             if not content:
                 pass
             else:

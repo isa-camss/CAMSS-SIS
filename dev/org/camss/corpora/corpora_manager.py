@@ -1,9 +1,10 @@
-from bs4 import BeautifulSoup as bs
 import os
+import json
+from bs4 import BeautifulSoup as bs
+import com.nttdata.dgi.util.io as io
 from com.nttdata.dgi.io.down.http_downloader import HTTPDownloader
 from org.camss.io.down.corpus_downloader import CorpusDownloader
-import json
-import com.nttdata.dgi.util.io as io
+from com.nttdata.dgi.io.textify.textify import Textify
 
 
 class CorporaManager:
@@ -18,6 +19,7 @@ class CorporaManager:
     def prepare_corpus_folders(self):
         io.drop_file(self.download_corpora_details.get('corpora_metadata_file'))
         os.makedirs(self.download_corpora_details.get('corpora_dir'), exist_ok=True)
+        os.makedirs(self.textification_corpora_details.get('textification_dir'), exist_ok=True)
         with open(self.download_corpora_details.get('corpora_metadata_file'), 'w+') as outfile:
             outfile.close()
         return self
@@ -81,11 +83,16 @@ class CorporaManager:
         return self
 
     def textify_corpus(self):
+        textifier = Textify()
+
         # loop for corpora folder and check if textified folder is ctt.TEXTIFICATION_FOLDER
-            # loop for document
-                # get name of file
-                # textification with tika
-                # save .txt file with teh same name in a new txt folder
+        for dir_name in os.listdir(self.textification_corpora_details.get('corpus_dir')):
+
+            if os.path.isdir(self.textification_corpora_details.get('corpus_dir') + '/' + dir_name):
+                if dir_name in self.textification_corpora_details.get('exclude_extensions_type'):
+                    pass
+                else:
+                    textifier.textify()
 
         return self
 
