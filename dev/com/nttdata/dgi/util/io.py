@@ -96,7 +96,8 @@ def list_dirs(root_dir: str):
     """
     Returns list with the names of the first level directories inside a root path.
     """
-    return list(os.walk(root_dir))[1]
+
+    return list(os.walk(root_dir))
 
 
 def drop_file(path: str):
@@ -249,8 +250,23 @@ def slash(path):
     """
     return os.path.join(path, '')
 
-def get_content_from_file(path: object, lang: object = True) -> object:
-    content = parser.from_file(path)['content']
-    lang_ = language.from_buffer(content)
-    return content, lang_
 
+def get_content_from_file(path: dict, lang: dict = True) -> tuple:
+    """
+        Returns the content and language of a document
+        :param path: the file path to the document
+        :param lang: if True, the lang is to be detected
+        :return: the content as text and the language
+        """
+    lang_ = None
+    content = None
+    try:
+        content = parser.from_file(path)['content']
+    except Exception as e:
+        log(f'Error in get_content_from_file. Exception: {e}')
+    # Some PDF, for example, are scanned images, without no textual content
+    if not content:
+        return None, None
+    # lang_ = language.from_buffer(content) if lang else None
+
+    return content, lang_

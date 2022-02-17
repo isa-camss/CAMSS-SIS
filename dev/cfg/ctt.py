@@ -38,6 +38,7 @@ EIRA_THESAURUS_DETAILS = {"url": EIRA_THESAURUS_URL, "path": RDF_DIR + "/" + EIR
 
 # ------------------------------------------- CORPORA -----------------------------------------------------------------
 CORPORA_DOCUMENT_TYPE = ['pdf', 'html']
+CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE = ['html', 'txt']
 CORPORA_METADATA_JSON = JSON_DIR + '/corpora_metadata.jsonl'
 
 # EURLEX CORPORA DETAILS
@@ -73,12 +74,18 @@ EURLEX_COPORA_DETAILS = {'url': EURLEX_CORPORA_URL,
                          'initial_page_size': RESULTS_NUMBER_BY_PAGE
                          }
 
-CORPORA_DETAILS = {'eurlex_details': EURLEX_COPORA_DETAILS,
+DOWNLOAD_CORPORA_DETAILS = {'eurlex_details': EURLEX_COPORA_DETAILS,
                    'max_documents': MAX_DOWNLOAD_DOCUMENT,
                    'download_types': CORPORA_DOCUMENT_TYPE,
                    'corpora_dir': CORPORA_DIR,
                    'corpora_metadata_file': CORPORA_METADATA_JSON
                    }
+# ______________________________________________ TEXTIFICATION _______________________________________________________
+TEXTIFICATION_DIR = CORPORA_DIR + '/txt'
+TEXTIFICATION_CORPORA_DETAILS = {'corpus_dir': '../' + CORPORA_DIR,
+                         'textification_dir': '../' + TEXTIFICATION_DIR,
+                         'exclude_extensions_type': CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE,
+                         'lang?': True}
 # _______________________________________________ LEMMATIZATION ______________________________________________________
 # EIRA THESAURUS LEMMATIZATION DETAILS
 

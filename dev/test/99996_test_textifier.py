@@ -3,7 +3,8 @@ import sys
 import logging
 from com.nttdata.dgi.io.textify.textify import Textify
 import com.nttdata.dgi.util.io as io
-
+import cfg.ctt as ctt
+import os
 
 """
 Test Tika Massively
@@ -20,6 +21,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s',
                     level=logging.INFO, filename=LOG)
 logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
 log = logging.getLogger("DocGov")
+
 
 class TestifierTest(unittest.TestCase):
 
@@ -39,22 +41,20 @@ class TestifierTest(unittest.TestCase):
         # If
         flawed = []
         index = 0
-        args: dict = {'source-dir': 'C:/SEMBUdev/Github/corpora/pdf',
-                      'target-dir': 'C:/SEMBUdev/Github/corpora/txt',
-                      'exclude-ext': ['.html', '.ppt'],
-                      'lang?': True}
+        args: dict = ctt.TEXTIFICATION_DETAILS
 
-        Textify.textify(args)
+        os.makedirs(ctt.TEXTIFICATION_DETAILS.get('textification_dir'), exist_ok=True)
 
-        """for index, path, error, _, _, _, _, _ in Textify.textify(args):
-            io.log(f'{index}. {path}', logger=log)
+        textifier = Textify()
 
-            if error:
-                io.log(f'{index}. FILE {path} COULD NOT BE READ NOR TRANSFORMED.')
-                flawed.append(path)
-            else:
-                io.log(f'{index}. {path}', logger=log)
+        for dir_name in os.listdir(ctt.TEXTIFICATION_DETAILS.get('corpus_dir')):
+            if os.path.isdir(ctt.TEXTIFICATION_DETAILS.get('corpus_dir') + '/' + dir_name):
+                if dir_name in ctt.TEXTIFICATION_DETAILS.get('exclude_extensions_type'):
+                    pass
+                else:
+                    textifier.textify({'source_dir': ctt.TEXTIFICATION_DETAILS.get('corpus_dir') + '/' + dir_name,
+                                       'target_dir': ctt.TEXTIFICATION_DETAILS.get('textification_dir'),
+                                       'lang?': ctt.TEXTIFICATION_DETAILS.get(True)
+                                       })
 
-        io.log(f'Done. It took {io.now() - t0} to transform {index} files', logger=log)
-        io.log(f'{len(flawed)} files could not be transformed. Here they are: {flawed}')"""
         return
