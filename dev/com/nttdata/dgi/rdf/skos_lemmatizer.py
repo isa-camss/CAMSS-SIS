@@ -5,12 +5,11 @@ import com.nttdata.dgi.util.errors as e
 import com.nttdata.dgi.rdf.graphstore as gs
 import tqdm
 
-LABELS = ['<title', '<preflabel', '<altlabel', '<hiddenlabel', '<literal', '<literalform']
 CRLF = '\n'
 EOF = ''
 
 
-class SKOSMapper:
+class SKOSLemmatizer:
     lemmatization_details: dict     # A dictionary with every data required for the lemmatization
     store_details: dict             # A dictionary with data to establish the connection to a Data Base
     report: dict
@@ -28,8 +27,9 @@ class SKOSMapper:
     stats: dict  # resulting stats
     graph: str  # the named graph to load onto a graph store
     function: str   # the name of the function to perform
+    labels: tuple
 
-    def __init__(self, lemmatization_details: dict):
+    def __init__(self, lemmatization_details: dict, labels: tuple):
         self.lemmatization_details = lemmatization_details
         self.report = {}
         self.code = -1
@@ -40,6 +40,7 @@ class SKOSMapper:
         self.tfn = ''
         self.eof = False
         self.stats = {}
+        self.labels = labels
 
     '''
     Default basic functions provided by the skos mirror component...This can be enriched with stemming and 
@@ -62,10 +63,11 @@ class SKOSMapper:
         :return: the lemma(s)
         """
         endpoint = self.lemmatization_details.get('endpoint')
-        call = self.lemmatization_details.get('raw-data')
-        call['phrase'] = content
-        call['lang'] = lang
-        res = requests.post(endpoint, call)
+        json_dict = {
+            'phrase': content,
+            'lang': lang
+        }
+        res = requests.post(endpoint, json_dict)
         if res.ok:
             return json.loads(res.content)['unaccented-minus-stopwords'], 201
         else:
@@ -106,7 +108,7 @@ class SKOSMapper:
         """
         # label = [l_ for l_ in LABELS if l_.lower() in line]
         ls = line.split()
-        label = [l_ for l_ in LABELS if ls and len(ls) > 0 and ls[0].lower() == l_.lower()]
+        label = [l_ for l_ in self.labels if ls and len(ls) > 0 and ls[0].lower() == l_.lower()]
         if len(label) > 0:
             lang = self._get_lang_(line)
             content = self._get_content_(line)
