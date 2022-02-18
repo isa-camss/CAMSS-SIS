@@ -49,20 +49,12 @@ EIRA_THESAURUS_LEMMA_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get('path'),
 LABELS = ['<title', '<preflabel', '<altlabel', '<hiddenlabel', '<literal', '<literalform',
           '<skos:preflabel', '<skos:altlabel', '<skos:hiddenlabel']
 SKOS_MAPPER_REQUEST_DETAILS = {
-<<<<<<< HEAD
     "endpoint": URL_NLP_LEMMATIZE,
     "labels": LABELS,
     "thesauri": [
         EIRA_THESAURUS_LEMMA_DETAILS
     ]
 }
-=======
-        "endpoint": URL_NLP_LEMMATIZE,
-        "thesauri": [
-            EIRA_THESAURUS_LEMMA_DETAILS
-        ]
-    }
->>>>>>> d91a54730c26bed463ddbee554fb56ed60967eb2
 
 SKOS_MAPPER_DETAILS = {'url': URL_SKOS_MAP,
                        'body': SKOS_MAPPER_REQUEST_DETAILS
