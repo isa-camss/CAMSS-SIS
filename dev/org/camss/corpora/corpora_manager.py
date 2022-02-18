@@ -33,12 +33,14 @@ class CorporaManager:
 
         while num_documents_download < self.download_corpora_details.get('max_documents'):
             # Create a dynamic query
-            query = self.download_corpora_details.get('eurlex_details').get('body') % (initial_page_number, initial_page_size)
+            query = self.download_corpora_details.get('eurlex_details').get('body') % (
+                initial_page_number, initial_page_size)
 
             # Request to the website
             eurlex_document_request = request_downloader(self.download_corpora_details.get('eurlex_details').get('url'),
-                                                       query,
-                                                       self.download_corpora_details.get('eurlex_details').get('headers')).download()
+                                                         query,
+                                                         self.download_corpora_details.get('eurlex_details').get(
+                                                             'headers')).download()
             if not eurlex_document_request.response.ok:
                 raise Exception(f"Query to EURLex returned {eurlex_document_request.response.status_code}. "
                                 f"Content: {eurlex_document_request.response.content}")
@@ -63,8 +65,9 @@ class CorporaManager:
 
                     #
                     if document_type in self.download_corpora_details.get('download_types'):
-                        textification_hash = io.hash(reference+document_type)
-                        save_document_path = os.path.join(self.download_corpora_details.get('corpora_dir'), document_type,
+                        textification_hash = io.hash(reference + document_type)
+                        save_document_path = os.path.join(self.download_corpora_details.get('corpora_dir'),
+                                                          document_type,
                                                           textification_hash + '.' + document_type)
                         io.make_file_dirs(save_document_path)
                         document_link = document.string
@@ -88,7 +91,8 @@ class CorporaManager:
         # loop for corpora folder and check if textified folder is ctt.TEXTIFICATION_FOLDER
         for dir_name in os.listdir(self.textification_corpora_details.get('corpus_dir')):
 
-            if os.path.isdir(self.textification_corpora_details.get('corpus_dir') + '/' + dir_name):
+            # if os.path.isdir(self.textification_corpora_details.get('corpus_dir') + '/' + dir_name):
+            if os.path.isdir(self.textification_corpora_details.get('corpus_dir') + dir_name):
                 if dir_name in self.textification_corpora_details.get('exclude_extensions_type'):
                     pass
                 else:
@@ -98,15 +102,14 @@ class CorporaManager:
 
     def lemmatize_resource(self):
         # loop jsonl to read line by line
-            # Read line metadata jsonl
-            # Access to the id_part
-            # Join to the txt path with the id_part (to obtain the path)
-            # Read the txt of the part (with open...)
-            # Call to Lemmatize microservice
-            # ---------PERSIST---------
-            # Prepare response to be persist
-            # ¿Se puede agregar contenido nuevo a una linea de jsonl que ya existe?,
-            # si se puede actualizar el diccionario y volver a escribirlo en la misma línea
-            # Invoque the Persistor (further)
+        # Read line metadata jsonl
+        # Access to the id_part
+        # Join to the txt path with the id_part (to obtain the path)
+        # Read the txt of the part (with open...)
+        # Call to Lemmatize microservice
+        # ---------PERSIST---------
+        # Prepare response to be persist
+        # ¿Se puede agregar contenido nuevo a una linea de jsonl que ya existe?,
+        # si se puede actualizar el diccionario y volver a escribirlo en la misma línea
+        # Invoque the Persistor (further)
         return self
-

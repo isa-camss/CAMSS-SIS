@@ -1,6 +1,5 @@
 import requests
 from com.nttdata.dgi.io.down.downloader import Downloader
-import cfg.ctt as ctt
 
 
 class RequestDownloader(Downloader):
