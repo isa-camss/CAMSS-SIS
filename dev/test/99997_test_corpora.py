@@ -15,8 +15,10 @@ class Corpora(unittest.TestCase):
         return
 
     def test_001_corpora_downloader(self):
-        corpora_manager = CorporaManager(ctt.DOWNLOAD_CORPORA_DETAILS).prepare_corpus_folders().download_corpus()
-        return self, corpora_manager
+        corpora_manager = CorporaManager(ctt.DOWNLOAD_CORPORA_DETAILS, ctt.TEXTIFICATION_CORPORA_DETAILS).\
+            prepare_corpus_folders().\
+            download_corpus()
+        return self
 
     def test_002_credentials(self):
         user = cred.EURLEX_WEB_SERVICE_USER_NAME

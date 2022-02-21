@@ -37,7 +37,7 @@ EIRA_THESAURUS_URL = "https://joinup.ec.europa.eu/sites/default/files/distributi
 EIRA_THESAURUS_DETAILS = {"url": EIRA_THESAURUS_URL, "path": RDF_DIR + "/" + EIRA_THESAURUS_NAME}
 
 # ------------------------------------------- CORPORA -----------------------------------------------------------------
-CORPORA_DOCUMENT_TYPE = ['pdf', 'html']
+CORPORA_DOCUMENT_TYPE = 'pdf'
 CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE = ['html', 'txt']
 CORPORA_METADATA_JSON = JSON_DIR + '/corpora_metadata.jsonl'
 
