@@ -1,10 +1,18 @@
 import os
 import json
 from bs4 import BeautifulSoup as bs
+from enum import IntEnum
 import com.nttdata.dgi.util.io as io
 from com.nttdata.dgi.io.down.http_downloader import HTTPDownloader
 from org.camss.io.down.corpus_downloader import CorpusDownloader
 from com.nttdata.dgi.io.textify.textify import Textify
+
+
+class DocumentPartType(IntEnum):
+    TITLE = 1
+    ABSTRACT = 2
+    BODY = 3
+    KEYWORDS = 4
 
 
 class CorporaManager:
@@ -25,20 +33,27 @@ class CorporaManager:
         return self
 
     def download_corpus(self):
+        t0 = io.log("Starting download corpus")
         num_documents_download = 0
         initial_page_number = self.download_corpora_details.get('eurlex_details').get('initial_page_number')
         initial_page_size = self.download_corpora_details.get('eurlex_details').get('initial_page_size')
+        max_documents_download = self.download_corpora_details.get('max_documents')
         http_downloader = HTTPDownloader()
         request_downloader = CorpusDownloader()
-
-        while num_documents_download < self.download_corpora_details.get('max_documents'):
+        io.log(f"Starting with page number '{initial_page_number}', "
+               f"page size: '{initial_page_size}' and maximum number of "
+               f"documents to download: '{max_documents_download}'")
+        while num_documents_download < max_documents_download:
+            io.log(f"Number of documents downloaded: {num_documents_download}/{max_documents_download}")
             # Create a dynamic query
-            query = self.download_corpora_details.get('eurlex_details').get('body') % (initial_page_number, initial_page_size)
+            query = self.download_corpora_details.get('eurlex_details').get('body') % (initial_page_number,
+                                                                                       initial_page_size)
 
             # Request to the website
             eurlex_document_request = request_downloader(self.download_corpora_details.get('eurlex_details').get('url'),
-                                                       query,
-                                                       self.download_corpora_details.get('eurlex_details').get('headers')).download()
+                                                         query,
+                                                         self.download_corpora_details.get('eurlex_details').get(
+                                                             'headers')).download()
             if not eurlex_document_request.response.ok:
                 raise Exception(f"Query to EURLex returned {eurlex_document_request.response.status_code}. "
                                 f"Content: {eurlex_document_request.response.content}")
@@ -53,24 +68,33 @@ class CorporaManager:
             for result in request_result:
                 reference = result.find('reference').text
                 reference_hash = io.hash(reference)
+                io.log(f"-- {num_documents_download}/{max_documents_download} Processing document "
+                       f"reference: {reference} --")
                 result_documents = {'reference': reference,
                                     'reference_hash': reference_hash,
-                                    'reference_links': []}
+                                    'parts': []}
 
                 # Access to the links for each result
                 for document in result.find_all('document_link'):
                     document_type = document['type'].lower()
 
-                    #
-                    if document_type in self.download_corpora_details.get('download_types'):
-                        textification_hash = io.hash(reference+document_type)
-                        save_document_path = os.path.join(self.download_corpora_details.get('corpora_dir'), document_type,
-                                                          textification_hash + '.' + document_type)
+                    # Only consider the files with corresponding document type (download_types)
+                    if document_type == self.download_corpora_details.get('download_types'):
+                        document_part_str = str(DocumentPartType.BODY)
+                        part_hash = io.hash(reference + document_part_str)
+                        save_document_path = os.path.join(self.download_corpora_details.get('corpora_dir'),
+                                                          document_type,
+                                                          part_hash + '.' + document_type)
                         io.make_file_dirs(save_document_path)
                         document_link = document.string
-                        document_dict = {textification_hash: {'type': document_type, 'link': document_link}}
-                        result_documents['reference_links'].append(document_dict)
+                        document_dict = {'id': part_hash,
+                                         'part_type': DocumentPartType.BODY,
+                                         'reference_link': {'document_type': document_type,
+                                                            'document_link': document_link}}
+
+                        result_documents['parts'].append(document_dict)
                         http_downloader(document_link, save_document_path).download()
+                        io.log(f"---- Processed document part: {document_part_str} with id: {part_hash} ----")
 
                 with open(self.download_corpora_details.get('corpora_metadata_file'), 'a+') as outfile:
                     json.dump(result_documents, outfile)
@@ -79,7 +103,7 @@ class CorporaManager:
 
                 num_documents_download += 1
             initial_page_number += 1
-
+        io.log(f"Finished corpus download in: {io.now()-t0}")
         return self
 
     def textify_corpus(self):
@@ -98,15 +122,14 @@ class CorporaManager:
 
     def lemmatize_resource(self):
         # loop jsonl to read line by line
-            # Read line metadata jsonl
-            # Access to the id_part
-            # Join to the txt path with the id_part (to obtain the path)
-            # Read the txt of the part (with open...)
-            # Call to Lemmatize microservice
-            # ---------PERSIST---------
-            # Prepare response to be persist
-            # ¿Se puede agregar contenido nuevo a una linea de jsonl que ya existe?,
-            # si se puede actualizar el diccionario y volver a escribirlo en la misma línea
-            # Invoque the Persistor (further)
+        # Read line metadata jsonl
+        # Access to the id_part
+        # Join to the txt path with the id_part (to obtain the path)
+        # Read the txt of the part (with open...)
+        # Call to Lemmatize microservice
+        # ---------PERSIST---------
+        # Prepare response to be persist
+        # ¿Se puede agregar contenido nuevo a una linea de jsonl que ya existe?,
+        # si se puede actualizar el diccionario y volver a escribirlo en la misma línea
+        # Invoque the Persistor (further)
         return self
-
