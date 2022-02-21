@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup as bs
 import com.nttdata.dgi.util.io as io
 from com.nttdata.dgi.io.down.http_downloader import HTTPDownloader
 from org.camss.io.down.corpus_downloader import CorpusDownloader
-from com.nttdata.dgi.io.textify.textify import Textify
+from com.nttdata.dgi.io.textify.textify import Textifier
 
 
 class CorporaManager:
@@ -86,17 +86,18 @@ class CorporaManager:
         return self
 
     def textify_corpus(self):
-        textifier = Textify()
+        textifier = Textifier()
 
         # loop for corpora folder and check if textified folder is ctt.TEXTIFICATION_FOLDER
         for dir_name in os.listdir(self.textification_corpora_details.get('corpus_dir')):
 
             # if os.path.isdir(self.textification_corpora_details.get('corpus_dir') + '/' + dir_name):
-            if os.path.isdir(self.textification_corpora_details.get('corpus_dir') + dir_name):
+            if os.path.isdir(self.textification_corpora_details.get('corpus_dir') + '/' + dir_name):
                 if dir_name in self.textification_corpora_details.get('exclude_extensions_type'):
                     pass
                 else:
-                    textifier.textify()
+                    textifier(self.textification_corpora_details.get('corpus_dir'),
+                              self.textification_corpora_details.get('textification_dir')).textify()
 
         return self
 

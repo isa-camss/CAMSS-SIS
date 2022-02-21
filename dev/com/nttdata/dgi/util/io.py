@@ -251,7 +251,7 @@ def slash(path):
     return os.path.join(path, '')
 
 
-def get_content_from_file(path: dict, lang = True) -> tuple:
+def get_content_from_file(path: dict, lang: dict = True) -> tuple:
     """
         Returns the content and language of a document
         :param path: the file path to the document
@@ -267,6 +267,6 @@ def get_content_from_file(path: dict, lang = True) -> tuple:
     # Some PDF, for example, are scanned images, without no textual content
     if not content:
         return None, None
-    lang_ = language.from_buffer(content) if lang else None
+    # lang_ = language.from_buffer(content) if lang else None
 
     return content, lang_

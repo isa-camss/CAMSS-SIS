@@ -85,7 +85,7 @@ TEXTIFICATION_DIR = CORPORA_DIR + '/txt'
 TEXTIFICATION_CORPORA_DETAILS = {'corpus_dir': CORPORA_DIR,
                                  'textification_dir': TEXTIFICATION_DIR,
                                  'exclude_extensions_type': CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE,
-                                 'textification_lang': True}
+                                 'lang?': True}
 # _______________________________________________ LEMMATIZATION ______________________________________________________
 # EIRA THESAURUS LEMMATIZATION DETAILS
 

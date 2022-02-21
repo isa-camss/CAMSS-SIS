@@ -1,5 +1,5 @@
 import unittest
-from com.nttdata.dgi.io.textify.textify import Textify
+from com.nttdata.dgi.io.textify.textify import Textifier
 import cfg.ctt as ctt
 import com.nttdata.dgi.util.io as io
 import os
@@ -20,7 +20,7 @@ class TestifierTest(unittest.TestCase):
     def test_001_textify(self):
         args: dict = ctt.TEXTIFICATION_CORPORA_DETAILS
 
-        textifier = Textify()
+        textifier = Textifier()
 
         for dir_name in os.listdir(ctt.TEXTIFICATION_CORPORA_DETAILS.get('corpus_dir')):
             if os.path.isdir(ctt.TEXTIFICATION_CORPORA_DETAILS.get('corpus_dir') + '/' + dir_name):
