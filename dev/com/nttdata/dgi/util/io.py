@@ -251,7 +251,7 @@ def slash(path):
     return os.path.join(path, '')
 
 
-def get_content_from_file(path: dict, lang: dict = True) -> tuple:
+def get_content_from_file(path: str, lang: bool = True) -> tuple:
     """
         Returns the content and language of a document
         :param path: the file path to the document

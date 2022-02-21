@@ -11,15 +11,8 @@ api = Namespace('gov_rsc_processor',
 
 def process_corpus() -> dict:
     # Download EURLex Corpus
-<<<<<<< HEAD
     # CorporaManager(ctt.DOWNLOAD_CORPORA_DETAILS, ctt.TEXTIFICATION_CORPORA_DETAILS).prepare_corpus_folders().download_corpus().textify_corpus()
     CorporaManager(ctt.DOWNLOAD_CORPORA_DETAILS, ctt.TEXTIFICATION_CORPORA_DETAILS).textify_corpus()
-=======
-    CorporaManager(ctt.DOWNLOAD_CORPORA_DETAILS, ctt.TEXTIFICATION_CORPORA_DETAILS).\
-        prepare_corpus_folders().\
-        download_corpus()
-
->>>>>>> 007ad71df7a77b6fd07e3bc1704e33ce28045516
     return {}
 
 

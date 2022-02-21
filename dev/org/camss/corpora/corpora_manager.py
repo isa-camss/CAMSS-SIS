@@ -111,17 +111,23 @@ class CorporaManager:
 
     def textify_corpus(self):
         textifier = Textifier()
+            # with open ...
+            # fix loop read each line on the jsonl and get the
+                # loop with each part of the parts (document)
+                    # condition part_type == BODY (log else)
+                        # condition if not document_type in CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE
+                            resource_file = ""# concat corpus_dir + document_type + id + .document_type
+                            textifier(resources_dir=None, resource_file=resource_file,
+                                      target_dir=self.textification_corpora_details.get('textification_dir')).textify_file()
 
-        # loop for corpora folder and check if textified folder is ctt.TEXTIFICATION_FOLDER
-        for dir_name in os.listdir(self.textification_corpora_details.get('corpus_dir')):
-
-            # if os.path.isdir(self.textification_corpora_details.get('corpus_dir') + '/' + dir_name):
+            """
+            for dir_name in os.listdir(self.textification_corpora_details.get('corpus_dir')):
             if os.path.isdir(self.textification_corpora_details.get('corpus_dir') + '/' + dir_name):
                 if dir_name in self.textification_corpora_details.get('exclude_extensions_type'):
                     pass
                 else:
-                    textifier(self.textification_corpora_details.get('corpus_dir'),
-                              self.textification_corpora_details.get('textification_dir')).textify()
+                    textifier(resources_dir=self.textification_corpora_details.get('corpus_dir'),
+                              self.textification_corpora_details.get('textification_dir')).textify_folder()"""
 
         return self
 
