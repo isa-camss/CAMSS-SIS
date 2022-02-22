@@ -1,6 +1,6 @@
 from com.nttdata.dgi.persistence.persistor import Persistor
 import requests
-from requests.auth import HTTPBasicAuth, HTTPDigestAuth
+from requests.auth import HTTPDigestAuth
 
 
 class VirtuosoPersistor(Persistor):
@@ -13,10 +13,9 @@ class VirtuosoPersistor(Persistor):
         self.user = self.persistor_configuration.get("user")
         self.password = self.persistor_configuration.get("password")
 
-    def __load(self):
-
-        # file = self.persistor_configuration.get("source")
-        file = "C:/SEMBUdev/Github/CAMSS/CAMSS-SIS/dev/arti/rdf/eira_thesaurus.rdf"
+    def __load(self, lemmatized_thesaurus: str, thesaurus_graph: str):
+        file = lemmatized_thesaurus
+        self.url += thesaurus_graph
         with open(file, 'r', encoding='utf8') as myfile:
             content_file = myfile.read()
         try:
@@ -30,5 +29,8 @@ class VirtuosoPersistor(Persistor):
 
         return super()
 
-    def persist(self):
-        self.__load()
+    def persist(self, *args, **kwargs):
+        lemmatized_thesaurus = args[0]
+        thesaurus_graph = args[1]
+        self.__load(lemmatized_thesaurus, thesaurus_graph)
+        return self

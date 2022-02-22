@@ -1,5 +1,9 @@
 from com.nttdata.dgi.io.down.thesaurus_downloader import ThesaurusDownloader
+from com.nttdata.dgi.persistence.ipersistor import IPersistor
+from com.nttdata.dgi.persistence.persistence_factory import PersistenceFactory, PersistorType
+
 import requests
+
 
 
 class ThesauriManager:
@@ -9,6 +13,7 @@ class ThesauriManager:
     thesauri_processed: str
     skos_mapper_details: dict
     http_downloader: ThesaurusDownloader
+
 
     def __init__(self, list_dicts_thesaurus_details, dict_skos_mapper_details):
         self.thesauri_details = list_dicts_thesaurus_details
@@ -31,5 +36,7 @@ class ThesauriManager:
         self.thesauri_details = thesauri_details
         return {}
 
-    def persist_thesauri(self):
+    def persist_thesauri(self, connection_details: dict, thesaurus_details: dict):
+        p: IPersistor = PersistenceFactory().new(PersistorType.VIRTUOSO, **connection_details)
+        p.persist(thesaurus_details.get('location'), thesaurus_details.get('graph_name'))
         return self

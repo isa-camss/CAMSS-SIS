@@ -71,13 +71,11 @@ LEMMATIZATION_FUNCTIONS = ["md5lemma", "lemma"]
 EIRA_MD5_NAME = "eira_thesaurus.md5lemmas.rdf"
 EIRA_THESAURUS_MD5_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get('path'),
                               "target": RDF_DIR + "/" + EIRA_MD5_NAME,
-                              "graph": '',
                               "function": LEMMATIZATION_FUNCTIONS[0]}
 
 EIRA_LEMMA_NAME = "eira_thesaurus.lemmas.rdf"
 EIRA_THESAURUS_LEMMA_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get('path'),
                                 "target": RDF_DIR + "/" + EIRA_LEMMA_NAME,
-                                "graph": '',
                                 "function": LEMMATIZATION_FUNCTIONS[1]}
 
 SKOS_MAPPER_REQUEST_DETAILS = {
@@ -143,4 +141,12 @@ STORE_DETAILS = {
         "database": "accelerators"
     }
 }
+EIRA_THESAURUS_VIRTUOSO_PERSISTENCE_DETAILS = {
+    "location": EIRA_THESAURUS_DETAILS.get('path'),
+    "graph_name": "http://data.europa.eu/dr8/"
+}
 
+EIRA_LEMMAS_THESAURUS_VIRTUOSO_PERSISTENCE_DETAILS = {
+    "location": RDF_DIR + "/" + EIRA_LEMMA_NAME,
+    "graph_name": "http://data.europa.eu/dr8/eira_lemmas/"
+}

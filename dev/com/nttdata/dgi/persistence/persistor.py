@@ -10,5 +10,5 @@ class Persistor (IPersistor):
         self.report = {}
         return
 
-    def persist(self) -> dict:
-        return self.report
+    def persist(self, *args, **kwargs):
+        return self
