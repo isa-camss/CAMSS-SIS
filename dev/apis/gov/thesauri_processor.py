@@ -16,7 +16,7 @@ def process_thesauri() -> dict:
     eira_thesaurus_details = ctt.EIRA_THESAURUS_DETAILS
     thesauri_details = [eira_thesaurus_details]
 
-    # Create the folders where the Thesaurus will be saved
+    # Create the folders where the Thesaurus will be saved TODO: and delete if exist EIRA RDF and LEMMATIZED RDF
     make_file_dirs(ctt.EIRA_THESAURUS_DETAILS.get('path'))
 
     # Create ThesaurusManager with the configuration for EIRA

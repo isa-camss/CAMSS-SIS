@@ -19,17 +19,15 @@ NAME_BLUEPRINT = 'swaggerCAMSS-SIS'
 # API ENDPOINTS
 API_HOST = 'http://localhost:5000'
 BASE_URL = API_HOST + API_PREFIX
-URL_SKOS_MAP = BASE_URL + '/SKOS_Mapper/skos_map'
+URL_SKOS_MAP = BASE_URL + '/SKOS_Lemmatizer/skos_lemmatize'
 URL_NLP_LEMMATIZE = BASE_URL + '/nlp/lemmatize'
 
 # ARTIFACTS PATH
-
 ARTIFACTS_DIR = "./arti"
 RDF_DIR = ARTIFACTS_DIR + "/rdf"
 JSON_DIR = ARTIFACTS_DIR + "/json"
 CORPORA_DIR = '../../corpora'
 
-# __________________________________________ THESAURI _________________________________________________________________
 # EIRA THESAURUS DETAILS
 EIRA_THESAURUS_NAME = "eira_thesaurus.rdf"
 EIRA_THESAURUS_URL = "https://joinup.ec.europa.eu/sites/default/files/distribution/access_url/2021-03/d72a664c-70ea" \
@@ -98,15 +96,19 @@ EIRA_THESAURUS_MD5_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get('path'),
                               }
 
 EIRA_LEMMA_NAME = "eira_thesaurus.lemmas.rdf"
-EIRA_THESAURUS_LEMMA_DETAILS = {'source': EIRA_THESAURUS_DETAILS.get('path'),
-                                'target': RDF_DIR + "/" + EIRA_LEMMA_NAME,
-                                'graph': '',
-                                'function': LEMMATIZATION_FUNCTIONS[1]
-                                }
-
-SKOS_MAPPER_REQUEST_DETAILS = {'endpoint': URL_NLP_LEMMATIZE,
-                               'thesauri': [EIRA_THESAURUS_MD5_DETAILS]
-                               }
+EIRA_THESAURUS_LEMMA_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get('path'),
+                                "target": RDF_DIR + "/" + EIRA_LEMMA_NAME,
+                                "graph": '',
+                                "function": LEMMATIZATION_FUNCTIONS[1]}
+LABELS = ['<title', '<preflabel', '<altlabel', '<hiddenlabel', '<literal', '<literalform',
+          '<skos:preflabel', '<skos:altlabel', '<skos:hiddenlabel']
+SKOS_MAPPER_REQUEST_DETAILS = {
+    "endpoint": URL_NLP_LEMMATIZE,
+    "labels": LABELS,
+    "thesauri": [
+        EIRA_THESAURUS_LEMMA_DETAILS
+    ]
+}
 
 SKOS_MAPPER_DETAILS = {'url': URL_SKOS_MAP,
                        'body': SKOS_MAPPER_REQUEST_DETAILS
@@ -144,11 +146,9 @@ LEMMATIZER_ENDPOINT = "http://localhost:5000/camss-sis/v1/lemmatize"
 LEMMATIZER_PREFERRED_METHOD = "unaccented-minus-stopwords"
 DEFAULT_LANG = "en"
 
-LEMMATIZATION_DETAILS = {
-    "endpoint": LEMMATIZER_ENDPOINT,
-    "method": LEMMATIZER_PREFERRED_METHOD,
-    "raw-data": {"phrase": "", "lang": DEFAULT_LANG}
-}
+LEMMATIZATION_DETAILS = {"endpoint": URL_NLP_LEMMATIZE,
+                         "method": LEMMATIZER_PREFERRED_METHOD
+                         }
 
 '''
 Information required for the connection to a database, e.g. a Graph Store like Stardog 
