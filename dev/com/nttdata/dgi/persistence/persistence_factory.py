@@ -11,6 +11,7 @@ class PersistorType(IntEnum):
     GRAPHDB = 4
     ELASTIC = 5
 
+
 class PersistenceFactory:
     configuration: dict
 

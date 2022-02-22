@@ -1,3 +1,0 @@
-<http://www.openlinksw.com/dataspace/kidehen@openlinksw.com#this> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://rdfs.org/sioc/ns#User> .
-<http://www.openlinksw.com/dataspace/kidehen@openlinksw.com#this> <http://www.w3.org/2000/01/rdf-schema#label> 	"Kingsley" .
-<http://www.openlinksw.com/dataspace/kidehen@openlinksw.com#this> <http://rdfs.org/sioc/ns#creator_of> <http://www.openlinksw.com/dataspace/kidehen@openlinksw.com/weblog/kidehen@openlinksw.com%27s%20BLOG%20%5B127%5D/1300> .

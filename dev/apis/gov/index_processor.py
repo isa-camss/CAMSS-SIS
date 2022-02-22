@@ -13,6 +13,11 @@ class ProcessIndex(Resource):
     @api.doc("Index Corpus with Thesauri")
     # @api.expect(ping_args, validate=True)
     def post(self):
-        # Instance IndexManager
-        t0 = io.now()
-        return {'message': f'{str(io.now() - t0)}'}, 200
+        try:
+            t0 = io.now()
+            # Instance IndexManager
+            report = {}
+            return {'message': f'Report: {report}. Done in: {str(io.now() - t0)}'}, 200
+        except Exception as ex:
+            io.log(f"Exception: {ex}")
+            return {'message': f'Exception: {ex}'}, 555
