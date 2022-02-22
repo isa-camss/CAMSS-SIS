@@ -1,13 +1,15 @@
 from com.nttdata.dgi.persistence.ipersistor import IPersistor
 from com.nttdata.dgi.persistence.virtuoso_persistor import VirtuosoPersistor
-from enum import Enum
+from enum import IntEnum
 
 
-class PersistorType(Enum):
+class PersistorType(IntEnum):
+    NONE = 0
     FILE = 1
     VIRTUOSO = 2
     STARDOG = 3
-
+    GRAPHDB = 4
+    ELASTIC = 5
 
 class PersistenceFactory:
     configuration: dict
