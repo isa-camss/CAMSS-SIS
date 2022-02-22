@@ -162,8 +162,8 @@ class SKOSLemmatizer:
         return ret
 
     def _open_files_(self):
-        self.sf = open(self.sfn, 'r')
-        self.tf = open(self.tfn, 'a+')
+        self.sf = open(self.sfn, 'r', encoding='utf8')
+        self.tf = open(self.tfn, 'a+', encoding='utf8')
         return self
 
     def _close_files_(self):
