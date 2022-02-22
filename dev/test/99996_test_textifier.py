@@ -3,6 +3,7 @@ from com.nttdata.dgi.io.textify.textify import Textifier
 import cfg.ctt as ctt
 import com.nttdata.dgi.util.io as io
 import os
+import json
 
 
 class TestifierTest(unittest.TestCase):
@@ -17,7 +18,7 @@ class TestifierTest(unittest.TestCase):
         text = io.get_content_from_file('C:/SEMBUdev/Github/corpora/pdf/3a99b8f82a0728f6cc2d492c1f255ee9.pdf', True)
         print(text)
 
-    def test_001_textify(self):
+    def test_002_textify_folder(self):
         args: dict = ctt.TEXTIFICATION_CORPORA_DETAILS
 
         textifier = Textifier()
@@ -30,3 +31,8 @@ class TestifierTest(unittest.TestCase):
                     textifier.textify()
 
         return
+
+    def test_003_textify_file(self):
+        with open(ctt.DOWNLOAD_CORPORA_DETAILS.get('corpora_metadata_file'), 'r') as jsonl_file:
+            data = json.load(jsonl_file)
+            print(data)

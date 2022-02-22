@@ -24,7 +24,7 @@ URL_NLP_LEMMATIZE = BASE_URL + '/nlp/lemmatize'
 
 # ARTIFACTS PATH
 
-ARTIFACTS_DIR = "./arti"
+ARTIFACTS_DIR = "../../arti"
 RDF_DIR = ARTIFACTS_DIR + "/rdf"
 JSON_DIR = ARTIFACTS_DIR + "/json"
 CORPORA_DIR = '../../corpora'

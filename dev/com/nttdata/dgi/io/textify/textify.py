@@ -5,7 +5,7 @@ class Textifier:
     source_textification_dir: str
     source_textification_file: str
     textification_dir: str
-    lang: dict
+    lang: bool
 
     def __init__(self, resources_dir: str = None, resource_file: str = None, target_dir: str = None):
 
@@ -29,7 +29,6 @@ class Textifier:
 
         return self
 
-
     def textify_folder(self):
 
         for index, path, name, ext in io.get_files(self.source_textification_dir):
@@ -39,5 +38,4 @@ class Textifier:
                 pass
             else:
                 io.to_file(content, new_path)
-
         return self
