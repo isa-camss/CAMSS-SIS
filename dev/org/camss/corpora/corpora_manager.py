@@ -1,6 +1,6 @@
 import os
 import json
-import self as self
+import ast
 from bs4 import BeautifulSoup as bs
 from enum import IntEnum
 import com.nttdata.dgi.util.io as io
@@ -26,6 +26,7 @@ class CorporaManager:
         return
 
     def prepare_corpus_folders(self):
+        os.makedirs(self.download_corpora_details.get('json_dir'), exist_ok=True)
         io.drop_file(self.download_corpora_details.get('corpora_metadata_file'))
         os.makedirs(self.download_corpora_details.get('corpora_dir'), exist_ok=True)
         os.makedirs(self.textification_corpora_details.get('textification_dir'), exist_ok=True)
@@ -112,25 +113,28 @@ class CorporaManager:
 
     def textify_corpus(self):
         textifier = Textifier()
+        # with open ...
+        with open(self.download_corpora_details.get('corpora_metadata_file'), 'rb') as file:
+            lines = file.readlines()
+            # Read each jsonl's line to get the 'part'
+            for line in lines:
+                line_value = line.strip()
+                dict_str = line_value.decode("UTF-8")
+                resource_dict = ast.literal_eval(dict_str)
+                # iterate each part of the parts (document)
+                for part in resource_dict['parts']:
+                    part_type = part['part_type']
+                    document_type = part['reference_link']['document_type']
+                    # Verify part_type == BODY (log else)
+                    if part_type == DocumentPartType.BODY:
+                        io.log(f"--Processing document reference: {resource_dict['reference']}----")
+                        #  Verify CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE
+                        if not document_type in self.textification_corpora_details.get('exclude_extensions_type'):
+                            resource_file = self.textification_corpora_details.get('corpus_dir') + '/' + document_type + '/' + part['id'] + '.' + document_type
+                            textifier(resources_dir=None, resource_file=resource_file,
+                                      target_dir=self.textification_corpora_details.get('textification_dir')).textify_file()
+                            io.log(f"---- The document with id: {part['id']} was successfullt textified ----")
         return self
-
-            # with open ...
-            # fix loop read each line on the jsonl and get the part
-                # loop with each part of the parts (document)
-                    # condition part_type == BODY (log else)
-                        # condition if not document_type in CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE
-                            # resource_file = ""# concat corpus_dir + document_type + id + .document_type
-                            # textifier(resources_dir=None, resource_file=resource_file,
-                                      # target_dir=self.textification_corpora_details.get('textification_dir')).textify_file()
-
-    """for dir_name in os.listdir(self.textification_corpora_details.get('corpus_dir')):
-            if os.path.isdir(self.textification_corpora_details.get('corpus_dir') + '/' + dir_name):
-                if dir_name in self.textification_corpora_details.get('exclude_extensions_type'):
-                    pass
-                else:
-                    textifier(resources_dir=self.textification_corpora_details.get('corpus_dir'),
-                              self.textification_corpora_details.get('textification_dir')).textify_folder()"""
-
 
 
     def lemmatize_resource(self):

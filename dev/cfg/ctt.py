@@ -24,7 +24,7 @@ URL_NLP_LEMMATIZE = BASE_URL + '/nlp/lemmatize'
 
 # ARTIFACTS PATH
 
-ARTIFACTS_DIR = "../../arti"
+ARTIFACTS_DIR = "./arti"
 RDF_DIR = ARTIFACTS_DIR + "/rdf"
 JSON_DIR = ARTIFACTS_DIR + "/json"
 CORPORA_DIR = '../../corpora'
@@ -77,6 +77,7 @@ EURLEX_COPORA_DETAILS = {'url': EURLEX_CORPORA_URL,
 DOWNLOAD_CORPORA_DETAILS = {'eurlex_details': EURLEX_COPORA_DETAILS,
                             'max_documents': MAX_DOWNLOAD_DOCUMENT,
                             'download_types': CORPORA_DOCUMENT_TYPE,
+                            'json_dir': JSON_DIR,
                             'corpora_dir': CORPORA_DIR,
                             'corpora_metadata_file': CORPORA_METADATA_JSON
                             }
