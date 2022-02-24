@@ -21,6 +21,10 @@ class ProcessCorpus(Resource):
     @api.doc("Download the corpus and resources analysis")
     # @api.expect(ping_args, validate=True)
     def post(self):
-        report = process_corpus()
-        t0 = io.now()
-        return {'message': f'{str(io.now() - t0)}'}, 200
+        try:
+            t0 = io.now()
+            report = process_corpus()
+            return {'message': f'Report: {report}. Done in: {str(io.now() - t0)}'}, 200
+        except Exception as ex:
+            io.log(f"Exception: {ex}")
+            return {'message': f'Exception: {ex}'}, 555

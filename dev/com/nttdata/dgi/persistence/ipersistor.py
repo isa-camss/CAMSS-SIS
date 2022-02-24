@@ -1,4 +1,4 @@
 class IPersistor:
 
-    def persist(self):
+    def persist(self, *args, **kwargs):
         return self
