@@ -116,6 +116,7 @@ class CorporaManager:
 
         with open(self.download_corpora_details.get('corpora_metadata_file'), 'rb') as file:
             lines = file.readlines()
+
             # Read each jsonl's line to get the 'part'
             io.log(f"--- Starting with Corpora Textification----")
             for line in lines:
@@ -127,7 +128,6 @@ class CorporaManager:
                 for part in resource_dict['parts']:
                     part_type = part['part_type']
                     document_type = part['reference_link']['document_type']
-
                     if part_type == DocumentPartType.BODY:
                         io.log(f"--Processing document reference: {resource_dict['reference']}----")
 
@@ -141,12 +141,20 @@ class CorporaManager:
         io.log(f"Finished Copora Textification")
         return self
 
+
     def lemmatize_resource(self):
-        # loop jsonl to read line by line
-        # Read line metadata jsonl
-        # Access to the id_part
-        # Join to the txt path with the id_part (to obtain the path)
-        # Read the txt of the part (with open...)
+        with open(self.download_corpora_details.get('corpora_metadata_file'), 'rb') as file:
+            lines = file.readlines()
+            for line in lines:
+                line_value = line.strip()
+                dict_str = line_value.decode("UTF-8")
+                resource_dict = ast.literal_eval(dict_str)
+                for part in resource_dict['parts']:
+                    part_id = part['id']
+                    textified_resource_file = self.textification_corpora_details.get('textification_dir') + '/' + part_id + '.' + 'txt'
+                    string_file = io.file_to_str(textified_resource_file)
+                    print(string_file)
+
         # Call to Lemmatize microservice
         # ---------PERSIST---------
         # Prepare response to be persist
