@@ -153,7 +153,6 @@ class CorporaManager:
                     part_id = part['id']
                     textified_resource_file = self.textification_corpora_details.get('textification_dir') + '/' + part_id + '.' + 'txt'
                     string_file = io.file_to_str(textified_resource_file)
-                    print(string_file)
 
         # Call to Lemmatize microservice
         # ---------PERSIST---------
