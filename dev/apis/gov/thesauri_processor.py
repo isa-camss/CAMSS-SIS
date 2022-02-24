@@ -3,8 +3,6 @@ from flask_restx import Namespace, Resource
 from com.nttdata.dgi.thes.thesauri_manager import ThesauriManager
 import cfg.ctt as ctt
 import cfg.crud as crud
-from com.nttdata.dgi.util.io import make_file_dirs
-import requests
 
 api = Namespace('gov_thes_processor',
                 description='Download and process Thesaurus')
@@ -12,31 +10,62 @@ api = Namespace('gov_thes_processor',
 
 # ping_args = api.parser()
 
-def process_thesauri() -> dict:
-    # Define thesaurus EIRA Thesaurus details
-    eira_thesaurus_details = ctt.EIRA_THESAURUS_DETAILS
-    thesauri_details = [eira_thesaurus_details]
+def process_thesauri() -> (dict, int):
+    report = {"message": [],
+              "warning": [],
+              "error": []}
+    try:
+        t0 = io.log("Process Thesauri started")
+        # 0. Initialize the needed variables for this process
+        # Download variables
+        download_eira_thesaurus_details = ctt.EIRA_THESAURUS_DETAILS
+        download_thesauri_details = [download_eira_thesaurus_details]
 
-    # Create the folders where the Thesaurus will be saved TODO: and delete if exist EIRA RDF and LEMMATIZED RDF
-    make_file_dirs(ctt.EIRA_THESAURUS_DETAILS.get('path'))
+        # SKOS Lemmatizer variables
+        skos_lemmatizer_details = ctt.SKOS_LEMMATIZER_DETAILS
 
-    # 1. Create ThesaurusManager with the configuration for EIRA
-    thesauri_manager = ThesauriManager(thesauri_details, ctt.SKOS_MAPPER_DETAILS)
+        # Persistor variables
+        virtuoso_connection_details = crud.VIRTUOSO_EIRA_LOAD_RDF_FILE
+        eira_thesaurus_persistor_details = ctt.EIRA_THESAURUS_VIRTUOSO_PERSISTENCE_DETAILS
+        eira_thesaurus_lemma_persistor_details = ctt.EIRA_LEMMAS_THESAURUS_VIRTUOSO_PERSISTENCE_DETAILS
 
-    # 2. Download Thesaurus
-    thesauri_manager.download_thesauri()
+        # 1. Create ThesaurusManager
+        thesauri_manager = ThesauriManager()
 
-    # 3. Lemmatization and SKOS mapping of downloaded Thesaurus
-    thesauri_manager.analyse()
+        # 2. Prepare all process folders/files
+        thesauri_manager.prepare_thesauri_folders(download_thesauri_details, skos_lemmatizer_details)
+        report['message'].append(f"Thesauri folders preparation finished in {str(io.now() - t0)}")
+        t1 = io.log(f"Thesauri configuration done in {str(io.now() - t0)}")
 
-    # 4. Persist original Thesaurus in Virtuoso
-    thesauri_manager.persist_thesauri(crud.VIRTUOSO_EIRA_LOAD_RDF_FILE,
-                                      ctt.EIRA_THESAURUS_VIRTUOSO_PERSISTENCE_DETAILS)
+        # 3. Download Thesauri
+        thesauri_manager.download_thesauri(download_thesauri_details)
+        report['message'].append(f"Thesauri download finished in {str(io.now() - t1)}")
+        t2 = io.log(f"Thesauri download done in {str(io.now() - t1)}")
 
-    # 5. Persist the lemmatized skos in Virtuoso
-    thesauri_manager.persist_thesauri(crud.VIRTUOSO_EIRA_LOAD_RDF_FILE,
-                                      ctt.EIRA_LEMMAS_THESAURUS_VIRTUOSO_PERSISTENCE_DETAILS)
-    return {}
+        # 3. Lemmatization and SKOS mapping of downloaded Thesaurus
+        thesauri_manager.analyse(skos_lemmatizer_details)
+        report['message'].append(f"Thesauri lemmatization finished in {str(io.now() - t2)}")
+        t3 = io.log(f"Thesauri lemmatization done in {str(io.now() - t2)}")
+
+        # 4. Persist original Thesaurus in Virtuoso
+        thesauri_manager.persist_thesauri(virtuoso_connection_details,
+                                          eira_thesaurus_persistor_details)
+
+        # 5. Persist the lemmatized skos in Virtuoso
+        thesauri_manager.persist_thesauri(virtuoso_connection_details,
+                                          eira_thesaurus_lemma_persistor_details)
+
+        report['message'].append(f"Thesauri persistence finished in {str(io.now() - t3)}")
+        io.log(f"Thesauri persistence done in {str(io.now() - t3)}")
+        status_code = 200
+
+    except Exception as ex:
+        status_code = 555
+        exception_message = f"Exception: {ex}"
+        report['error'].append(f"It was an error during the Thesaurus process. {exception_message}")
+        io.log(exception_message)
+
+    return report, status_code
 
 
 @api.route('/process_thesaurus')
@@ -44,10 +73,6 @@ class ProcessThesaurus(Resource):
     @api.doc("Download and process thesaurus")
     # @api.expect(ping_args, validate=True)
     def post(self):
-        try:
-            t0 = io.now()
-            report = process_thesauri()
-            return {'message': f'Report: {report}. Done in: {str(io.now() - t0)}'}, 200
-        except Exception as ex:
-            io.log(f"Exception: {ex}")
-            return {'message': f'Exception: {ex}'}, 555
+        t0 = io.now()
+        report, status_code = process_thesauri()
+        return {'message': f'Report: {report}. Done in: {str(io.now() - t0)}'}, 200

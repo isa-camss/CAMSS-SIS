@@ -19,7 +19,7 @@ NAME_BLUEPRINT = 'swaggerCAMSS-SIS'
 # API ENDPOINTS
 API_HOST = 'http://localhost:5000'
 BASE_URL = API_HOST + API_PREFIX
-URL_SKOS_MAP = BASE_URL + '/SKOS_Lemmatizer/skos_lemmatize'
+URL_SKOS_LEM = BASE_URL + '/SKOS_Lemmatizer/skos_lemmatize'
 URL_NLP_LEMMATIZE = BASE_URL + '/nlp/lemmatize'
 
 # ARTIFACTS PATH
@@ -29,10 +29,13 @@ JSON_DIR = ARTIFACTS_DIR + "/json"
 CORPORA_DIR = '../../corpora'
 
 # EIRA THESAURUS DETAILS
-EIRA_THESAURUS_NAME = "eira_thesaurus.rdf"
+EIRA_THESAURUS_NAME = "eira_thesaurus"
+EIRA_THESAURUS_FILE = EIRA_THESAURUS_NAME + '.rdf'
 EIRA_THESAURUS_URL = "https://joinup.ec.europa.eu/sites/default/files/distribution/access_url/2021-03/d72a664c-70ea" \
                      "-4dd7-91ee-3768d44cc079/EIRA_SKOS.rdf "
-EIRA_THESAURUS_DETAILS = {"url": EIRA_THESAURUS_URL, "path": RDF_DIR + "/" + EIRA_THESAURUS_NAME}
+EIRA_THESAURUS_DETAILS = {"name": EIRA_THESAURUS_NAME,
+                          "url": EIRA_THESAURUS_URL,
+                          "path": RDF_DIR + "/" + EIRA_THESAURUS_FILE}
 
 # ------------------------------------------- CORPORA -----------------------------------------------------------------
 CORPORA_DOCUMENT_TYPE = 'pdf'
@@ -99,7 +102,7 @@ EIRA_THESAURUS_LEMMA_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get('path'),
                                 "function": LEMMATIZATION_FUNCTIONS[1]}
 LABELS = ['<title', '<preflabel', '<altlabel', '<hiddenlabel', '<literal', '<literalform',
           '<skos:preflabel', '<skos:altlabel', '<skos:hiddenlabel']
-SKOS_MAPPER_REQUEST_DETAILS = {
+SKOS_LEMMATIZER_REQUEST_DETAILS = {
     "endpoint": URL_NLP_LEMMATIZE,
     "labels": LABELS,
     "thesauri": [
@@ -107,9 +110,9 @@ SKOS_MAPPER_REQUEST_DETAILS = {
     ]
 }
 
-SKOS_MAPPER_DETAILS = {'url': URL_SKOS_MAP,
-                       'body': SKOS_MAPPER_REQUEST_DETAILS
-                       }
+SKOS_LEMMATIZER_DETAILS = {'url': URL_SKOS_LEM,
+                           'body': SKOS_LEMMATIZER_REQUEST_DETAILS
+                           }
 
 # LANGUAGES
 
