@@ -21,7 +21,8 @@ class Textifier:
     def textify_file(self):
         content, lang_ = io.get_content_from_file(self.source_textification_file, self.lang)
         file_name = io.get_file_name_from_path(self.source_textification_file)
-        new_path = io.slash(self.textification_dir) + file_name + '.txt'
+        name, extension = io.file_split_name_ext(file_name)
+        new_path = io.slash(self.textification_dir) + name + '.txt'
         if not content:
             pass
         else:

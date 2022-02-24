@@ -111,7 +111,7 @@ class CorporaManager:
     def textify_corpus(self):
         textifier = Textifier()
 
-        with open(self.download_corpora_details.get('corpora_metadata_file'), 'rb') as file:
+        with open(self.download_corpora_details.get('resource_metadata_file'), 'rb') as file:
             lines = file.readlines()
             # Read each jsonl's line to get the 'part'
             io.log(f"--- Starting with Corpora Textification----")
@@ -144,6 +144,7 @@ class CorporaManager:
         # Access to the id_part
         # Join to the txt path with the id_part (to obtain the path)
         # Read the txt of the part (with open...)
+        #
         # Call to Lemmatize microservice
         # ---------PERSIST---------
         # Prepare response to be persist
