@@ -113,29 +113,33 @@ class CorporaManager:
 
     def textify_corpus(self):
         textifier = Textifier()
-        # with open ...
+
         with open(self.download_corpora_details.get('corpora_metadata_file'), 'rb') as file:
             lines = file.readlines()
             # Read each jsonl's line to get the 'part'
+            io.log(f"--- Starting with Corpora Textification----")
             for line in lines:
                 line_value = line.strip()
                 dict_str = line_value.decode("UTF-8")
                 resource_dict = ast.literal_eval(dict_str)
+
                 # iterate each part of the parts (document)
                 for part in resource_dict['parts']:
                     part_type = part['part_type']
                     document_type = part['reference_link']['document_type']
-                    # Verify part_type == BODY (log else)
+
                     if part_type == DocumentPartType.BODY:
                         io.log(f"--Processing document reference: {resource_dict['reference']}----")
-                        #  Verify CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE
+
+                        #  Textify Corpora
                         if not document_type in self.textification_corpora_details.get('exclude_extensions_type'):
                             resource_file = self.textification_corpora_details.get('corpus_dir') + '/' + document_type + '/' + part['id'] + '.' + document_type
                             textifier(resources_dir=None, resource_file=resource_file,
                                       target_dir=self.textification_corpora_details.get('textification_dir')).textify_file()
                             io.log(f"---- The document with id: {part['id']} was successfullt textified ----")
-        return self
 
+        io.log(f"Finished Copora Textification")
+        return self
 
     def lemmatize_resource(self):
         # loop jsonl to read line by line
