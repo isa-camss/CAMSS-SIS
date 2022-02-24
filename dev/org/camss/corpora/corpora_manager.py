@@ -27,10 +27,10 @@ class CorporaManager:
 
     def prepare_corpus_folders(self):
         os.makedirs(self.download_corpora_details.get('json_dir'), exist_ok=True)
-        io.drop_file(self.download_corpora_details.get('corpora_metadata_file'))
+        io.drop_file(self.download_corpora_details.get('resource_metadata_file'))
         os.makedirs(self.download_corpora_details.get('corpora_dir'), exist_ok=True)
         os.makedirs(self.textification_corpora_details.get('textification_dir'), exist_ok=True)
-        with open(self.download_corpora_details.get('corpora_metadata_file'), 'w+') as outfile:
+        with open(self.download_corpora_details.get('resource_metadata_file'), 'w+') as outfile:
             outfile.close()
         return self
 
@@ -48,10 +48,8 @@ class CorporaManager:
         while num_documents_download < max_documents_download:
             io.log(f"Number of documents downloaded: {num_documents_download}/{max_documents_download}")
             # Create a dynamic query
-
             query = self.download_corpora_details.get('eurlex_details').get('body') % (initial_page_number,
                                                                                        initial_page_size)
-
 
             # Request to the website
             eurlex_document_request = request_downloader(self.download_corpora_details.get('eurlex_details').get('url'),
@@ -82,7 +80,6 @@ class CorporaManager:
                 for document in result.find_all('document_link'):
                     document_type = document['type'].lower()
 
-
                     # Only consider the files with corresponding document type (download_types)
                     if document_type == self.download_corpora_details.get('download_types'):
                         document_part_str = str(DocumentPartType.BODY)
@@ -101,7 +98,7 @@ class CorporaManager:
                         http_downloader(document_link, save_document_path).download()
                         io.log(f"---- Processed document part: {document_part_str} with id: {part_hash} ----")
 
-                with open(self.download_corpora_details.get('corpora_metadata_file'), 'a+') as outfile:
+                with open(self.download_corpora_details.get('resource_metadata_file'), 'a+') as outfile:
                     json.dump(result_documents, outfile)
                     outfile.write('\n')
                     outfile.close()

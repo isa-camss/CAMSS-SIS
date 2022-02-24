@@ -19,8 +19,11 @@ NAME_BLUEPRINT = 'swaggerCAMSS-SIS'
 # API ENDPOINTS
 API_HOST = 'http://localhost:5000'
 BASE_URL = API_HOST + API_PREFIX
+URL_THESAURI_PROCESSOR = BASE_URL + '/gov_thes_processor/process_thesaurus'
 URL_SKOS_MAP = BASE_URL + '/SKOS_Lemmatizer/skos_lemmatize'
 URL_NLP_LEMMATIZE = BASE_URL + '/nlp/lemmatize'
+URL_RESOURCES_PROCESSOR = BASE_URL + '/gov_rsc_processor/process_corpus'
+URL_SEARCHER = BASE_URL + '/gse_searcher/search'
 
 # ARTIFACTS PATH
 ARTIFACTS_DIR = "./arti"
@@ -28,6 +31,7 @@ RDF_DIR = ARTIFACTS_DIR + "/rdf"
 JSON_DIR = ARTIFACTS_DIR + "/json"
 CORPORA_DIR = '../../corpora'
 
+# ------------------------------------------- THESAURUS ---------------------------------------------------------------
 # EIRA THESAURUS DETAILS
 EIRA_THESAURUS_NAME = "eira_thesaurus.rdf"
 EIRA_THESAURUS_URL = "https://joinup.ec.europa.eu/sites/default/files/distribution/access_url/2021-03/d72a664c-70ea" \
@@ -37,7 +41,7 @@ EIRA_THESAURUS_DETAILS = {"url": EIRA_THESAURUS_URL, "path": RDF_DIR + "/" + EIR
 # ------------------------------------------- CORPORA -----------------------------------------------------------------
 CORPORA_DOCUMENT_TYPE = 'pdf'
 CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE = ['html', 'txt']
-CORPORA_METADATA_JSON = JSON_DIR + '/corpora_metadata.jsonl'
+RESOURCE_METADATA_JSON = JSON_DIR + '/resource_metadata.jsonl'
 
 # EURLEX CORPORA DETAILS
 # EURLEX_DOCUMENT_NAME = "corpora.txt"
@@ -77,15 +81,15 @@ DOWNLOAD_CORPORA_DETAILS = {'eurlex_details': EURLEX_COPORA_DETAILS,
                             'download_types': CORPORA_DOCUMENT_TYPE,
                             'json_dir': JSON_DIR,
                             'corpora_dir': CORPORA_DIR,
-                            'corpora_metadata_file': CORPORA_METADATA_JSON
+                            'resource_metadata_file': RESOURCE_METADATA_JSON
                             }
-# ______________________________________________ TEXTIFICATION _______________________________________________________
+# -------------------------------------------TEXTIFICATION -----------------------------------------------------------
 TEXTIFICATION_DIR = CORPORA_DIR + '/txt'
 TEXTIFICATION_CORPORA_DETAILS = {'corpus_dir': CORPORA_DIR,
                                  'textification_dir': TEXTIFICATION_DIR,
                                  'exclude_extensions_type': CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE,
-                                 'lang?': True}
-# _______________________________________________ LEMMATIZATION ______________________________________________________
+                                 'textification_lang': True}
+# ------------------------------------------- LEMMATIZATION ----------------------------------------------------------
 # EIRA THESAURUS LEMMATIZATION DETAILS
 
 LEMMATIZATION_FUNCTIONS = ["md5lemma", "lemma"]
@@ -147,6 +151,8 @@ DEFAULT_LANG = "en"
 LEMMATIZATION_DETAILS = {"endpoint": URL_NLP_LEMMATIZE,
                          "method": LEMMATIZER_PREFERRED_METHOD
                          }
+
+# ------------------------------------------- PERSISTANCE -------------------------------------------------------------
 
 '''
 Information required for the connection to a database, e.g. a Graph Store like Stardog 
