@@ -1,26 +1,41 @@
 import com.nttdata.dgi.util.io as io
 
 
-class Textify:
-    corpus_dir: str
+class Textifier:
+    source_textification_dir: str
+    source_textification_file: str
     textification_dir: str
-    textification_lang: bool
+    lang: bool
 
-    def __init__(self, resources_dir: str = None, target_dir: str = None, lang: bool = None):
-        super().__init__()
+    def __init__(self, resources_dir: str = None, resource_file: str = None, target_dir: str = None):
 
-        self.corpus_dir = resources_dir
+        self.source_textification_dir = resources_dir
+        self.source_textification_file = resource_file
         self.textification_dir = target_dir
-        self.textification_lang = lang
+        self.lang = None
 
-    def textify(self):
+    def __call__(self, resources_dir, resource_file, target_dir):
+        self.__init__(resources_dir, resource_file, target_dir)
+        return self
 
-        for index, path, name, ext in io.get_files(self.corpus_dir):
-            content, lang_ = io.get_content_from_file(path, self.textification_lang)
+    def textify_file(self):
+        content, lang_ = io.get_content_from_file(self.source_textification_file, self.lang)
+        file_name = io.get_file_name_from_path(self.source_textification_file)
+        new_path = io.slash(self.textification_dir) + file_name + '.txt'
+        if not content:
+            pass
+        else:
+            io.to_file(content, new_path)
+
+        return self
+
+    def textify_folder(self):
+
+        for index, path, name, ext in io.get_files(self.source_textification_dir):
+            content, lang_ = io.get_content_from_file(path, self.lang)
             new_path = io.slash(self.textification_dir) + name + '.txt'
             if not content:
                 pass
             else:
                 io.to_file(content, new_path)
-
         return self

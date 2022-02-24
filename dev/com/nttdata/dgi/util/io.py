@@ -1,3 +1,4 @@
+import ast
 import base64
 from datetime import datetime
 import enum
@@ -80,6 +81,7 @@ def log(message: str, level: str = None, condition: bool = True, logger: logging
     :param level: info, warning or error
     :param condition: skips the job if a specified condition is not met
     :param logger: the logger used to print and save the execution events
+    @rtype: object
     """
     if condition:
         _logger = logging.getLogger() if not logger else logger
@@ -251,7 +253,7 @@ def slash(path):
     return os.path.join(path, '')
 
 
-def get_content_from_file(path: dict, lang = True) -> tuple:
+def get_content_from_file(path: str, lang: bool = True) -> tuple:
     """
         Returns the content and language of a document
         :param path: the file path to the document
@@ -267,6 +269,16 @@ def get_content_from_file(path: dict, lang = True) -> tuple:
     # Some PDF, for example, are scanned images, without no textual content
     if not content:
         return None, None
-    lang_ = language.from_buffer(content) if lang else None
+    # lang_ = language.from_buffer(content) if lang else None
 
     return content, lang_
+
+
+def read_jsonl(jsonl_path: str) -> dict:
+    with open(jsonl_path, 'rb') as file:
+        lines = file.readlines()
+        for line in lines:
+            line_value = line.strip()
+            dict_str = line_value.decode("UTF-8")
+            wdc_dict = ast.literal_eval(dict_str)
+    return wdc_dict

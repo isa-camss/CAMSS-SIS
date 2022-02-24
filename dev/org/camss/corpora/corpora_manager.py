@@ -1,11 +1,12 @@
 import os
 import json
+import ast
 from bs4 import BeautifulSoup as bs
 from enum import IntEnum
 import com.nttdata.dgi.util.io as io
 from com.nttdata.dgi.io.down.http_downloader import HTTPDownloader
 from org.camss.io.down.corpus_downloader import CorpusDownloader
-from com.nttdata.dgi.io.textify.textify import Textify
+from com.nttdata.dgi.io.textify.textify import Textifier
 
 
 class DocumentPartType(IntEnum):
@@ -25,6 +26,7 @@ class CorporaManager:
         return
 
     def prepare_corpus_folders(self):
+        os.makedirs(self.download_corpora_details.get('json_dir'), exist_ok=True)
         io.drop_file(self.download_corpora_details.get('corpora_metadata_file'))
         os.makedirs(self.download_corpora_details.get('corpora_dir'), exist_ok=True)
         os.makedirs(self.textification_corpora_details.get('textification_dir'), exist_ok=True)
@@ -46,8 +48,10 @@ class CorporaManager:
         while num_documents_download < max_documents_download:
             io.log(f"Number of documents downloaded: {num_documents_download}/{max_documents_download}")
             # Create a dynamic query
+
             query = self.download_corpora_details.get('eurlex_details').get('body') % (initial_page_number,
                                                                                        initial_page_size)
+
 
             # Request to the website
             eurlex_document_request = request_downloader(self.download_corpora_details.get('eurlex_details').get('url'),
@@ -78,6 +82,7 @@ class CorporaManager:
                 for document in result.find_all('document_link'):
                     document_type = document['type'].lower()
 
+
                     # Only consider the files with corresponding document type (download_types)
                     if document_type == self.download_corpora_details.get('download_types'):
                         document_part_str = str(DocumentPartType.BODY)
@@ -107,17 +112,33 @@ class CorporaManager:
         return self
 
     def textify_corpus(self):
-        textifier = Textify()
+        textifier = Textifier()
 
-        # loop for corpora folder and check if textified folder is ctt.TEXTIFICATION_FOLDER
-        for dir_name in os.listdir(self.textification_corpora_details.get('corpus_dir')):
+        with open(self.download_corpora_details.get('corpora_metadata_file'), 'rb') as file:
+            lines = file.readlines()
+            # Read each jsonl's line to get the 'part'
+            io.log(f"--- Starting with Corpora Textification----")
+            for line in lines:
+                line_value = line.strip()
+                dict_str = line_value.decode("UTF-8")
+                resource_dict = ast.literal_eval(dict_str)
 
-            if os.path.isdir(self.textification_corpora_details.get('corpus_dir') + '/' + dir_name):
-                if dir_name in self.textification_corpora_details.get('exclude_extensions_type'):
-                    pass
-                else:
-                    textifier.textify()
+                # iterate each part of the parts (document)
+                for part in resource_dict['parts']:
+                    part_type = part['part_type']
+                    document_type = part['reference_link']['document_type']
 
+                    if part_type == DocumentPartType.BODY:
+                        io.log(f"--Processing document reference: {resource_dict['reference']}----")
+
+                        #  Textify Corpora
+                        if not document_type in self.textification_corpora_details.get('exclude_extensions_type'):
+                            resource_file = self.textification_corpora_details.get('corpus_dir') + '/' + document_type + '/' + part['id'] + '.' + document_type
+                            textifier(resources_dir=None, resource_file=resource_file,
+                                      target_dir=self.textification_corpora_details.get('textification_dir')).textify_file()
+                            io.log(f"---- The document with id: {part['id']} was successfullt textified ----")
+
+        io.log(f"Finished Copora Textification")
         return self
 
     def lemmatize_resource(self):
