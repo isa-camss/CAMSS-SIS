@@ -5,14 +5,21 @@ import com.nttdata.dgi.util.io as io
 
 
 class VirtuosoPersistor(Persistor):
+    url: str
+    user: str
+    password: str
 
     def __init__(self, persistor_configuration: dict):
         super(VirtuosoPersistor, self).__init__(persistor_configuration)
         self.url = self.persistor_configuration.get("endpoint")
         self.user = self.persistor_configuration.get("user")
         self.password = self.persistor_configuration.get("password")
+        self.report = {"message": [],
+                       "warning": [],
+                       "error": []}
 
     def __load(self, lemmatized_thesaurus: str, thesaurus_graph: str):
+        t0 = io.now()
         file = lemmatized_thesaurus
         self.url += thesaurus_graph
         with open(file, 'r', encoding='utf8') as my_file:
@@ -21,14 +28,21 @@ class VirtuosoPersistor(Persistor):
             result = requests.post(url=self.url,
                                    data=content_file.encode('utf-8'),
                                    auth=HTTPDigestAuth(self.user, self.password))
+
             if not result.ok:
                 response_error_message = f"FAILED: The file {file} could not be loaded onto the Virtuoso repository. " \
+                                         f"Done in {str(io.now() - t0)}. " \
                                          f"Response: {result.content} // Response code: {result.status_code}"
                 io.log(response_error_message, 'e')
-                self.report = {"message": response_error_message}
-
+                self.report['error'].append(response_error_message)
+            else:
+                response_correct_message = f"Response from Virtuoso is ok. Done in {str(io.now() - t0)}. " \
+                                           f"Status code: {result.status_code}"
+                self.report['message'].append(response_correct_message)
         except Exception as ex:
-            error_message = f"Exception in method __load from VirtuosoPersistor. Exception: {ex}"
+            error_message = f"Exception in method __load from VirtuosoPersistor. Done in {str(io.now() - t0)}. " \
+                            f"Exception: {ex}"
+            self.report['error'].append(error_message)
             raise Exception(error_message)
 
         return super()

@@ -8,14 +8,12 @@ import com.nttdata.dgi.util.io as io
 class ThesauriManager:
     thesauri_details: list  # List of dicts with thesaurus url and path to save it
     skos_lemmatizer_details: dict
-    report: dict
+    persistor: IPersistor
 
     def __init__(self, list_thesauri_details: list = None,
-                 dict_skos_lemmatizer_details: dict = None,
-                 report: dict = None):
+                 dict_skos_lemmatizer_details: dict = None):
         self.thesauri_details = list_thesauri_details
         self.skos_lemmatizer_details = dict_skos_lemmatizer_details
-        self.report = report
 
     def prepare_thesauri_folders(self, thesauri_details: list, skos_lemmatizer_details: dict):
         # Iterate through every thesaurus to drop the file if exists and creates the folder
@@ -58,6 +56,6 @@ class ThesauriManager:
         return self
 
     def persist_thesauri(self, connection_details: dict, thesaurus_details: dict):
-        p: IPersistor = PersistenceFactory().new(PersistorType.VIRTUOSO, **connection_details)
-        p.persist(thesaurus_details.get('location'), thesaurus_details.get('graph_name'))
+        self.persistor = PersistenceFactory().new(PersistorType.VIRTUOSO, **connection_details)
+        self.persistor.persist(thesaurus_details.get('location'), thesaurus_details.get('graph_name'))
         return self

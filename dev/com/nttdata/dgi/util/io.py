@@ -17,6 +17,15 @@ import glob
 from tika import parser, language
 
 
+def merge_dicts(dicts_list) -> dict:
+    merged_dict = {}
+    for item_dict in dicts_list:
+        merged_dict = {key: merged_dict.get(key, []) + item_dict.get(key, [])
+                       for key in set(list(merged_dict.keys()) + list(item_dict.keys()))}
+
+    return merged_dict
+
+
 def url_tail(url: str, sep: str = '/'):
     """
     Returns the tail of a path
