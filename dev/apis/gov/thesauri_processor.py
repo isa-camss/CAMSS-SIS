@@ -26,12 +26,12 @@ def process_thesauri() -> dict:
     # 2. Download Thesaurus
     thesauri_manager.download_thesauri()
 
-    # 3. Lemmatization and SKOS mapping of downloaded Thesaurus
-    thesauri_manager.analyse()
-
     # 4. Persist original Thesaurus in Virtuoso
     thesauri_manager.persist_thesauri(crud.VIRTUOSO_EIRA_LOAD_RDF_FILE,
                                       ctt.EIRA_THESAURUS_VIRTUOSO_PERSISTENCE_DETAILS)
+
+    # 3. Lemmatization and SKOS mapping of downloaded Thesaurus
+    thesauri_manager.analyse()
 
     # 5. Persist the lemmatized skos in Virtuoso
     thesauri_manager.persist_thesauri(crud.VIRTUOSO_EIRA_LOAD_RDF_FILE,
@@ -47,7 +47,7 @@ class ProcessThesaurus(Resource):
         try:
             t0 = io.now()
             report = process_thesauri()
-            return {'message': f'Report: {report}. Done in: {str(io.now() - t0)}'}, 200
+            return {'message': f'Done in: {str(io.now() - t0)}'}, 200
         except Exception as ex:
             io.log(f"Exception: {ex}")
             return {'message': f'Exception: {ex}'}, 555

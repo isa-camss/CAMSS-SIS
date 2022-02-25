@@ -11,7 +11,9 @@ api = Namespace('gov_rsc_processor',
 
 def process_corpus() -> dict:
     # Download EURLex Corpus
-    CorporaManager(ctt.DOWNLOAD_CORPORA_DETAILS, ctt.TEXTIFICATION_CORPORA_DETAILS).prepare_corpus_folders().download_corpus().textify_corpus()
+    CorporaManager(ctt.DOWNLOAD_CORPORA_DETAILS, ctt.TEXTIFICATION_CORPORA_DETAILS).\
+        prepare_corpus_folders().download_corpus().\
+        textify_corpus()
     # CorporaManager(ctt.DOWNLOAD_CORPORA_DETAILS, ctt.TEXTIFICATION_CORPORA_DETAILS).textify_corpus()
     return {}
 
@@ -24,7 +26,7 @@ class ProcessCorpus(Resource):
         try:
             t0 = io.now()
             report = process_corpus()
-            return {'message': f'Report: {report}. Done in: {str(io.now() - t0)}'}, 200
+            return {'message': f'Done in: {str(io.now() - t0)}'}, 200
         except Exception as ex:
             io.log(f"Exception: {ex}")
             return {'message': f'Exception: {ex}'}, 555
