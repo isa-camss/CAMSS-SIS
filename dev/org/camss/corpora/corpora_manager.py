@@ -23,11 +23,11 @@ class CorporaManager:
 
     def prepare_corpus_folders(self):
         os.makedirs(self.download_details.get('json_dir'), exist_ok=True)
-        io.drop_file(self.download_details.get('corpora_metadata_file'))
+        io.drop_file(self.download_details.get('resource_metadata_file'))
         io.drop_file(self.lemmatization_details.get('lemmatized_jsonl'))
         os.makedirs(self.download_details.get('corpora_dir'), exist_ok=True)
         os.makedirs(self.textification_details.get('textification_dir'), exist_ok=True)
-        with open(self.download_details.get('corpora_metadata_file'), 'w+') as outfile:
+        with open(self.download_details.get('resource_metadata_file'), 'w+') as outfile:
             outfile.close()
         with open(self.lemmatization_details.get('lemmatized_jsonl'), 'w+') as outfile:
             outfile.close()
@@ -113,7 +113,7 @@ class CorporaManager:
                             io.log(f"Error downloading document reference: {reference} with link: {document_link}. "
                                    f"Exception: {ex}", "w")
 
-                with open(self.download_details.get('corpora_metadata_file'), 'a+') as outfile:
+                with open(self.download_details.get('resource_metadata_file'), 'a+') as outfile:
                     json.dump(result_documents, outfile)
                     outfile.write('\n')
                     outfile.close()
@@ -126,7 +126,7 @@ class CorporaManager:
     def textify_corpus(self):
         textifier = Textifier()
 
-        with open(self.download_details.get('corpora_metadata_file'), 'rb') as file:
+        with open(self.download_details.get('resource_metadata_file'), 'rb') as file:
             lines = file.readlines()
 
             # Read each jsonl's line to get the 'part'
@@ -147,8 +147,7 @@ class CorporaManager:
 
                         #  Textify Corpora
                         if not document_type in self.textification_details.get('exclude_extensions_type'):
-                            textifier(resources_dir=None, resource_file=source_path,
-                                      target_dir=target_path).textify_file()
+                            textifier.textify_file(resource_file=source_path, target_file=target_path)
                             io.log(f"---- The document with id: {part.get('id')} was successfullt textified ----")
 
         io.log(f"Finished Copora Textification")

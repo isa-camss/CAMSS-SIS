@@ -253,14 +253,12 @@ def slash(path):
     return os.path.join(path, '')
 
 
-def get_content_from_file(path: str, lang: bool = True) -> tuple:
+def get_content_from_file(path: str) -> str:
     """
         Returns the content and language of a document
         :param path: the file path to the document
-        :param lang: if True, the lang is to be detected
         :return: the content as text and the language
         """
-    lang_ = None
     content = None
     try:
         content = parser.from_file(path)['content']
@@ -271,7 +269,7 @@ def get_content_from_file(path: str, lang: bool = True) -> tuple:
         return None, None
     # lang_ = language.from_buffer(content) if lang else None
 
-    return content, lang_
+    return content
 
 
 def read_jsonl(jsonl_path: str) -> dict:
