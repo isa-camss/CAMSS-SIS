@@ -2,13 +2,13 @@ import cfg.ctt as ctt
 import com.nttdata.dgi.util.io as io
 from flask_restx import Namespace, Resource
 
-api = Namespace('gov_index_processor',
-                description='Index Corpus with Thesauri')
+api = Namespace(ctt.GOVERNORS_NAME,
+                description='These microservices are responsible of generating the needed resources to enable the '
+                            'search engine.')
+
 
 # ping_args = api.parser()
-
-
-@api.route('/process_index')
+@api.route(f'/{ctt.GOV_INDEXATION_ENDPOINT}')
 class ProcessIndex(Resource):
     @api.doc("Index Corpus with Thesauri")
     # @api.expect(ping_args, validate=True)

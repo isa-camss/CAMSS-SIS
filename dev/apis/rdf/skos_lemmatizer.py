@@ -1,14 +1,13 @@
+import cfg.ctt as ctt
 import com.nttdata.dgi.util.io as io
-from flask_restx import Namespace, Resource, fields
+from flask_restx import Resource, fields, Namespace
 from flask import request
 from com.nttdata.dgi.rdf.skos_lemmatizer import SKOSLemmatizer
-import cfg.ctt as ctt
 
-api = Namespace('SKOS_Lemmatizer',
+api = Namespace(ctt.RDF_SKOS_NAME,
                 description='Maps labels from one '
                             'or more SKOS or SKOS-XL thesauri to the result returned by an endpoint '
                             'given as an argument.')
-
 
 t1l = api.model("GSF lemmas", {"source": fields.String(default=ctt.EIRA_THESAURUS_LEMMA_DETAILS.get('source')),
                                "target": fields.String(default=ctt.EIRA_THESAURUS_LEMMA_DETAILS.get('target')),
@@ -24,7 +23,7 @@ model = api.model("SKOS Lemmatizer",
                    'thesauri': fields.List(fields.Nested(t1l))})
 
 
-@api.route('/skos_lemmatize')
+@api.route(f'/{ctt.SKOS_LEMMATIZER_ENDPOINT}')
 @api.expect(model)
 class SKOSMirror(Resource):
     @api.doc(

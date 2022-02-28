@@ -3,13 +3,12 @@ from flask_restx import Api
 import cfg.ctt as ctt
 
 # API
-from apis.gov.thesauri_processor import api as thesauri_processor
-from apis.gov.resources_processor import api as resources_processor
-from apis.gov.index_processor import api as index_processor
-from apis.nlp.basics import api as basics
-from apis.nlp.lemmatizer import api as lemmatizer
-from apis.rdf.skos_lemmatizer import api as skos_mapper
-from apis.gse.searcher import api as searcher
+from apis.gov.index_processor import api as index
+from apis.gov.resources_processor import api as rsc
+from apis.gov.thesauri_processor import api as thes
+from apis.nlp.lemmatizer import api as nlp
+from apis.rdf.skos_lemmatizer import api as rdf
+from apis.gse.searcher import api as search
 
 blueprint = Blueprint(name=ctt.API_NAME, import_name=__name__, url_prefix=ctt.API_PREFIX)
 api = Api(blueprint,
@@ -19,15 +18,15 @@ api = Api(blueprint,
           )
 
 # GOVS API
-api.add_namespace(thesauri_processor)
-api.add_namespace(resources_processor)
-api.add_namespace(index_processor)
+api.add_namespace(thes)
+api.add_namespace(rsc)
+api.add_namespace(index)
 
 # NLP API
-api.add_namespace(basics)
-api.add_namespace(skos_mapper)
-api.add_namespace(lemmatizer)
+api.add_namespace(nlp)
 
+# RDF API
+api.add_namespace(rdf)
 
 # SEARCH API
-api.add_namespace(searcher)
+api.add_namespace(search)

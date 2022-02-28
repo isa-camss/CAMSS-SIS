@@ -3,20 +3,22 @@ import langdetect
 import cfg.ctt as ctt
 import com.nttdata.dgi.util.io as io
 import com.nttdata.dgi.nlp.lemma as lemma
-from flask_restx import Namespace, Resource
+from flask_restx import Resource, Namespace
 from com.nttdata.dgi.nlp.langmodels import LangModel
 from com.nttdata.dgi.nlp.stopwords import StopWords
 from spacy.tokens import Doc
 
-api = Namespace('nlp',
+api = Namespace(ctt.NLP_NAME,
                 description='NLP-related operations, e.g. lemmatization, stemming, bag of terms extraction, etc.')
 
 model: LangModel = LangModel(lang_models=ctt.MAIN_DEFAULT_LANGUAGE_MODEL)
-
 lem_args = api.parser()
 lem_args.add_argument('phrase', required=True)
 lem_args.add_argument('lang', required=False, default='')
-lem_args.add_argument('mode', required=False, default=ctt.PREFERRED_LEMMATIZATION_MODE, help='modes: accented-plus-stopwords, accentend-minus-stopwords, unnaccented-plus-stopwords, unaccented-minus-stopwords or all')
+lem_args.add_argument('mode', required=False,
+                      default=ctt.PREFERRED_LEMMATIZATION_MODE,
+                      help='modes: accented-plus-stopwords, accentend-minus-stopwords, unnaccented-plus-stopwords, '
+                           'unaccented-minus-stopwords or all')
 
 
 def _combinations_(phrase: str, ret: dict, lang: str, term: str) -> dict:
@@ -41,9 +43,9 @@ def _lang_allow_(lang: str):
     return lang
 
 
-@api.route('/lemmatize')
+@api.route(f'/{ctt.NLP_LEMMATIZE_ENDPOINT}')
 @api.expect(lem_args)
-class Lematize(Resource):
+class Lemmatize(Resource):
     @api.doc("Given a term of one or more words, returns the original term and the corresponding "
              "accented/unaccented and stopped/unstopped lemmas")
     def post(self):
@@ -80,7 +82,8 @@ class Lematize(Resource):
             io.log(json.dumps(ret))
             return ret, 200
         except Exception as e:
-            m = f'The lemmatizer had some problem...possible cause: a requested language model may not have been loaded. ({e})'
+            m = f'The lemmatizer had some problem...possible cause: a requested language model ' \
+                f'may not have been loaded. ({e})'
             io.log(m)
             return {'message': m}, 500
 
@@ -114,7 +117,7 @@ def _sentencier_(args: dict) -> tuple:
     return msg, code
 
 
-@api.route('/sentencize')
+@api.route(f'/{ctt.NLP_SENTENCIZE_ENDPOINT}')
 @api.expect(_sent_args)
 class Sentencizer(Resource):
     @api.doc("Given a text, it returns the sentences of the text. If no language is specified, the language is "                    
@@ -127,7 +130,8 @@ class Sentencizer(Resource):
         io.log(f'Text sentencized. It took {str(io.now()-t0)}.')
         return msg, code
 
-@api.route('/ping')
+
+@api.route(f'/{ctt.NLP_PING_ENDPOINT}')
 class Ping(Resource):
     @api.doc("Returns 'pong' if invoked. Used to check that the NLP services are up and running.")
     def get(self):

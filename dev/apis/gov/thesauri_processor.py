@@ -1,15 +1,15 @@
-import com.nttdata.dgi.util.io as io
-from flask_restx import Namespace, Resource
-from com.nttdata.dgi.thes.thesauri_manager import ThesauriManager
 import cfg.ctt as ctt
 import cfg.crud as crud
+import com.nttdata.dgi.util.io as io
+from flask_restx import Resource, Namespace
+from com.nttdata.dgi.thes.thesauri_manager import ThesauriManager
 
-api = Namespace('gov_thes_processor',
-                description='Download and process Thesaurus')
+api = Namespace(ctt.GOVERNORS_NAME,
+                description='These microservices are responsible of generating the needed resources to enable the '
+                            'search engine.')
 
 
 # ping_args = api.parser()
-
 def process_thesauri() -> (dict, int):
     report = {"message": [],
               "warning": [],
@@ -70,7 +70,7 @@ def process_thesauri() -> (dict, int):
     return report, status_code
 
 
-@api.route('/process_thesaurus')
+@api.route(f'/{ctt.GOV_THESAURI_PROCESSOR_ENDPOINT}')
 class ProcessThesaurus(Resource):
     @api.doc("Download and process thesaurus")
     # @api.expect(ping_args, validate=True)

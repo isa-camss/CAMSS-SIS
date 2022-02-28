@@ -82,7 +82,7 @@ class CorporaManager:
 
                     # Only consider the files with corresponding document type (download_types)
                     if document_type == self.download_corpora_details.get('download_types'):
-                        document_part_str = str(DocumentPartType.BODY)
+                        document_part_str = DocumentPartType.BODY.name
                         part_hash = io.hash(reference + document_part_str)
                         save_document_path = os.path.join(self.download_corpora_details.get('corpora_dir'),
                                                           document_type,
