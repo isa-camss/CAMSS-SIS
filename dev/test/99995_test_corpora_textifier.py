@@ -3,7 +3,6 @@ from com.nttdata.dgi.io.textify.textify import Textifier
 import cfg.ctt as ctt
 import com.nttdata.dgi.util.io as io
 import os
-import json
 import ast
 
 
@@ -14,10 +13,6 @@ class TestifierTest(unittest.TestCase):
 
     def setUp(self) -> None:
         return
-
-    def test_001_get_content(self):
-        text = io.get_content_from_file('C:/SEMBUdev/Github/corpora/pdf/3a99b8f82a0728f6cc2d492c1f255ee9.pdf', True)
-        print(text)
 
     def test_002_textify_folder(self):
         args: dict = ctt.TEXTIFICATION_CORPORA_DETAILS
@@ -34,8 +29,9 @@ class TestifierTest(unittest.TestCase):
         return
 
     def test_003_textify_file(self):
-        # new_json = io.read_jsonl('C:/SEMBUdev/Github/CAMSS/CAMSS-SIS/dev/arti/json/corpora_metadata.jsonl')
         jsonl_path = 'C:/SEMBUdev/Github/CAMSS/CAMSS-SIS/dev/arti/json/corpora_metadata.jsonl'
+        # resource_dict = io.read_jsonl(jsonl_path)
+
         with open(jsonl_path, 'rb') as file:
             lines = file.readlines()
             for line in lines:
@@ -49,7 +45,4 @@ class TestifierTest(unittest.TestCase):
                         io.log("Resource obtained")
                         if not document_type in ctt.CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE:
                             resource_file = ctt.CORPORA_DIR + '/' + document_type + '/' + part['id'] + '.' + document_type
-
-                    print(resource_file, document_type, part_type, part)
-                # print(resource_dict['parts'])
         return resource_dict
