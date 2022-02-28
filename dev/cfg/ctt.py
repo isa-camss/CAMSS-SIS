@@ -17,7 +17,7 @@ END_POINT_SWAGGER_JSON = f'{API_PREFIX}/swagger.json'
 NAME_BLUEPRINT = 'swaggerCAMSS-SIS'
 
 # API ENDPOINTS
-API_HOST = 'http://localhost:5000'
+API_HOST = f'http://localhost:{API_PORT}'
 BASE_URL = API_HOST + API_PREFIX
 URL_THESAURI_PROCESSOR = BASE_URL + '/gov_thes_processor/process_thesaurus'
 URL_SKOS_LEM = BASE_URL + '/SKOS_Lemmatizer/skos_lemmatize'
