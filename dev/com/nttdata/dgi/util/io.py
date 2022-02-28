@@ -211,9 +211,22 @@ def file_to_str(path_filename: str, bytes_number: int = 0) -> str:
     """
     if not xst_file(path_filename):
         return None
-    offset = bytes_number if bytes_number != 0 else pl.Path(path_filename).stat().st_size
-    with so.open(path_filename, 'rb') as fin:
-        return fin.read(offset).decode('utf-8')
+    file_size = pl.Path(path_filename).stat().st_size
+    offset = bytes_number if bytes_number != 0 and bytes_number < file_size else file_size
+    try:
+        with so.open(path_filename, 'rb') as fin:
+            return fin.read(offset).decode('utf-8')
+    except Exception as ex:
+        raise ex
+
+
+def gen_entry_id(ids: tuple) -> int:
+    """
+    Generates a UUID based on the concatenation of a list of strings representing different metadata of an object.
+    :return: the long integer of the unique identifier
+    """
+    s = ''.join(ids)
+    return int(hash(s), 16)
 
 
 def get_file(path_filename: str) -> (str, str):

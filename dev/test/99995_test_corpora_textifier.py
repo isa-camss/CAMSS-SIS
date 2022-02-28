@@ -14,6 +14,16 @@ class TestifierTest(unittest.TestCase):
     def setUp(self) -> None:
         return
 
+    def test_001_get_content(self):
+        content = io.get_content_from_file(
+            'file:///home/mfaju/Escritorio/CAMSS/corpora/pdf/daf9878cb555edab4899824c02668784.pdf')
+
+        print(content)
+
+
+
+        return
+
     def test_002_textify_folder(self):
         args: dict = ctt.TEXTIFICATION_CORPORA_DETAILS
 

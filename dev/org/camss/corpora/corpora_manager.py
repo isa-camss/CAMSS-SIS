@@ -83,20 +83,24 @@ class CorporaManager:
 
                     # Only consider the files with corresponding document type (download_types)
                     if document_type == self.download_details.get('download_types'):
-                        document_part_str = DocumentPartType.BODY.name
-                        # 'id': int16(md5(refrence) + md5(b64 contingut) + md5(part_type))
-                        part_hash = io.hash(reference + document_part_str)
                         save_document_path = os.path.join(self.download_details.get('corpora_dir'),
                                                           document_type,
-                                                          part_hash + '.' + document_type)
-                        save_txt_path = os.path.join(self.download_details.get('textification_dir'),
-                                                          part_hash + '.txt')
+                                                          reference_hash + '.' + document_type)
                         io.make_file_dirs(save_document_path)
                         document_link = document.string
+                        document_part = DocumentPartType.BODY.name.lower()
                         try:
                             http_downloader(document_link, save_document_path).download()
-                            document_dict = {'id': part_hash,
-                                             'part_type': DocumentPartType.BODY,
+                            content_hash = io.hash(io.base64_(save_document_path))
+                            document_part_hash = io.hash(document_part)
+                            # part_id: int16(md5(refrence) + md5(b64 contingut) + md5(part_type))
+                            part_hash_int16 = io.gen_entry_id((reference_hash, content_hash, document_part_hash))
+                            save_txt_path = os.path.join(self.download_details.get('textification_dir'),
+                                                         document_part,
+                                                         str(part_hash_int16) + '.txt')
+                            io.make_file_dirs(save_txt_path)
+                            document_dict = {'id': part_hash_int16,
+                                             'part_type': document_part,
                                              'reference_link': {'document_type': document_type,
                                                                 'document_path': save_document_path,
                                                                 'txt_path': save_txt_path,
@@ -104,7 +108,8 @@ class CorporaManager:
                                                                 }}
 
                             result_documents['parts'].append(document_dict)
-                            io.log(f"---- Processed document part: {document_part_str} with id: {part_hash} ----")
+                            io.log(f"---- Processed document part: {document_part} with id: {part_hash_int16} "
+                                   f"from reference: {reference} ----")
                         except Exception as ex:
                             io.log(f"Error downloading document reference: {reference} with link: {document_link}. "
                                    f"Exception: {ex}", "w")
@@ -137,7 +142,7 @@ class CorporaManager:
                     document_type = part.get('reference_link').get('document_type')
                     source_path = part.get('reference_link').get('document_path')
                     target_path = part.get('reference_link').get('txt_path')
-                    if part_type == DocumentPartType.BODY:
+                    if part_type == DocumentPartType.BODY.name.lower():
                         io.log(f"--Processing document reference: {resource_dict.get('reference')}----")
 
                         #  Textify Corpora
