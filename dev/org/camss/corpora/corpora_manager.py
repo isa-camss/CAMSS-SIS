@@ -138,7 +138,8 @@ class CorporaManager:
                     source_path = part.get('reference_link').get('document_path')
                     target_path = part.get('reference_link').get('txt_path')
                     if part_type == DocumentPartType.BODY:
-                        io.log(f"--Processing document reference: {resource_dict.get('reference')}----")
+                        io.log(f"--Processing document with reference: {resource_dict.get('reference')} and part "
+                               f"document id: {part.get('id')}----")
 
                         #  Textify Corpora
                         if not document_type in self.textification_details.get('exclude_extensions_type'):
@@ -152,6 +153,7 @@ class CorporaManager:
         self.lemmatization_details = corpora_lemmatization_details
         with open(self.lemmatization_details.get('metadata_file'), 'rb') as file:
             lines = file.readlines()
+            io.log(f"--- Starting with Corpora Lemmatization----")
             for line in lines:
                 line_value = line.strip()
                 dict_str = line_value.decode("UTF-8")
@@ -161,8 +163,9 @@ class CorporaManager:
                 for part in resource_dict['parts']:
                     part_id = part.get('id')
                     part_type = part.get('part_type')
-                    textified_resource_file = part.get('txt_path')
-                    # textified_resource_file = self.textification_corpora_details.get('textification_dir') + '/' + part_id + '.' + 'txt'
+                    io.log(f"--Processing document with reference: {resource_dict.get('reference')} and part "
+                           f"document id: {part.get('id')}----")
+                    textified_resource_file = part.get('reference_link').get('txt_path')
                     content_file = io.file_to_str(textified_resource_file)
 
                     # exists, entry_id = self.exists(rsc_id, part_id, part_type)
@@ -176,6 +179,7 @@ class CorporaManager:
                         Analyse the content and keep the tuples (lemma, term, freq). 
                         *** LEMMATIZATION OCCURS HERE ***
                         '''
+
                         bot = KeywordWorker(self.lemmatization_details).extract(content_file,
                                                                               rsc_part=part_type,
                                                                               rsc_lang=rsc_lang).bot
@@ -186,12 +190,6 @@ class CorporaManager:
                             json.dump(corpora_lemmatized_dict, outfile)
                             outfile.write('\n')
                             outfile.close()
-
-
-        # Call to Lemmatize microservice
-        # ---------PERSIST---------
-        # Prepare response to be persist
-        # ¿Se puede agregar contenido nuevo a una linea de jsonl que ya existe?,
-        # si se puede actualizar el diccionario y volver a escribirlo en la misma línea
-        # Invoque the Persistor (further)
+                            io.log(f"---- The document with id: {part.get('id')} was successfullt lemmatized ----")
+        io.log(f"Finished Copora Textification")
         return self
