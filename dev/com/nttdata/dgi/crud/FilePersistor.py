@@ -6,8 +6,8 @@
 # Original author: SEMBU-Team, NTTData
 # 
 #######################################################
-from com.nttdata.sembu.io.IO import IO as IO
-from com.nttdata.sembu.crud.Persistor import Persistor
+from com.nttdata.dgi.io.IO import IO as IO
+from com.nttdata.dgi.crud.Persistor import Persistor
 
 
 class FilePersistor(Persistor):

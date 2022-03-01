@@ -1,5 +1,5 @@
 import unittest
-from com.nttdata.sembu.io.IO import IO
+from com.nttdata.dgi.io.IO import IO
 
 
 class ReadLinesTest(unittest.TestCase):

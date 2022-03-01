@@ -8,10 +8,10 @@
 # 
 #######################################################
 
-from com.nttdata.sembu.crud.PersistorType import PersistorType
-from com.nttdata.sembu.crud.Persistor import Persistor
-from com.nttdata.sembu.crud.FilePersistor import FilePersistor
-from com.nttdata.sembu.crud.ElasticPersistor import ElasticPersistor
+from com.nttdata.dgi.crud.PersistorType import PersistorType
+from com.nttdata.dgi.crud.Persistor import Persistor
+from com.nttdata.dgi.crud.FilePersistor import FilePersistor
+from com.nttdata.dgi.crud.ElasticPersistor import ElasticPersistor
 
 
 class PersistenceFactory:

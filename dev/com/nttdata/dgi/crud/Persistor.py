@@ -7,8 +7,8 @@
 # Original author: paula
 # 
 #######################################################
-from com.nttdata.sembu.crud.IPersistor import IPersistor
-from com.nttdata.sembu.crud.PersistorType import PersistorType
+from com.nttdata.dgi.crud.IPersistor import IPersistor
+from com.nttdata.dgi.crud.PersistorType import PersistorType
 
 
 class PersistorArgumentError(ValueError):

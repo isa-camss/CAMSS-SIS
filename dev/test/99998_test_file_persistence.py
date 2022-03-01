@@ -1,7 +1,7 @@
 import unittest
-from com.nttdata.sembu.crud.PersistenceFactory import PersistenceFactory
-from com.nttdata.sembu.crud.PersistorType import PersistorType
-from com.nttdata.sembu.crud.IPersistor import IPersistor
+from com.nttdata.dgi.crud.PersistenceFactory import PersistenceFactory
+from com.nttdata.dgi.crud.PersistorType import PersistorType
+from com.nttdata.dgi.crud.IPersistor import IPersistor
 
 
 class FilePersistenceTest(unittest.TestCase):
