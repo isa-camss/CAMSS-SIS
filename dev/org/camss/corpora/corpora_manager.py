@@ -121,7 +121,6 @@ class CorporaManager:
 
                 num_documents_download += 1
             initial_page_number += 1
-        io.log(f"Finished corpus download in: {io.now()-t0}")
         return self
 
     def textify_corpus(self):
@@ -143,60 +142,63 @@ class CorporaManager:
                     source_path = part.get('reference_link').get('document_path')
                     target_path = part.get('reference_link').get('txt_path')
                     if part_type == DocumentPartType.BODY.name.lower():
-                        io.log(f"--Processing document reference: {resource_dict.get('reference')}----")
+                        io.log(f"--Processing document with reference: {resource_dict.get('reference')} and part "
+                               f"document id: {part.get('id')}----")
 
                         #  Textify Corpora
                         if not document_type in self.textification_details.get('exclude_extensions_type'):
                             textifier.textify_file(resource_file=source_path, target_file=target_path)
-                            io.log(f"---- The document with id: {part.get('id')} was successfullt textified ----")
-
-        io.log(f"Finished Copora Textification")
+                            io.log(f"---- The document with id: {part.get('id')} was successfully textified ----")
         return self
 
     def lemmatize_corpora(self, corpora_lemmatization_details: dict):
+        io.log(f"---- Starting with Corpora Lemmatization ----")
         self.lemmatization_details = corpora_lemmatization_details
+
         with open(self.lemmatization_details.get('metadata_file'), 'rb') as file:
             lines = file.readlines()
+            num_lines = len(lines)
+            current_line = 0
             for line in lines:
+                t0 = io.log(f"--- Processing line {current_line}/{num_lines} ---")
                 line_value = line.strip()
                 dict_str = line_value.decode("UTF-8")
                 resource_dict = ast.literal_eval(dict_str)
                 rsc_id = resource_dict.get('reference_hash')
                 rsc_lang = resource_dict.get('lang')
                 for part in resource_dict['parts']:
+                    t1 = io.log(f"-- Processing resource id: {rsc_id}, part: {resource_dict.get('part_type')} "
+                                f"with id: {resource_dict.get('part_id')} --")
                     part_id = part.get('id')
                     part_type = part.get('part_type')
-                    textified_resource_file = part.get('txt_path')
-                    # textified_resource_file = self.textification_corpora_details.get('textification_dir') + '/' + part_id + '.' + 'txt'
+                    textified_resource_file = part.get('reference_link').get('txt_path')
                     content_file = io.file_to_str(textified_resource_file)
 
                     # exists, entry_id = self.exists(rsc_id, part_id, part_type)
                     exists, entry_id = False, part_id
                     if not exists:
-                        t1 = io.now()
-                        # Generate a new id...
-                        # new_entry_id = self.gen_entry_id(mid, rsc_md5, rsc_type)
-                        new_entry_id = entry_id
                         '''
                         Analyse the content and keep the tuples (lemma, term, freq). 
                         *** LEMMATIZATION OCCURS HERE ***
                         '''
+
                         bot = KeywordWorker(self.lemmatization_details).extract(content_file,
-                                                                              rsc_part=part_type,
-                                                                              rsc_lang=rsc_lang).bot
+                                                                                rsc_part=part_type,
+                                                                                rsc_lang=rsc_lang).bot
                         corpora_lemmatized_dict = {'id': part_id,
-                                                   'terms': bot,
+                                                   'terms': bot
                                                    }
                         with open(self.lemmatization_details.get('lemmatized_jsonl'), 'a+') as outfile:
                             json.dump(corpora_lemmatized_dict, outfile)
                             outfile.write('\n')
                             outfile.close()
 
+                        io.log(f"-- The part with id: {part.get('id')} was successfully lemmatized in "
+                               f"{io.now() - t1} --")
+                    else:
+                        io.log(f"-- Part id: {part_id} already exists in database, lemmatization skipped in "
+                               f"{io.now() - t1} --", level="i")
 
-        # Call to Lemmatize microservice
-        # ---------PERSIST---------
-        # Prepare response to be persist
-        # ¿Se puede agregar contenido nuevo a una linea de jsonl que ya existe?,
-        # si se puede actualizar el diccionario y volver a escribirlo en la misma línea
-        # Invoque the Persistor (further)
+                io.log(f"--- The resource id: {rsc_id} was successfully lemmatized in {io.now() - t0} ---")
+                current_line += 1
         return self
