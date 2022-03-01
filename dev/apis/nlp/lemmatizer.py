@@ -65,7 +65,7 @@ class Lemmatize(Resource):
             phrase = args['phrase']
             mode = args['mode']
             if not args['lang'] or args['lang'] == '':
-                io.log("Detecting language...")
+                # io.log("Detecting language...")
                 lang = langdetect.detect(phrase + '.')
                 lang = _lang_allow_(lang)
             else:
@@ -79,7 +79,7 @@ class Lemmatize(Resource):
                 ret = {mode: _combinations_(combinations, ret, lang, args['phrase']).get(mode), 'lang': lang}
             else:
                 ret = _combinations_(combinations, ret, lang, args['phrase'])
-            io.log(json.dumps(ret))
+            # io.log(json.dumps(ret))
             return ret, 200
         except Exception as e:
             m = f'The lemmatizer had some problem...possible cause: a requested language model ' \
