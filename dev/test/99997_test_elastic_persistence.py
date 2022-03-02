@@ -1,8 +1,7 @@
 import unittest
-
 import elasticsearch
-
 import cfg.crud as crud
+import com.nttdata.dgi.util.io as io
 from datetime import datetime
 from com.nttdata.dgi.crud.PersistenceFactory import PersistenceFactory
 from com.nttdata.dgi.crud.Persistor import Persistor
@@ -67,6 +66,84 @@ class ElasticSearchTest(unittest.TestCase):
             'timestamp': datetime.now(),
         }
         p.persist(index="test3", content=doc2, id=1024)
+        return
+
+    def test_0003_persist_in_named_index_no_id(self):
+        """
+        Persists in ElasticPersistor a document in a given index.
+        :return: self
+        """
+        p: Persistor = PersistenceFactory().new(crud.ELASTICSEARCH_DETAILS, PersistorType.ELASTIC)
+
+        '''
+        Document id is provided inside the document. '''
+
+        doc_test_lem = {"id": "77e21850383da6909b9f842ce5ef3a99",
+                        "modified": io.now(),
+                        "terms": {
+                            "77e21850383da6909b9f842ce5ef3a99": [{
+                                "ee5b02730f46da5da2693105aa308529":
+                                {
+                                    "lemma": "state member state",
+                                    "term": "states those member states",
+                                    "freq": 2
+                                },
+                                "10ae9fc7d453b0dd525d0edf2ede7961":
+                                {
+                                    "lemma": "list",
+                                    "term": "listed",
+                                    "freq": 13
+                                }
+                            }]
+                        }}
+
+        doc_test_lem_2 = {"rsc_id": "77e21850383da6909b9f842ce5ef3a99",
+                          "part_id": "12345678909876543211234567890",
+                          "part_type": "body",
+                          "modified": io.now(),
+                          "terms": [
+                              {
+                                  "lem_id": "ee5b02730f46da5da2693105aa308529",
+                                  "lemma": "state member state",
+                                  "term": "states those member states",
+                                  "freq": 2
+                              },
+                              {
+                                  "lem_id": "10ae9fc7d453b0dd525d0edf2ede7961",
+                                  "lemma": "list",
+                                  "term": "listed",
+                                  "freq": 13
+                              }
+                          ]}
+
+        doc_test_lem_3 = {"reference": "eng_cellar:ab920b5e-50a6-49c9-8ffc-880a6bbfc20f_en",
+                          "modified": io.now(),
+                          "reference_hash": "d1695d48a69ca0d737f89e7b63f9f26f",
+                          "lang": "en",
+                          "parts": [
+                              {
+                                  "id": "77e21850383da6909b9f842ce5ef3a99",
+                                  "part_type": "body",
+                                  "reference_link": {
+                                      "document_type": "pdf",
+                                      "document_path": "../../corpora\\pdf\\77e21850383da6909b9f842ce5ef3a99.pdf",
+                                      "txt_path": "../../corpora/txt\\77e21850383da6909b9f842ce5ef3a99.txt", "document_link": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=cellar:ab920b5e-50a6-49c9-8ffc-880a6bbfc20f"
+                                  }
+                              },
+                              {"id": "87e21850383da6909b9f842ce5ef3a99",
+                               "part_type": "title",
+                               "reference_link": {
+                                       "document_type": "pdf",
+                                       "document_path": "../../corpora\\pdf\\77e21850383da6909b9f842ce5ef3a99.pdf",
+                                       "txt_path": "../../corpora/txt\\77e21850383da6909b9f842ce5ef3a99.txt",
+                                       "document_link": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=cellar:ab920b5e-50a6-49c9-8ffc-880a6bbfc20f"}
+                               }]
+                          }
+
+        str_date = io.now().strftime("%Y%m%d")
+        p.persist(index=f"sis-raw-{str_date}", content=doc_test_lem)
+        p.persist(index=f"sis-lem-{str_date}", content=doc_test_lem_2)
+        p.persist(index=f"sis-metadata-{str_date}", content=doc_test_lem_3)
         return
 
     def test_0002_drop(self):
