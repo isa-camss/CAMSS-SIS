@@ -185,6 +185,14 @@ class CorporaManager:
                         bot = KeywordWorker(self.lemmatization_details).extract(content_file,
                                                                                 rsc_part=part_type,
                                                                                 rsc_lang=rsc_lang).bot
+                        # Change the structure of bot json : "terms": [
+                        #                               {
+                        #                                   "lem_id": "ee5b02730f46da5da2693105aa308529",
+                        #                                   "lemma": "member",
+                        #                                   "term": "the member",
+                        #                                   "freq": 2
+                        #                               }
+                        # Add all metadata details see json example in test_elastic_persistence
                         corpora_lemmatized_dict = {'id': part_id,
                                                    'terms': bot
                                                    }

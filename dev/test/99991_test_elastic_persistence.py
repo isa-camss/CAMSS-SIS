@@ -104,15 +104,9 @@ class ElasticSearchTest(unittest.TestCase):
                           "terms": [
                               {
                                   "lem_id": "ee5b02730f46da5da2693105aa308529",
-                                  "lemma": "state member state",
-                                  "term": "states those member states",
+                                  "lemma": "member",
+                                  "term": "the member",
                                   "freq": 2
-                              },
-                              {
-                                  "lem_id": "10ae9fc7d453b0dd525d0edf2ede7961",
-                                  "lemma": "list",
-                                  "term": "listed",
-                                  "freq": 13
                               }
                           ]}
 
