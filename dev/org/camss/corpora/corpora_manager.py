@@ -15,11 +15,12 @@ class CorporaManager:
     textification_details: dict
     lemmatization_details: dict
 
-    def __init__(self, download_details: dict = None, textification_details: dict = None, lemmatization_details: dict = None):
+    def __init__(self, download_details: dict = None,
+                 textification_details: dict = None,
+                 lemmatization_details: dict = None):
         self.download_details = download_details
         self.textification_details = textification_details
         self.lemmatization_details = lemmatization_details
-        return
 
     def prepare_corpus_folders(self):
         os.makedirs(self.download_details.get('json_dir'), exist_ok=True)

@@ -10,6 +10,14 @@ api = Namespace(ctt.GOVERNORS_NAME,
 
 # ping_args = api.parser()
 def process_corpus() -> dict:
+    report = {"message": [],
+              "warning": [],
+              "error": []}
+    t0 = io.log("Proccess Corpora started")
+    # 0. Initialize the needed variables for this process
+    # Download variables
+    download_corpora_details = ctt.DOWNLOAD_CORPORA_DETAILS
+
     # Download EURLex Corpus
     CorporaManager(ctt.DOWNLOAD_CORPORA_DETAILS, ctt.TEXTIFICATION_CORPORA_DETAILS, ctt.CORPORA_LEMMATIZATION_DETAILS).\
         prepare_corpus_folders().download_corpus().\
