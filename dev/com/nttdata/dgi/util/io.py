@@ -17,6 +17,10 @@ import glob
 from tika import parser, language
 
 
+def datetime_to_string(datetime_to_parse: datetime):
+    return datetime_to_parse.strftime("%d/%m/%Y, %H:%M:%S")
+
+
 def merge_dicts(dicts_list) -> dict:
     merged_dict = {}
     for item_dict in dicts_list:

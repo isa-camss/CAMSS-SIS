@@ -101,6 +101,7 @@ class CorporaManager:
                             io.make_file_dirs(save_txt_path)
                             document_dict = {'id': part_hash_int16,
                                              'part_type': document_part,
+                                             'timestamp': io.datetime_to_string(io.now()),
                                              'reference_link': {'document_type': document_type,
                                                                 'document_path': save_document_path,
                                                                 'txt_path': save_txt_path,
@@ -129,7 +130,7 @@ class CorporaManager:
         with open(self.download_details.get('resource_metadata_file'), 'rb') as file:
             lines = file.readlines()
             # Read each jsonl's line to get the 'part'
-            io.log(f"--- Starting with Corpora Textification----")
+            io.log(f"--- Starting with Corpora Textification. Lines to process: {len(lines)} ---")
             for line in lines:
                 line_value = line.strip()
                 dict_str = line_value.decode("UTF-8")
@@ -143,7 +144,7 @@ class CorporaManager:
                     target_path = part.get('reference_link').get('txt_path')
                     if part_type == DocumentPartType.BODY.name.lower():
                         io.log(f"--Processing document with reference: {resource_dict.get('reference')} and part "
-                               f"document id: {part.get('id')}----")
+                               f"document id: {part.get('id')}--")
 
                         #  Textify Corpora
                         if not document_type in self.textification_details.get('exclude_extensions_type'):
@@ -167,8 +168,8 @@ class CorporaManager:
                 rsc_id = resource_dict.get('reference_hash')
                 rsc_lang = resource_dict.get('lang')
                 for part in resource_dict['parts']:
-                    t1 = io.log(f"-- Processing resource id: {rsc_id}, part: {resource_dict.get('part_type')} "
-                                f"with id: {resource_dict.get('part_id')} --")
+                    t1 = io.log(f"-- Processing resource id: {rsc_id}, part: {part.get('part_type')} "
+                                f"with id: {part.get('id')} --")
                     part_id = part.get('id')
                     part_type = part.get('part_type')
                     textified_resource_file = part.get('reference_link').get('txt_path')
@@ -185,9 +186,14 @@ class CorporaManager:
                         bot = KeywordWorker(self.lemmatization_details).extract(content_file,
                                                                                 rsc_part=part_type,
                                                                                 rsc_lang=rsc_lang).bot
-                        corpora_lemmatized_dict = {'id': part_id,
-                                                   'terms': bot
-                                                   }
+                        corpora_lemmatized_dict = {
+                            "rsc_id": rsc_id,
+                            "part_id": part_id,
+                            "part_type": part_type,
+                            "timestamp": io.datetime_to_string(io.now()),
+                            'terms': bot
+                        }
+
                         with open(self.lemmatization_details.get('lemmatized_jsonl'), 'a+') as outfile:
                             json.dump(corpora_lemmatized_dict, outfile)
                             outfile.write('\n')
