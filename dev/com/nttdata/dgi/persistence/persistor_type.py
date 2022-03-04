@@ -1,6 +1,6 @@
 #######################################################
 # 
-# PersistorType.py
+# persistor_type.py
 # Python implementation of the Enumeration PersistorType
 # Created on:      18-feb-2022 21:05:20
 # Original author: SEMBU Team-NTTData

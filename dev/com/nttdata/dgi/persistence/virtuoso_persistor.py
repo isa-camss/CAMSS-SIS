@@ -5,15 +5,18 @@ import com.nttdata.dgi.util.io as io
 
 
 class VirtuosoPersistor(Persistor):
+    persistor_details: dict
     url: str
     user: str
     password: str
+    report: dict
 
-    def __init__(self, persistor_configuration: dict):
-        super(VirtuosoPersistor, self).__init__(persistor_configuration)
-        self.url = self.persistor_configuration.get("endpoint")
-        self.user = self.persistor_configuration.get("user")
-        self.password = self.persistor_configuration.get("password")
+    def __init__(self, **persistor_details):
+        super(VirtuosoPersistor, self).__init__()
+        self.persistor_details = persistor_details
+        self.url = self.persistor_details.get("endpoint")
+        self.user = self.persistor_details.get("user")
+        self.password = self.persistor_details.get("password")
         self.report = {"message": [],
                        "warning": [],
                        "error": []}

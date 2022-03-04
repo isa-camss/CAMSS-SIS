@@ -1,5 +1,5 @@
 from elasticsearch import Elasticsearch
-from com.nttdata.dgi.crud.Persistor import Persistor, PersistorArgumentError
+from com.nttdata.dgi.persistence.persistor import Persistor, PersistorArgumentError
 
 
 class ElasticPersistorException(ValueError):

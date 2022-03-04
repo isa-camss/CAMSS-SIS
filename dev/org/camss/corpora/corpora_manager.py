@@ -8,17 +8,25 @@ from org.camss.io.down.corpus_downloader import CorpusDownloader
 from com.nttdata.dgi.io.textify.textify import Textifier
 from com.nttdata.dgi.rsc.document_part_type import DocumentPartType
 from com.nttdata.dgi.rsc.kw import KeywordWorker
+from com.nttdata.dgi.persistence.ipersistor import IPersistor
+from com.nttdata.dgi.persistence.persistor_type import PersistorType
+from com.nttdata.dgi.persistence.persistence_factory import PersistenceFactory
 
 
 class CorporaManager:
     download_details: dict
     textification_details: dict
     lemmatization_details: dict
+    persistor: IPersistor
 
-    def __init__(self, download_details: dict = None, textification_details: dict = None, lemmatization_details: dict = None):
+    def __init__(self, download_details: dict = None, textification_details: dict = None,
+                 lemmatization_details: dict = None,
+                 connection_details: dict = None):
         self.download_details = download_details
         self.textification_details = textification_details
         self.lemmatization_details = lemmatization_details
+        self.persistor = PersistenceFactory().new(persistor_type=PersistorType.ELASTIC,
+                                                  persistor_details=connection_details)
         return
 
     def prepare_corpus_folders(self):
@@ -49,7 +57,7 @@ class CorporaManager:
             # Create a dynamic query
 
             query = self.download_details.get('eurlex_details').get('body') % (initial_page_number,
-                                                                                       initial_page_size)
+                                                                               initial_page_size)
 
             # Request to the website
             eurlex_document_request = request_downloader(self.download_details.get('eurlex_details').get('url'),
@@ -193,11 +201,14 @@ class CorporaManager:
                         #                                   "freq": 2
                         #                               }
                         # Add all metadata details see json example in test_elastic_persistence
-                        corpora_lemmatized_dict = {'id': part_id,
-                                                   'terms': bot
-                                                   }
+                        lemmatized_document_dict = {'id': part_id,
+                                                    'terms': bot
+                                                    }
+                        self.persistor.persist(index=self.lemmatization_details.get('index'),
+                                               content=lemmatized_document_dict)
+
                         with open(self.lemmatization_details.get('lemmatized_jsonl'), 'a+') as outfile:
-                            json.dump(corpora_lemmatized_dict, outfile)
+                            json.dump(lemmatized_document_dict, outfile)
                             outfile.write('\n')
                             outfile.close()
 

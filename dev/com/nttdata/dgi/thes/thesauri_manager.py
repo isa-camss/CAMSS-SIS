@@ -56,6 +56,7 @@ class ThesauriManager:
         return self
 
     def persist_thesauri(self, connection_details: dict, thesaurus_details: dict):
-        self.persistor = PersistenceFactory().new(PersistorType.VIRTUOSO, **connection_details)
+        self.persistor = PersistenceFactory().new(persistor_type=PersistorType.VIRTUOSO,
+                                                  persistor_details=connection_details)
         self.persistor.persist(thesaurus_details.get('location'), thesaurus_details.get('graph_name'))
         return self

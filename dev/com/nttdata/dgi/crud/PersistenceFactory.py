@@ -11,7 +11,7 @@
 from com.nttdata.dgi.crud.PersistorType import PersistorType
 from com.nttdata.dgi.crud.Persistor import Persistor
 from com.nttdata.dgi.crud.FilePersistor import FilePersistor
-from com.nttdata.dgi.crud.ElasticPersistor import ElasticPersistor
+from com.nttdata.dgi.persistence.elastic_persistor import ElasticPersistor
 
 
 class PersistenceFactory:

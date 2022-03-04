@@ -197,6 +197,7 @@ MIN_RSC_BODY_TERM_FREQUENCY = 2
 MIN_TERM_SIZE = 1
 
 CORPORA_LEMMATIZATION_DETAILS = {
+    "index": 'eurlex_docs',
     "metadata_file":RESOURCE_METADATA_JSON,
     "lemmatized_jsonl": RESOURCE_LEMMATIZED_JSON,
     "corpus_path": TEXTIFICATION_DIR,
