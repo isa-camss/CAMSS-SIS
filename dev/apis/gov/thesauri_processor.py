@@ -22,7 +22,7 @@ def process_thesauri() -> (dict, int):
         download_thesauri_details = [download_eira_thesaurus_details]
 
         # SKOS Lemmatizer variables
-        skos_lemmatizer_details = ctt.SKOS_LEMMATIZER_DETAILS
+        skos_lemmatizer_details = ctt.SKOS_MAPPER_DETAILS
 
         # Persistor variables
         virtuoso_connection_details = crud.VIRTUOSO_EIRA_LOAD_RDF_FILE

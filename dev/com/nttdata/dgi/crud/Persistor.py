@@ -8,7 +8,7 @@
 # 
 #######################################################
 from com.nttdata.dgi.crud.IPersistor import IPersistor
-from com.nttdata.dgi.crud.PersistorType import PersistorType
+from com.nttdata.dgi.persistence.persistor_type import PersistorType
 
 
 class PersistorArgumentError(ValueError):

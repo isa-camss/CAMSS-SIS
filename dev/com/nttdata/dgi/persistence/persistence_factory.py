@@ -1,7 +1,6 @@
-from com.nttdata.dgi.persistence.ipersistor import IPersistor
 from com.nttdata.dgi.persistence.virtuoso_persistor import VirtuosoPersistor
-from enum import IntEnum
 from com.nttdata.dgi.persistence.persistor_type import PersistorType
+from com.nttdata.dgi.persistence.ipersistor import IPersistor
 from com.nttdata.dgi.crud.Persistor import Persistor
 from com.nttdata.dgi.crud.FilePersistor import FilePersistor
 from com.nttdata.dgi.persistence.elastic_persistor import ElasticPersistor
@@ -40,8 +39,8 @@ class PersistenceFactory:
 
 
 
-    def new(persistor_type: PersistorType, **persistor_configuration) -> IPersistor:
-        persistor: IPersistor = None
-        if PersistorType.VIRTUOSO is persistor_type:
-            persistor: VirtuosoPersistor = VirtuosoPersistor(persistor_configuration)
-        return persistor
+    # def new(persistor_type: PersistorType, **persistor_configuration) -> IPersistor:
+        # persistor: IPersistor = None
+        # if PersistorType.VIRTUOSO is persistor_type:
+            # persistor: VirtuosoPersistor = VirtuosoPersistor(persistor_configuration)
+        # return persistor
