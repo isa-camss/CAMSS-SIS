@@ -9,7 +9,7 @@ api = Namespace(ctt.GOVERNORS_NAME,
 
 
 # ping_args = api.parser()
-def process_corpus() -> dict:
+def process_corpus() -> (dict, int):
     report = {"message": [],
               "warning": [],
               "error": []}
