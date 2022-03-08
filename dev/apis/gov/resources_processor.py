@@ -28,13 +28,13 @@ def process_corpus() -> (dict, int):
         lemmatization_corpora_details = ctt.CORPORA_LEMMATIZATION_DETAILS
 
         # Persistor variables
-        persist_corpora_details = ctt.CORPORA_LEMMATIZATION_DETAILS
+        elastic_connection_details = crud.ELASTICSEARCH_DETAILS
 
         # 1. Create CorporaManager
         corpora_manager = CorporaManager()
 
         # 2. Prepare all folders/files
-        corpora_manager.prepare_corpus_folders(download_corpora_details,
+        """corpora_manager.prepare_corpus_folders(download_corpora_details,
                                                textify_corpora_details,
                                                lemmatization_corpora_details)
         report['message'].append(f"Corpora folders preparation finished in {str(io.now() - t0)}")
@@ -48,12 +48,12 @@ def process_corpus() -> (dict, int):
         # 4. Textify Corpus
         corpora_manager.textify_corpus(download_corpora_details, textify_corpora_details)
         report['message'].append(f"Corpora textification finished in {str(io.now() - t2)}")
-        t3 = io.log(f"Corpora textification done in {str(io.now() - t2)}")
+        t3 = io.log(f"Corpora textification done in {str(io.now() - t2)}")"""
 
         # 5. Lemmatize Corpus
-        corpora_manager.lemmatize_corpora(lemmatization_corpora_details)
-        report['message'].append(f"Corpora lemmatization finished in {str(io.now() - t3)}")
-        t4 = io.log(f"Corpora lemmatization done in {str(io.now() - t3)}")
+        corpora_manager.lemmatize_corpora(lemmatization_corpora_details, elastic_connection_details)
+        # report['message'].append(f"Corpora lemmatization finished in {str(io.now() - t3)}")
+        # io.log(f"Corpora lemmatization done in {str(io.now() - t3)}")
 
         status_code = 200
     except Exception as ex:

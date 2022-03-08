@@ -208,11 +208,26 @@ class CorporaManager:
                         bot = KeywordWorker(self.lemmatization_details).extract(content_file,
                                                                                 rsc_part=part_type,
                                                                                 rsc_lang=rsc_lang).bot
+                        date_time_now = io.now()
+                        date_time_now_str = io.datetime_to_string(date_time_now)
                         lemmatized_document_dict = {
                             "rsc_id": rsc_id,
-                            "part_id": part_id,
+                            "part_id": str(part_id),
                             "part_type": part_type,
-                            "timestamp": io.datetime_to_string(io.now()),
+                            "timestamp": date_time_now_str,
+                            'terms': bot
+                        }
+
+                        with open(self.lemmatization_details.get('lemmatized_jsonl'), 'a+') as outfile:
+                            json.dump(lemmatized_document_dict, outfile)
+                            outfile.write('\n')
+                            outfile.close()
+
+                        lemmatized_document_dict = {
+                            "rsc_id": rsc_id,
+                            "part_id": str(part_id),
+                            "part_type": part_type,
+                            "timestamp": date_time_now,
                             'terms': bot
                         }
 
@@ -220,11 +235,6 @@ class CorporaManager:
                         elastic_index = self.lemmatization_details.get('index') + f"-{str_date}"
                         self.persistor.persist(index=elastic_index,
                                                content=lemmatized_document_dict)
-
-                        with open(self.lemmatization_details.get('lemmatized_jsonl'), 'a+') as outfile:
-                            json.dump(lemmatized_document_dict, outfile)
-                            outfile.write('\n')
-                            outfile.close()
 
                         io.log(f"-- The part with id: {part.get('id')} was successfully lemmatized in "
                                f"{io.now() - t1} --")

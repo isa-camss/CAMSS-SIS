@@ -100,7 +100,7 @@ class ElasticSearchTest(unittest.TestCase):
                         }}
 
         doc_test_lem_2 = {"rsc_id": "77e21850383da6909b9f842ce5ef3a99",
-                          "part_id": "12345678909876543211234567890",
+                          "part_id": "55705594741352276138083873704993455486",
                           "part_type": "body",
                           "modified": io.now(),
                           "terms": [
@@ -108,6 +108,12 @@ class ElasticSearchTest(unittest.TestCase):
                                   "lem_id": "ee5b02730f46da5da2693105aa308529",
                                   "lemma": "member",
                                   "term": "the member",
+                                  "freq": 2
+                              },
+                              {
+                                  "lem_id": "ee5b02730f46da5da6693105aa308529",
+                                  "lemma": "agriculture",
+                                  "term": "the agriculture",
                                   "freq": 2
                               }
                           ]}
