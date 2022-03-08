@@ -20,16 +20,20 @@ class CorporaManager:
     persistor: IPersistor
     persistor_details: dict
 
-    def __init__(self, download_details: dict = None, textification_details: dict = None,
+    def __init__(self, download_details: dict = None,
+                 textification_details: dict = None,
                  lemmatization_details: dict = None,
                  connection_details: dict = None):
         self.download_details = download_details
         self.textification_details = textification_details
         self.lemmatization_details = lemmatization_details
         self.persistor_details = connection_details
-        return
 
-    def prepare_corpus_folders(self):
+    def prepare_corpus_folders(self, download_details: dict, textification_details: dict, lemmatization_details: dict):
+        self.download_details = download_details
+        self.textification_details = textification_details
+        self.lemmatization_details = lemmatization_details
+
         os.makedirs(self.download_details.get('json_dir'), exist_ok=True)
         io.drop_file(self.download_details.get('resource_metadata_file'))
         io.drop_file(self.lemmatization_details.get('lemmatized_jsonl'))
@@ -41,7 +45,9 @@ class CorporaManager:
             outfile.close()
         return self
 
-    def download_corpus(self):
+    def download_corpus(self, download_details: dict):
+        self.download_details = download_details
+
         io.log("Starting download corpus")
         num_documents_download = 0
         initial_page_number = self.download_details.get('eurlex_details').get('initial_page_number')
@@ -109,6 +115,7 @@ class CorporaManager:
                             io.make_file_dirs(save_txt_path)
                             document_dict = {'id': part_hash_int16,
                                              'part_type': document_part,
+                                             'timestamp': io.datetime_to_string(io.now()),
                                              'reference_link': {'document_type': document_type,
                                                                 'document_path': save_document_path,
                                                                 'txt_path': save_txt_path,
@@ -131,13 +138,15 @@ class CorporaManager:
             initial_page_number += 1
         return self
 
-    def textify_corpus(self):
+    def textify_corpus(self, download_details: dict, textification_details: dict):
+        self.download_details = download_details
+        self.textification_details = textification_details
         textifier = Textifier()
 
         with open(self.download_details.get('resource_metadata_file'), 'rb') as file:
             lines = file.readlines()
             # Read each jsonl's line to get the 'part'
-            io.log(f"--- Starting with Corpora Textification----")
+            io.log(f"--- Starting with Corpora Textification. Lines to process: {len(lines)} ---")
             for line in lines:
                 line_value = line.strip()
                 dict_str = line_value.decode("UTF-8")
@@ -151,7 +160,7 @@ class CorporaManager:
                     target_path = part.get('reference_link').get('txt_path')
                     if part_type == DocumentPartType.BODY.name.lower():
                         io.log(f"--Processing document with reference: {resource_dict.get('reference')} and part "
-                               f"document id: {part.get('id')}----")
+                               f"document id: {part.get('id')}--")
 
                         #  Textify Corpora
                         if document_type not in self.textification_details.get('exclude_extensions_type'):
@@ -178,12 +187,15 @@ class CorporaManager:
                 rsc_id = resource_dict.get('reference_hash')
                 rsc_lang = resource_dict.get('lang')
                 for part in resource_dict['parts']:
-                    t1 = io.log(f"-- Processing resource id: {rsc_id}, part: {resource_dict.get('part_type')} "
-                                f"with id: {resource_dict.get('part_id')} --")
+                    t1 = io.log(f"-- Processing resource id: {rsc_id}, part: {part.get('part_type')} "
+                                f"with id: {part.get('id')} --")
                     part_id = part.get('id')
                     part_type = part.get('part_type')
                     textified_resource_file = part.get('reference_link').get('txt_path')
                     content_file = io.file_to_str(textified_resource_file)
+                    star_slice = 0
+                    end_slice = 99
+                    content_file_sliced = content_file[star_slice:end_slice]
 
                     # exists, entry_id = self.exists(rsc_id, part_id, part_type)
                     exists, entry_id = False, part_id
@@ -196,17 +208,14 @@ class CorporaManager:
                         bot = KeywordWorker(self.lemmatization_details).extract(content_file,
                                                                                 rsc_part=part_type,
                                                                                 rsc_lang=rsc_lang).bot
-                        # Change the structure of bot json : "terms": [
-                        #                               {
-                        #                                   "lem_id": "ee5b02730f46da5da2693105aa308529",
-                        #                                   "lemma": "member",
-                        #                                   "term": "the member",
-                        #                                   "freq": 2
-                        #                               }
-                        # Add all metadata details see json example in test_elastic_persistence
-                        lemmatized_document_dict = {'id': part_id,
-                                                    'terms': bot
-                                                    }
+                        lemmatized_document_dict = {
+                            "rsc_id": rsc_id,
+                            "part_id": part_id,
+                            "part_type": part_type,
+                            "timestamp": io.datetime_to_string(io.now()),
+                            'terms': bot
+                        }
+
                         str_date = io.now().strftime("%Y%m%d")
                         elastic_index = self.lemmatization_details.get('index') + f"-{str_date}"
                         self.persistor.persist(index=elastic_index,

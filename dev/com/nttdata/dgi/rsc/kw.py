@@ -170,9 +170,11 @@ class KeywordWorker(KeywordWorkerInterface):
             lang = self._decide_lang_(term, rsc_lang)
             if lang:
                 lemma = self.__lemmatize__(term, lang)
-                lemma_list.append({io.hash(lemma): {'lemma': lemma,
-                                                    'term': term,
-                                                    'freq': freq}})
+                lemma_list.append({
+                    'lemma_id': io.hash(lemma),
+                    'lemma': lemma,
+                    'term': term,
+                    'freq': freq})
             # If no lang -> the term contains no linguistic features, e.g. '---', and similar trash
         return lemma_list
 
@@ -215,7 +217,7 @@ class KeywordWorker(KeywordWorkerInterface):
 
         cleansed_terms = self._cleanse_(terms, rsc_lang)
 
-        if rsc_part == DocumentPartType.BODY:
+        if rsc_part == DocumentPartType.BODY.name.lower():
             '''
             There is the need of filtering out very low frequencies of the tf (term frequency in one document). 
             Otherwise the lemmatizations takes an eternity. 'fo_freq' stands for 'filter out frequencies lesser than...'
