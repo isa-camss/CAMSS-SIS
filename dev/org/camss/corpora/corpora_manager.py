@@ -22,7 +22,11 @@ class CorporaManager:
         self.textification_details = textification_details
         self.lemmatization_details = lemmatization_details
 
-    def prepare_corpus_folders(self):
+    def prepare_corpus_folders(self, download_details: dict, textification_details: dict, lemmatization_details: dict):
+        self.download_details = download_details
+        self.textification_details = textification_details
+        self.lemmatization_details = lemmatization_details
+
         os.makedirs(self.download_details.get('json_dir'), exist_ok=True)
         io.drop_file(self.download_details.get('resource_metadata_file'))
         io.drop_file(self.lemmatization_details.get('lemmatized_jsonl'))
@@ -34,7 +38,9 @@ class CorporaManager:
             outfile.close()
         return self
 
-    def download_corpus(self):
+    def download_corpus(self, download_details: dict):
+        self.download_details = download_details
+
         t0 = io.log("Starting download corpus")
         num_documents_download = 0
         initial_page_number = self.download_details.get('eurlex_details').get('initial_page_number')
@@ -124,7 +130,9 @@ class CorporaManager:
             initial_page_number += 1
         return self
 
-    def textify_corpus(self):
+    def textify_corpus(self, download_details: dict, textification_details: dict):
+        self.download_details = download_details
+        self.textification_details = textification_details
         textifier = Textifier()
 
         with open(self.download_details.get('resource_metadata_file'), 'rb') as file:
@@ -153,8 +161,8 @@ class CorporaManager:
         return self
 
     def lemmatize_corpora(self, corpora_lemmatization_details: dict):
-        io.log(f"---- Starting with Corpora Lemmatization ----")
         self.lemmatization_details = corpora_lemmatization_details
+        io.log(f"---- Starting with Corpora Lemmatization ----")
 
         with open(self.lemmatization_details.get('metadata_file'), 'rb') as file:
             lines = file.readlines()
@@ -174,6 +182,9 @@ class CorporaManager:
                     part_type = part.get('part_type')
                     textified_resource_file = part.get('reference_link').get('txt_path')
                     content_file = io.file_to_str(textified_resource_file)
+                    star_slice = 0
+                    end_slice = 99
+                    content_file_sliced = content_file[star_slice:end_slice]
 
                     # exists, entry_id = self.exists(rsc_id, part_id, part_type)
                     exists, entry_id = False, part_id
