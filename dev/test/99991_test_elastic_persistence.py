@@ -3,9 +3,11 @@ import elasticsearch
 import cfg.crud as crud
 import com.nttdata.dgi.util.io as io
 from datetime import datetime
-from com.nttdata.dgi.crud.PersistenceFactory import PersistenceFactory
-from com.nttdata.dgi.crud.Persistor import Persistor
-from com.nttdata.dgi.crud.PersistorType import PersistorType
+from com.nttdata.dgi.persistence.persistence_factory import PersistenceFactory
+from com.nttdata.dgi.persistence.persistor import Persistor
+from com.nttdata.dgi.persistence.persistor_type import PersistorType
+from com.nttdata.dgi.persistence.ipersistor import IPersistor
+
 
 
 class ElasticSearchTest(unittest.TestCase):
@@ -73,7 +75,7 @@ class ElasticSearchTest(unittest.TestCase):
         Persists in ElasticPersistor a document in a given index.
         :return: self
         """
-        p: Persistor = PersistenceFactory().new(crud.ELASTICSEARCH_DETAILS, PersistorType.ELASTIC)
+        p: IPersistor = PersistenceFactory().new(crud.ELASTICSEARCH_DETAILS, PersistorType.ELASTIC)
 
         '''
         Document id is provided inside the document. '''

@@ -18,6 +18,7 @@ class CorporaManager:
     textification_details: dict
     lemmatization_details: dict
     persistor: IPersistor
+    persistor_details: dict
 
     def __init__(self, download_details: dict = None, textification_details: dict = None,
                  lemmatization_details: dict = None,
@@ -25,8 +26,7 @@ class CorporaManager:
         self.download_details = download_details
         self.textification_details = textification_details
         self.lemmatization_details = lemmatization_details
-        self.persistor = PersistenceFactory().new(persistor_type=PersistorType.ELASTIC,
-                                                  persistor_details=connection_details)
+        self.persistor_details = connection_details
         return
 
     def prepare_corpus_folders(self):
@@ -42,7 +42,7 @@ class CorporaManager:
         return self
 
     def download_corpus(self):
-        t0 = io.log("Starting download corpus")
+        io.log("Starting download corpus")
         num_documents_download = 0
         initial_page_number = self.download_details.get('eurlex_details').get('initial_page_number')
         initial_page_size = self.download_details.get('eurlex_details').get('initial_page_size')
@@ -154,14 +154,17 @@ class CorporaManager:
                                f"document id: {part.get('id')}----")
 
                         #  Textify Corpora
-                        if not document_type in self.textification_details.get('exclude_extensions_type'):
+                        if document_type not in self.textification_details.get('exclude_extensions_type'):
                             textifier.textify_file(resource_file=source_path, target_file=target_path)
                             io.log(f"---- The document with id: {part.get('id')} was successfully textified ----")
         return self
 
-    def lemmatize_corpora(self, corpora_lemmatization_details: dict):
+    def lemmatize_corpora(self, corpora_lemmatization_details: dict, connection_details: dict):
         io.log(f"---- Starting with Corpora Lemmatization ----")
         self.lemmatization_details = corpora_lemmatization_details
+        self.persistor_details = connection_details
+        self.persistor = PersistenceFactory().new(persistor_type=PersistorType.ELASTIC,
+                                                  persistor_details=self.persistor_details)
 
         with open(self.lemmatization_details.get('metadata_file'), 'rb') as file:
             lines = file.readlines()
@@ -204,7 +207,9 @@ class CorporaManager:
                         lemmatized_document_dict = {'id': part_id,
                                                     'terms': bot
                                                     }
-                        self.persistor.persist(index=self.lemmatization_details.get('index'),
+                        str_date = io.now().strftime("%Y%m%d")
+                        elastic_index = self.lemmatization_details.get('index') + f"-{str_date}"
+                        self.persistor.persist(index=elastic_index,
                                                content=lemmatized_document_dict)
 
                         with open(self.lemmatization_details.get('lemmatized_jsonl'), 'a+') as outfile:

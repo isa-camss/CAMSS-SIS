@@ -9,11 +9,13 @@ class ThesauriManager:
     thesauri_details: list  # List of dicts with thesaurus url and path to save it
     skos_lemmatizer_details: dict
     persistor: IPersistor
+    persistor_details: dict
 
     def __init__(self, list_thesauri_details: list = None,
-                 dict_skos_lemmatizer_details: dict = None):
+                 dict_skos_lemmatizer_details: dict = None, connection_details: dict = None):
         self.thesauri_details = list_thesauri_details
         self.skos_lemmatizer_details = dict_skos_lemmatizer_details
+        self.persistor_details = connection_details
 
     def prepare_thesauri_folders(self, thesauri_details: list, skos_lemmatizer_details: dict):
         # Iterate through every thesaurus to drop the file if exists and creates the folder
@@ -56,7 +58,8 @@ class ThesauriManager:
         return self
 
     def persist_thesauri(self, connection_details: dict, thesaurus_details: dict):
+        self.persistor_details = connection_details
         self.persistor = PersistenceFactory().new(persistor_type=PersistorType.VIRTUOSO,
-                                                  persistor_details=connection_details)
+                                                  persistor_details=self.persistor_details)
         self.persistor.persist(thesaurus_details.get('location'), thesaurus_details.get('graph_name'))
         return self

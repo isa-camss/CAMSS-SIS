@@ -1,7 +1,9 @@
 import cfg.ctt as ctt
+import cfg.crud as crud
 import com.nttdata.dgi.util.io as io
 from flask_restx import Resource, Namespace
 from org.camss.corpora.corpora_manager import CorporaManager
+
 
 api = Namespace(ctt.GOVERNORS_NAME,
                 description='These microservices are responsible of generating the needed resources to enable the '
@@ -12,8 +14,7 @@ api = Namespace(ctt.GOVERNORS_NAME,
 def process_corpus() -> dict:
     # Download EURLex Corpus
     CorporaManager(ctt.DOWNLOAD_CORPORA_DETAILS, ctt.TEXTIFICATION_CORPORA_DETAILS, ctt.CORPORA_LEMMATIZATION_DETAILS).\
-        prepare_corpus_folders().download_corpus().\
-        textify_corpus().lemmatize_corpora(ctt.CORPORA_LEMMATIZATION_DETAILS).persist_corpora()
+        lemmatize_corpora(ctt.CORPORA_LEMMATIZATION_DETAILS, crud.ELASTICSEARCH_DETAILS)
 
     return {}
 

@@ -1,8 +1,7 @@
 from com.nttdata.dgi.persistence.virtuoso_persistor import VirtuosoPersistor
 from com.nttdata.dgi.persistence.persistor_type import PersistorType
 from com.nttdata.dgi.persistence.ipersistor import IPersistor
-from com.nttdata.dgi.crud.Persistor import Persistor
-from com.nttdata.dgi.crud.FilePersistor import FilePersistor
+# from com.nttdata.dgi.crud.FilePersistor import FilePersistor
 from com.nttdata.dgi.persistence.elastic_persistor import ElasticPersistor
 
 
@@ -22,22 +21,20 @@ class PersistenceFactory:
         except ValueError:
             raise ValueError("FAILED: A wrong value was passed as a Persistor Type. Check the documentation.")
 
-    @staticmethod
-    def new(self, persistor_details: dict, persistor_type: PersistorType = None) -> Persistor:
+    def new(self, persistor_details: dict, persistor_type: PersistorType = None) -> IPersistor:
 
         _type = self.__get_persistor_type(persistor_details, persistor_type)
-        p = None
+        p: IPersistor = None
 
         if _type is PersistorType.FILE:
-            p = FilePersistor(**persistor_details)
+            pass
+            # p = FilePersistor(**persistor_details)
         elif _type is PersistorType.ELASTIC:
             p = ElasticPersistor(**persistor_details)
         elif _type is PersistorType.VIRTUOSO:
             p = VirtuosoPersistor(**persistor_details)
         p.type = _type
         return p
-
-
 
     # def new(persistor_type: PersistorType, **persistor_configuration) -> IPersistor:
         # persistor: IPersistor = None
