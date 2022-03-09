@@ -44,8 +44,8 @@ def process_thesauri() -> (dict, int):
 
         # 4. SKOS Lemmatizer of downloaded Thesaurus
         thesauri_manager.analyse(skos_lemmatizer_details)
-        report['message'].append(f"Thesauri lemmatization finished in {str(io.now() - t2)}")
-        t3 = io.log(f"Thesauri lemmatization done in {str(io.now() - t2)}")
+        # report['message'].append(f"Thesauri lemmatization finished in {str(io.now() - t2)}")
+        # t3 = io.log(f"Thesauri lemmatization done in {str(io.now() - t2)}")
 
         # 5. Persist original Thesaurus in Virtuoso
         thesauri_manager.persist_thesauri(virtuoso_connection_details,
@@ -58,8 +58,8 @@ def process_thesauri() -> (dict, int):
                                           eira_thesaurus_lemma_persistor_details)
 
         report = io.merge_dicts([report, thesauri_manager.persistor.report])
-        report['message'].append(f"Persistence finished in {str(io.now() - t3)}")
-        io.log(f"Thesauri persistence done in {str(io.now() - t3)}")
+        # report['message'].append(f"Persistence finished in {str(io.now() - t3)}")
+        # io.log(f"Thesauri persistence done in {str(io.now() - t3)}")
         status_code = 200
     except Exception as ex:
         status_code = 555

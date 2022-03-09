@@ -193,9 +193,6 @@ class CorporaManager:
                     part_type = part.get('part_type')
                     textified_resource_file = part.get('reference_link').get('txt_path')
                     content_file = io.file_to_str(textified_resource_file)
-                    star_slice = 0
-                    end_slice = 99
-                    content_file_sliced = content_file[star_slice:end_slice]
 
                     # exists, entry_id = self.exists(rsc_id, part_id, part_type)
                     exists, entry_id = False, part_id

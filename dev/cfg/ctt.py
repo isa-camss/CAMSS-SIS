@@ -50,24 +50,24 @@ URL_SEARCHER = f'{BASE_URL}/{SEARCH_NAME}/{SEARCHER_SEARCH_ENDPOINT}'
 ARTIFACTS_DIR = "./arti"
 RDF_DIR = ARTIFACTS_DIR + "/rdf"
 JSON_DIR = ARTIFACTS_DIR + "/json"
-CORPORA_DIR = '../../corpora'
-TEXTIFICATION_DIR = CORPORA_DIR + '/txt'
+CORPORA_DIR = "../../corpora"
+TEXTIFICATION_DIR = CORPORA_DIR + "/txt"
 
 
 # ------------------------------------------- PROJECT LANGUAGES -------------------------------------------
 
 # The default language needs to be set compulsorily. Basic functionality would not work without it (e.g.,
 # Taxonomy lemmatization, amongst other).
-DEFAULT_LANGUAGE = 'en'
+DEFAULT_LANGUAGE = "en"
 
 # ------------------------------------------- THESAURUS ---------------------------------------------------------------
 # Default four language models
-MAIN_DEFAULT_LANGUAGE_MODEL = {'en': 'en_core_web_lg'}
+MAIN_DEFAULT_LANGUAGE_MODEL = {"en": "en_core_web_lg"}
 
-DEFAULT_LANGUAGE_MODELS = {'en': 'en_core_web_lg'}
+DEFAULT_LANGUAGE_MODELS = {"en": "en_core_web_lg"}
 
 # The languages allowed for a specific project
-PROJECT_LANGUAGES = ['en']
+PROJECT_LANGUAGES = ["en"]
 
 # The lemmatizer returns four possible combinations of modes. The options are:
 # accented-minus-stopwords,
@@ -77,23 +77,23 @@ PROJECT_LANGUAGES = ['en']
 # unaccented-minus-stopwords, or
 # all
 # If 'all' is supplied, a dictionary with all the options is returned.
-PREFERRED_LEMMATIZATION_MODE = 'unaccented-minus-stopwords'
+PREFERRED_LEMMATIZATION_MODE = "unaccented-minus-stopwords"
 
 # ------------------------------------------- THESAURUS ---------------------------------------------------------------
 # EIRA THESAURUS DETAILS
 EIRA_THESAURUS_NAME = "eira_thesaurus"
-EIRA_THESAURUS_FILE = EIRA_THESAURUS_NAME + '.rdf'
+EIRA_THESAURUS_FILE = EIRA_THESAURUS_NAME + ".rdf"
 EIRA_THESAURUS_URL = "https://joinup.ec.europa.eu/sites/default/files/distribution/access_url/2021-03/d72a664c-70ea" \
-                     "-4dd7-91ee-3768d44cc079/EIRA_SKOS.rdf "
+                     "-4dd7-91ee-3768d44cc079/EIRA_SKOS.rdf"
 EIRA_THESAURUS_DETAILS = {"name": EIRA_THESAURUS_NAME,
                           "url": EIRA_THESAURUS_URL,
                           "path": RDF_DIR + "/" + EIRA_THESAURUS_FILE}
 
 # ------------------------------------------- CORPORA -----------------------------------------------------------------
 CORPORA_DOCUMENT_TYPE = "pdf"
-CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE = ['html', 'txt']
-RESOURCE_METADATA_JSON = JSON_DIR + '/resource_metadata.jsonl'
-RESOURCE_LEMMATIZED_JSON = JSON_DIR + '/resource_lemmatized.jsonl'
+CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE = ["html", "txt"]
+RESOURCE_METADATA_JSON = JSON_DIR + "/resource_metadata.jsonl"
+RESOURCE_LEMMATIZED_JSON = JSON_DIR + "/resource_lemmatized.jsonl"
 
 # EURLEX CORPORA DETAILS
 # EURLEX_DOCUMENT_NAME = "corpora.txt"
@@ -101,7 +101,7 @@ EURLEX_CORPORA_URL = "https://eur-lex.europa.eu/EURLexWebService"
 PAGE_NUMBER = 1
 RESULTS_NUMBER_BY_PAGE = 10
 MAX_DOWNLOAD_DOCUMENT = 20
-EURLEX_CORPORA_QUERY_HEADERS = {'content-type': 'application/soap+xml'}
+EURLEX_CORPORA_QUERY_HEADERS = {"content-type": "application/soap+xml"}
 EURLEX_CORPORA_QUERY_BODY = f"""<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:sear="http://eur-lex.europa.eu/search">
     <soap:Header>
         <wsse:Security soap:mustUnderstand="true" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd">
@@ -121,38 +121,38 @@ EURLEX_CORPORA_QUERY_BODY = f"""<soap:Envelope xmlns:soap="http://www.w3.org/200
     </soap:Body>
 </soap:Envelope>"""
 
-EURLEX_COPORA_DETAILS = {'url': EURLEX_CORPORA_URL,
-                         'body': EURLEX_CORPORA_QUERY_BODY,
-                         'headers': EURLEX_CORPORA_QUERY_HEADERS,
-                         'initial_page_number': PAGE_NUMBER,
-                         'initial_page_size': RESULTS_NUMBER_BY_PAGE
+EURLEX_COPORA_DETAILS = {"url": EURLEX_CORPORA_URL,
+                         "body": EURLEX_CORPORA_QUERY_BODY,
+                         "headers": EURLEX_CORPORA_QUERY_HEADERS,
+                         "initial_page_number": PAGE_NUMBER,
+                         "initial_page_size": RESULTS_NUMBER_BY_PAGE
                          }
 
-DOWNLOAD_CORPORA_DETAILS = {'eurlex_details': EURLEX_COPORA_DETAILS,
-                            'default_lang': DEFAULT_LANGUAGE,
-                            'max_documents': MAX_DOWNLOAD_DOCUMENT,
-                            'download_types': CORPORA_DOCUMENT_TYPE,
-                            'json_dir': JSON_DIR,
-                            'corpora_dir': CORPORA_DIR,
-                            'resource_metadata_file': RESOURCE_METADATA_JSON,
-                            'textification_dir': TEXTIFICATION_DIR
+DOWNLOAD_CORPORA_DETAILS = {"eurlex_details": EURLEX_COPORA_DETAILS,
+                            "default_lang": DEFAULT_LANGUAGE,
+                            "max_documents": MAX_DOWNLOAD_DOCUMENT,
+                            "download_types": CORPORA_DOCUMENT_TYPE,
+                            "json_dir": JSON_DIR,
+                            "corpora_dir": CORPORA_DIR,
+                            "resource_metadata_file": RESOURCE_METADATA_JSON,
+                            "textification_dir": TEXTIFICATION_DIR
                             }
 # ______________________________________________ TEXTIFICATION _______________________________________________________
-TEXTIFICATION_CORPORA_DETAILS = {'corpus_dir': CORPORA_DIR,
-                                 'textification_dir': TEXTIFICATION_DIR,
-                                 'exclude_extensions_type': CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE,
-                                 'textification_lang': True}
+TEXTIFICATION_CORPORA_DETAILS = {"corpus_dir": CORPORA_DIR,
+                                 "textification_dir": TEXTIFICATION_DIR,
+                                 "exclude_extensions_type": CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE,
+                                 "textification_lang": True}
 # ------------------------------------------- LEMMATIZATION ----------------------------------------------------------
 # EIRA THESAURUS LEMMATIZATION DETAILS
 
 LEMMATIZATION_FUNCTIONS = ["md5lemma", "lemma"]
 EIRA_MD5_NAME = "eira_thesaurus.md5lemmas.rdf"
-EIRA_THESAURUS_MD5_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get('path'),
+EIRA_THESAURUS_MD5_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get("path"),
                               "target": RDF_DIR + "/" + EIRA_MD5_NAME,
                               "function": LEMMATIZATION_FUNCTIONS[0]}
 
 EIRA_LEMMA_NAME = "eira_thesaurus.lemmas.rdf"
-EIRA_THESAURUS_LEMMA_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get('path'),
+EIRA_THESAURUS_LEMMA_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get("path"),
                                 "target": RDF_DIR + "/" + EIRA_LEMMA_NAME,
                                 "function": LEMMATIZATION_FUNCTIONS[1]}
 LABELS = ['<title', '<preflabel', '<altlabel', '<hiddenlabel', '<literal', '<literalform',
@@ -165,8 +165,8 @@ SKOS_LEMMATIZER_REQUEST_DETAILS = {
     ]
 }
 
-SKOS_MAPPER_DETAILS = {'url': URL_SKOS_LEM,
-                       'body': SKOS_LEMMATIZER_REQUEST_DETAILS
+SKOS_MAPPER_DETAILS = {"url": URL_SKOS_LEM,
+                       "body": SKOS_LEMMATIZER_REQUEST_DETAILS
                        }
 
 # SKOS MAPPER
@@ -197,16 +197,16 @@ MIN_RSC_BODY_TERM_FREQUENCY = 2
 MIN_TERM_SIZE = 1
 
 CORPORA_LEMMATIZATION_DETAILS = {
-    "index": 'eurlex-docs',
+    "index": "eurlex-docs",
     "metadata_file":RESOURCE_METADATA_JSON,
     "lemmatized_jsonl": RESOURCE_LEMMATIZED_JSON,
     "corpus_path": TEXTIFICATION_DIR,
-    "ops_metadata": '',
-    "rsc_metadata": '',
-    "abstract_sentence#": '',
-    "out_nq_file": '',
-    "out_jsonl_file": '',
-    "labels_dictionary_pkl": '',
+    "ops_metadata": "",
+    "rsc_metadata": "",
+    "abstract_sentence#": "",
+    "out_nq_file": "",
+    "out_jsonl_file": "",
+    "labels_dictionary_pkl": "",
     "lemmatizer_endpoint": URL_NLP_LEMMATIZE,
     "ngram_range": NGRAM_RANGE,
     "rsc_part_types": [],
@@ -233,7 +233,7 @@ STORE_DETAILS = {
     }
 }
 EIRA_THESAURUS_VIRTUOSO_PERSISTENCE_DETAILS = {
-    "location": EIRA_THESAURUS_DETAILS.get('path'),
+    "location": EIRA_THESAURUS_DETAILS.get("path"),
     "graph_name": "http://data.europa.eu/dr8/"
 }
 
