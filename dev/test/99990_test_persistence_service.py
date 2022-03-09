@@ -41,6 +41,5 @@ class PersistenceServiceTest(unittest.TestCase):
         assert res.ok
         return
 
-
 if __name__ == '__main__':
     unittest.main()

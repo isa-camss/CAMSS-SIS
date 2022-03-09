@@ -60,7 +60,7 @@ TEXTIFICATION_DIR = CORPORA_DIR + "/txt"
 # Taxonomy lemmatization, amongst other).
 DEFAULT_LANGUAGE = "en"
 
-# ------------------------------------------- THESAURUS ---------------------------------------------------------------
+# ------------------------------------------- LANGUAGE MODELS ----------------------------------------------------
 # Default four language models
 MAIN_DEFAULT_LANGUAGE_MODEL = {"en": "en_core_web_lg"}
 
@@ -87,7 +87,29 @@ EIRA_THESAURUS_URL = "https://joinup.ec.europa.eu/sites/default/files/distributi
                      "-4dd7-91ee-3768d44cc079/EIRA_SKOS.rdf"
 EIRA_THESAURUS_DETAILS = {"name": EIRA_THESAURUS_NAME,
                           "url": EIRA_THESAURUS_URL,
-                          "path": RDF_DIR + "/" + EIRA_THESAURUS_FILE}
+                          "path": RDF_DIR + "/" + EIRA_THESAURUS_FILE
+                          }
+
+EIRA_ABBS = {"legal_specifications": ["public policy", "interoperable digital public services implementation",
+                                      "public policy cycle","binding instrument", "non-binding instrument", "legal act",
+                                      "legislation catalogue", "legal interoperability agreement",
+                                      "legislation on data information and knowledge exchange",
+                                      "legal authority", "shared legal framework",
+                                      "legal agreements / international treaties"
+                                      ],
+             "organisational_specifications": ["public service", "interoperability strategy",
+                                               "interoperability framework", "interoperability gobernance",
+                                               "interoperability organisation authority", "security framework",
+                                               "privacy framework", "interoperability skill", "business",
+                                               "public administration", "organisation", "citizen",
+                                               "public service agent", "public service consumer agent",
+                                               "public service consumer", "organisational interoperability agreement",
+                                               "public service provider", "public service delivery agent",
+                                               "service delivery model", "business capability",
+                                               "exchange of business information", "business information",
+                                               "public service catalogue", "shared governance framework"
+                                               ]
+             }
 
 # ------------------------------------------- CORPORA -----------------------------------------------------------------
 CORPORA_DOCUMENT_TYPE = "pdf"
