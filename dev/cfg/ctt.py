@@ -53,7 +53,6 @@ JSON_DIR = ARTIFACTS_DIR + "/json"
 CORPORA_DIR = "../../corpora"
 TEXTIFICATION_DIR = CORPORA_DIR + "/txt"
 
-
 # ------------------------------------------- PROJECT LANGUAGES -------------------------------------------
 
 # The default language needs to be set compulsorily. Basic functionality would not work without it (e.g.,
@@ -80,6 +79,7 @@ PROJECT_LANGUAGES = ["en"]
 PREFERRED_LEMMATIZATION_MODE = "unaccented-minus-stopwords"
 
 # ------------------------------------------- THESAURUS ---------------------------------------------------------------
+# EIRA ------------------------
 # EIRA THESAURUS DETAILS
 EIRA_THESAURUS_NAME = "eira_thesaurus"
 EIRA_THESAURUS_FILE = EIRA_THESAURUS_NAME + ".rdf"
@@ -89,27 +89,47 @@ EIRA_THESAURUS_DETAILS = {"name": EIRA_THESAURUS_NAME,
                           "url": EIRA_THESAURUS_URL,
                           "path": RDF_DIR + "/" + EIRA_THESAURUS_FILE
                           }
+# ABBS PER EIRA VIEW
+EIRA_LEGAL_SPECIFICATIONS = ["public policy", "interoperable digital public services implementation",
+                             "public policy cycle", "binding instrument", "non-binding instrument", "legal act",
+                             "legislation catalogue", "legal interoperability agreement",
+                             "legislation on data information and knowledge exchange", "legal authority",
+                             "shared legal framework", "legal agreements / international treaties"
+                             ]
 
-EIRA_ABBS = {"legal_specifications": ["public policy", "interoperable digital public services implementation",
-                                      "public policy cycle","binding instrument", "non-binding instrument", "legal act",
-                                      "legislation catalogue", "legal interoperability agreement",
-                                      "legislation on data information and knowledge exchange",
-                                      "legal authority", "shared legal framework",
-                                      "legal agreements / international treaties"
-                                      ],
-             "organisational_specifications": ["public service", "interoperability strategy",
-                                               "interoperability framework", "interoperability gobernance",
-                                               "interoperability organisation authority", "security framework",
-                                               "privacy framework", "interoperability skill", "business",
-                                               "public administration", "organisation", "citizen",
-                                               "public service agent", "public service consumer agent",
-                                               "public service consumer", "organisational interoperability agreement",
-                                               "public service provider", "public service delivery agent",
-                                               "service delivery model", "business capability",
-                                               "exchange of business information", "business information",
-                                               "public service catalogue", "shared governance framework"
-                                               ]
-             }
+EIRA_ORGANISATIONAL_SPECIFICATIONS = ["public service", "interoperability strategy", "interoperability framework",
+                                      "interoperability gobernance", "interoperability organisation authority",
+                                      "security framework", "privacy framework", "interoperability skill", "business",
+                                      "public administration", "organisation", "citizen", "public service agent",
+                                      "public service consumer agent", "public service consumer",
+                                      "organisational interoperability agreement", "public service provider",
+                                      "public service delivery agent", "service delivery model", "business capability",
+                                      "exchange of business information", "business information",
+                                      "public service catalogue", "shared governance framework"
+                                      ]
+
+EIRA_SEMANTIC_SPECIFICATIONS = ["data policy", "representation", "data set catalogue", "data set", "data",
+                                "descriptive metada policy", "master data policy", "open data policy",
+                                "base registry data policy", "data portability policy", "reference data policy",
+                                "data entity", "core data model", "data syntax", "data model", "controlled vocabulary",
+                                "shared knowledge base", "data mapping", "ontologies catalogue", "ontology",
+                                "data owner", "semantic interoperability agreement", "data mapping",
+                                "data mapping catalogue", "semantic agreement", "security policy", "privacy policy"
+                                ]
+
+EIRA_TECHNICAL_SPECIFICATIONS = ["machine to machine interface", "human interface",
+                                 "interoperable european solution service", "interoperable european solution component",
+                                 "access management service", "access management component", "audit service",
+                                 "audit component", "interoperable european solution", "data transformation service",
+                                 "data transformation component", "data validation service",
+                                 "data validation component", "service discovery service",
+                                 "service discovery component", "orchestration service", "orchestration component",
+                                 "technical specification", "technical interoperability agreement", "shared platform",
+                                 "conformance testing service", "conformance testing component",
+                                 "conformance test report", "conformance test scenario", "technical agreement"
+                                 ]
+
+EIRA_ABBS = EIRA_LEGAL_SPECIFICATIONS + EIRA_ORGANISATIONAL_SPECIFICATIONS
 
 # ------------------------------------------- CORPORA -----------------------------------------------------------------
 CORPORA_DOCUMENT_TYPE = "pdf"
@@ -165,8 +185,8 @@ TEXTIFICATION_CORPORA_DETAILS = {"corpus_dir": CORPORA_DIR,
                                  "exclude_extensions_type": CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE,
                                  "textification_lang": True}
 # ------------------------------------------- LEMMATIZATION ----------------------------------------------------------
+# THESAURUS LEMMATIZATION -------------------
 # EIRA THESAURUS LEMMATIZATION DETAILS
-
 LEMMATIZATION_FUNCTIONS = ["md5lemma", "lemma"]
 EIRA_MD5_NAME = "eira_thesaurus.md5lemmas.rdf"
 EIRA_THESAURUS_MD5_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get("path"),
@@ -177,8 +197,11 @@ EIRA_LEMMA_NAME = "eira_thesaurus.lemmas.rdf"
 EIRA_THESAURUS_LEMMA_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get("path"),
                                 "target": RDF_DIR + "/" + EIRA_LEMMA_NAME,
                                 "function": LEMMATIZATION_FUNCTIONS[1]}
+
+# SKOS MAPPER
 LABELS = ['<title', '<preflabel', '<altlabel', '<hiddenlabel', '<literal', '<literalform',
           '<skos:preflabel', '<skos:altlabel', '<skos:hiddenlabel']
+
 SKOS_LEMMATIZER_REQUEST_DETAILS = {
     "endpoint": URL_NLP_LEMMATIZE,
     "labels": LABELS,
@@ -191,7 +214,6 @@ SKOS_MAPPER_DETAILS = {"url": URL_SKOS_LEM,
                        "body": SKOS_LEMMATIZER_REQUEST_DETAILS
                        }
 
-# SKOS MAPPER
 """
 Lemmatization provided via a lemmatization service endpoint...
 """
@@ -203,7 +225,7 @@ LEMMATIZATION_DETAILS = {"endpoint": URL_NLP_LEMMATIZE,
                          "method": LEMMATIZER_PREFERRED_METHOD
                          }
 
-# CORPORA LEMMATIZATION
+# CORPORA LEMMATIZATION -------------------
 """
 KEY TERM CONFIGURATION...remember a 'Key Term' has been convened as a Term that is included in at least one 
 controlled vocabularies of the Thesauri. A 'Key Word' is a collocation from the corpus that IS NOT present in
@@ -220,7 +242,7 @@ MIN_TERM_SIZE = 1
 
 CORPORA_LEMMATIZATION_DETAILS = {
     "index": "eurlex-docs",
-    "metadata_file":RESOURCE_METADATA_JSON,
+    "metadata_file": RESOURCE_METADATA_JSON,
     "lemmatized_jsonl": RESOURCE_LEMMATIZED_JSON,
     "corpus_path": TEXTIFICATION_DIR,
     "ops_metadata": "",
@@ -234,7 +256,8 @@ CORPORA_LEMMATIZATION_DETAILS = {
     "rsc_part_types": [],
     "def_lang": DEFAULT_LANGUAGE,
     "min_tf": MIN_RSC_TERM_FREQUENCY,  # Number of times a Term must occur in a resource to be included in the KR Tree
-    "min_tf_body": MIN_RSC_BODY_TERM_FREQUENCY,  # Number of times a Term must occur in a resource to be included in the KR Tree
+    "min_tf_body": MIN_RSC_BODY_TERM_FREQUENCY,
+    # Number of times a Term must occur in a resource to be included in the KR Tree
     "min_term_len": MIN_TERM_SIZE  # 1-gram terms found in the document are to be considered terms, otherwise
     # relevant terms like 3G, 4G and 5G would be discarded.
 }
@@ -263,3 +286,6 @@ EIRA_LEMMAS_THESAURUS_VIRTUOSO_PERSISTENCE_DETAILS = {
     "location": RDF_DIR + "/" + EIRA_LEMMA_NAME,
     "graph_name": "http://data.europa.eu/dr8/eira_lemmas/"
 }
+
+# ------------------------------------------- SEARCH -------------------------------------------------------------
+SEARCH_DETAILS =
