@@ -1,5 +1,7 @@
 import cfg.credentials as cred
 import cfg.queries as queries
+import cfg.crud as crud
+
 
 # PROJECT CONFIG
 PROJECT_NAME = 'camss-sis'
@@ -277,6 +279,7 @@ STORE_DETAILS = {
         "database": "accelerators"
     }
 }
+
 EIRA_THESAURUS_VIRTUOSO_PERSISTENCE_DETAILS = {
     "location": EIRA_THESAURUS_DETAILS.get("path"),
     "graph_name": "http://data.europa.eu/dr8/"
@@ -288,4 +291,13 @@ EIRA_LEMMAS_THESAURUS_VIRTUOSO_PERSISTENCE_DETAILS = {
 }
 
 # ------------------------------------------- SEARCH -------------------------------------------------------------
-SEARCH_DETAILS =
+MATCH_TERMS_JSON = JSON_DIR + "/match_terms.jsonl"
+CONCEPTS_TEST = ["public policy", "europe", "binding instrument", "legal act"]
+SEARCH_DETAILS = {"eira_concepts": CONCEPTS_TEST,           # EIRA_ABBS
+                  "client_host": crud.ELASTICSEARCH_HOST,
+                  "elastic_query": queries.ELASTIC_QUERY,
+                  "elastic_index": CORPORA_LEMMATIZATION_DETAILS['index'],
+                  "match_terms_file": MATCH_TERMS_JSON
+                  }
+
+
