@@ -1,15 +1,14 @@
-import cfg.ctt as ctt
-
 ELASTICSEARCH_HOST = "http://localhost:9200"
 ELASTICSEARCH_USER = None
 ELASTICSEARCH_PASSWORD = None
-ELASTICSEARCH_DEF_INDEX = "sembu"
+ELASTICSEARCH_DOCS_METADATA_INDEX = "eurlex-docs-metadata"
+ELASTICSEARCH_TERMS_LEMMATIZED_INDEX = "eira-terms"
+ELASTICSEARCH_DOCS_LEMMATIZED_INDEX = "eurlex-docs-lemmatized"
 
 ELASTICSEARCH_DETAILS = {"host": ELASTICSEARCH_HOST,
                          "user": ELASTICSEARCH_USER,
-                         "password": ELASTICSEARCH_PASSWORD,
-                         "def_index": ELASTICSEARCH_DEF_INDEX}
-
+                         "password": ELASTICSEARCH_PASSWORD
+                         }
 
 VIRTUOSO_EIRA_LOAD_RDF_FILE = {
     # "source": ctt.EIRA_THESAURUS_DETAILS.get('path'),

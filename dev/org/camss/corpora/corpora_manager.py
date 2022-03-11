@@ -45,8 +45,11 @@ class CorporaManager:
             outfile.close()
         return self
 
-    def download_corpus(self, download_details: dict):
+    def download_corpus(self, download_details: dict, connection_details: dict):
         self.download_details = download_details
+        self.persistor_details = connection_details
+        self.persistor = PersistenceFactory().new(persistor_type=PersistorType.ELASTIC,
+                                                  persistor_details=self.persistor_details)
 
         io.log("Starting download corpus")
         num_documents_download = 0
@@ -113,7 +116,7 @@ class CorporaManager:
                                                          document_part,
                                                          str(part_hash_int16) + '.txt')
                             io.make_file_dirs(save_txt_path)
-                            document_dict = {'id': part_hash_int16,
+                            document_dict = {'id': str(part_hash_int16),
                                              'part_type': document_part,
                                              'timestamp': io.datetime_to_string(io.now()),
                                              'reference_link': {'document_type': document_type,
@@ -129,10 +132,17 @@ class CorporaManager:
                             io.log(f"Error downloading document reference: {reference} with link: {document_link}. "
                                    f"Exception: {ex}", "w")
 
+                # Create jsonl with resource metadata
                 with open(self.download_details.get('resource_metadata_file'), 'a+') as outfile:
                     json.dump(result_documents, outfile)
                     outfile.write('\n')
                     outfile.close()
+
+                # Persist in Elasticsearch resource metadata
+                str_date = io.now().strftime("%Y%m%d")
+                elastic_metadata_index = self.download_details.get('elastic_metadata_index') + f"-{str_date}"
+                self.persistor.persist(index=elastic_metadata_index,
+                                       content=result_documents)
 
                 num_documents_download += 1
             initial_page_number += 1
@@ -215,6 +225,7 @@ class CorporaManager:
                             'terms': bot
                         }
 
+                        # Create jsonl with lemmatized corpora
                         with open(self.lemmatization_details.get('lemmatized_jsonl'), 'a+') as outfile:
                             json.dump(lemmatized_document_dict, outfile)
                             outfile.write('\n')
@@ -228,9 +239,10 @@ class CorporaManager:
                             'terms': bot
                         }
 
+                        # Persist in Elasticsearch lemmatized corpora
                         str_date = io.now().strftime("%Y%m%d")
-                        elastic_index = self.lemmatization_details.get('index') + f"-{str_date}"
-                        self.persistor.persist(index=elastic_index,
+                        elastic_lemmas_index = self.lemmatization_details.get('elastic_lemmas_index') + f"-{str_date}"
+                        self.persistor.persist(index=elastic_lemmas_index,
                                                content=lemmatized_document_dict)
 
                         io.log(f"-- The part with id: {part.get('id')} was successfully lemmatized in "

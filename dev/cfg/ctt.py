@@ -2,7 +2,6 @@ import cfg.credentials as cred
 import cfg.queries as queries
 import cfg.crud as crud
 
-
 # PROJECT CONFIG
 PROJECT_NAME = 'camss-sis'
 VERSION = 'v1.0'
@@ -96,19 +95,13 @@ EIRA_LEGAL_SPECIFICATIONS = ["public policy", "interoperable digital public serv
                              "public policy cycle", "binding instrument", "non-binding instrument", "legal act",
                              "legislation catalogue", "legal interoperability agreement",
                              "legislation on data information and knowledge exchange", "legal authority",
-                             "shared legal framework", "legal agreements / international treaties"
+                             "shared legal framework", "legal agreements", "international treaties"
                              ]
 
-EIRA_ORGANISATIONAL_SPECIFICATIONS = ["public service", "interoperability strategy", "interoperability framework",
-                                      "interoperability gobernance", "interoperability organisation authority",
-                                      "security framework", "privacy framework", "interoperability skill", "business",
-                                      "public administration", "organisation", "citizen", "public service agent",
-                                      "public service consumer agent", "public service consumer",
-                                      "organisational interoperability agreement", "public service provider",
-                                      "public service delivery agent", "service delivery model", "business capability",
-                                      "exchange of business information", "business information",
-                                      "public service catalogue", "shared governance framework"
-                                      ]
+EIRA_ORGANISATIONAL_SPECIFICATIONS = ["interoperability strategy", "interoperability framework",
+                                      "interoperability governance", "interoperability organisation authority",
+                                      "interoperability skill", "organisational interoperability agreement",
+                                      "public service provider", "exchange of business information"]
 
 EIRA_SEMANTIC_SPECIFICATIONS = ["data policy", "representation", "data set catalogue", "data set", "data",
                                 "descriptive metada policy", "master data policy", "open data policy",
@@ -130,9 +123,12 @@ EIRA_TECHNICAL_SPECIFICATIONS = ["machine to machine interface", "human interfac
                                  "conformance testing service", "conformance testing component",
                                  "conformance test report", "conformance test scenario", "technical agreement"
                                  ]
+CAMSS_SIS_DISCOVERIES = ["interoperability certificate"]
 
-EIRA_ABBS = EIRA_LEGAL_SPECIFICATIONS + EIRA_ORGANISATIONAL_SPECIFICATIONS
-
+EIRA_ABBS = EIRA_LEGAL_SPECIFICATIONS + EIRA_ORGANISATIONAL_SPECIFICATIONS + CAMSS_SIS_DISCOVERIES
+EIRA_CONCEPTS_DETAILS = {"terms": EIRA_ABBS,
+                         "elastic_terms_index": crud.ELASTICSEARCH_TERMS_LEMMATIZED_INDEX
+                         }
 # ------------------------------------------- CORPORA -----------------------------------------------------------------
 CORPORA_DOCUMENT_TYPE = "pdf"
 CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE = ["html", "txt"]
@@ -178,6 +174,7 @@ DOWNLOAD_CORPORA_DETAILS = {"eurlex_details": EURLEX_COPORA_DETAILS,
                             "download_types": CORPORA_DOCUMENT_TYPE,
                             "json_dir": JSON_DIR,
                             "corpora_dir": CORPORA_DIR,
+                            "elastic_metadata_index": crud.ELASTICSEARCH_DOCS_METADATA_INDEX,
                             "resource_metadata_file": RESOURCE_METADATA_JSON,
                             "textification_dir": TEXTIFICATION_DIR
                             }
@@ -243,7 +240,7 @@ MIN_RSC_BODY_TERM_FREQUENCY = 2
 MIN_TERM_SIZE = 1
 
 CORPORA_LEMMATIZATION_DETAILS = {
-    "index": "eurlex-docs",
+    "elastic_lemmas_index": crud.ELASTICSEARCH_DOCS_LEMMATIZED_INDEX,
     "metadata_file": RESOURCE_METADATA_JSON,
     "lemmatized_jsonl": RESOURCE_LEMMATIZED_JSON,
     "corpus_path": TEXTIFICATION_DIR,
@@ -293,11 +290,15 @@ EIRA_LEMMAS_THESAURUS_VIRTUOSO_PERSISTENCE_DETAILS = {
 # ------------------------------------------- SEARCH -------------------------------------------------------------
 MATCH_TERMS_JSON = JSON_DIR + "/match_terms.jsonl"
 CONCEPTS_TEST = ["public policy", "europe", "binding instrument", "legal act"]
-SEARCH_DETAILS = {"eira_concepts": CONCEPTS_TEST,           # EIRA_ABBS
-                  "client_host": crud.ELASTICSEARCH_HOST,
-                  "elastic_query": queries.ELASTIC_QUERY,
-                  "elastic_index": CORPORA_LEMMATIZATION_DETAILS['index'],
+
+SEARCH_DETAILS = {"eira_concepts": CONCEPTS_TEST,  # EIRA_ABBS
+                  "elastic_query_details": {"client_host": crud.ELASTICSEARCH_HOST,
+                                            'query': queries.ELASTIC_QUERY,
+                                            "elastic_index": crud.ELASTICSEARCH_DOCS_LEMMATIZED_INDEX,
+                                            "scroll": "1m",
+                                            "raise_on_error": True,
+                                            "preserve_order": False,
+                                            "clear_scroll": True
+                                            },
                   "match_terms_file": MATCH_TERMS_JSON
                   }
-
-

@@ -27,16 +27,16 @@ class GetFromElasticTest(unittest.TestCase):
         # elastic_index = "eurlex-docs-20220308"
 
         for term in ctt.SEARCH_DETAILS.get('eira_concepts'):
-            query = ctt.SEARCH_DETAILS.get('elastic_query') % term
-            # query = {
-            # "query": {
-            # "bool": {
-            # "must": [
-            # {"match": {"terms.lemma": f"""{term}"""}}
-            #  ]
-            # }
-            # }
-            # }
+            # query = ctt.SEARCH_DETAILS['elastic_query']
+            query = {
+                "query": {
+                    "bool": {
+                        "must": [
+                            {"match": {"terms.lemma": f"""{term}"""}}
+                        ]
+                    }
+                }
+            }
             terms_match = {'term': term,
                            'resources_matches': []
                            }
