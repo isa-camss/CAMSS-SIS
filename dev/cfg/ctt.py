@@ -49,10 +49,10 @@ URL_SEARCHER = f'{BASE_URL}/{SEARCH_NAME}/{SEARCHER_SEARCH_ENDPOINT}'
 
 # ARTIFACTS PATH
 ARTIFACTS_DIR = "./arti"
-RDF_DIR = ARTIFACTS_DIR + "/rdf"
-JSON_DIR = ARTIFACTS_DIR + "/json"
-CORPORA_DIR = "../../corpora"
-TEXTIFICATION_DIR = CORPORA_DIR + "/txt"
+RDF_DIR = ARTIFACTS_DIR + "/camss_sis_rdf"
+JSON_DIR = ARTIFACTS_DIR + "/camss_sis_json"
+CORPORA_DIR = "../../camss_sis_corpora"
+TEXTIFICATION_DIR = CORPORA_DIR + "/camss_sis_txt"
 
 # ------------------------------------------- PROJECT LANGUAGES -------------------------------------------
 
@@ -68,6 +68,7 @@ DEFAULT_LANGUAGE_MODELS = {"en": "en_core_web_lg"}
 
 # The languages allowed for a specific project
 PROJECT_LANGUAGES = ["en"]
+DEFAULT_LANG = "en"
 
 # The lemmatizer returns four possible combinations of modes. The options are:
 # accented-minus-stopwords,
@@ -84,6 +85,7 @@ PREFERRED_LEMMATIZATION_MODE = "unaccented-minus-stopwords"
 # EIRA THESAURUS DETAILS
 EIRA_THESAURUS_NAME = "eira_thesaurus"
 EIRA_THESAURUS_FILE = EIRA_THESAURUS_NAME + ".rdf"
+TERM_LEMMATIZED_JSON = JSON_DIR + "camss_term_lemmatized.jsonl"
 EIRA_THESAURUS_URL = "https://joinup.ec.europa.eu/sites/default/files/distribution/access_url/2021-03/d72a664c-70ea" \
                      "-4dd7-91ee-3768d44cc079/EIRA_SKOS.rdf"
 EIRA_THESAURUS_DETAILS = {"name": EIRA_THESAURUS_NAME,
@@ -127,13 +129,17 @@ CAMSS_SIS_DISCOVERIES = ["interoperability certificate"]
 
 EIRA_ABBS = EIRA_LEGAL_SPECIFICATIONS + EIRA_ORGANISATIONAL_SPECIFICATIONS + CAMSS_SIS_DISCOVERIES
 EIRA_CONCEPTS_DETAILS = {"terms": EIRA_ABBS,
-                         "elastic_terms_index": crud.ELASTICSEARCH_TERMS_LEMMATIZED_INDEX
+                         "rsc_lang": DEFAULT_LANG,
+                         "elastic_terms_index": crud.ELASTICSEARCH_TERMS_LEMMATIZED_INDEX,
+                         "json_dir": JSON_DIR,
+                         "lemmatized_jsonl": TERM_LEMMATIZED_JSON
                          }
 # ------------------------------------------- CORPORA -----------------------------------------------------------------
 CORPORA_DOCUMENT_TYPE = "pdf"
 CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE = ["html", "txt"]
-RESOURCE_METADATA_JSON = JSON_DIR + "/resource_metadata.jsonl"
-RESOURCE_LEMMATIZED_JSON = JSON_DIR + "/resource_lemmatized.jsonl"
+RESOURCE_METADATA_JSON = JSON_DIR + "/camss_resource_metadata.jsonl"
+RESOURCE_LEMMATIZED_JSON = JSON_DIR + "/camss_resource_lemmatized.jsonl"
+
 
 # EURLEX CORPORA DETAILS
 # EURLEX_DOCUMENT_NAME = "corpora.txt"
@@ -218,7 +224,6 @@ Lemmatization provided via a lemmatization service endpoint...
 """
 LEMMATIZER_ENDPOINT = "http://localhost:5000/camss-sis/v1/lemmatize"
 LEMMATIZER_PREFERRED_METHOD = "unaccented-minus-stopwords"
-DEFAULT_LANG = "en"
 
 LEMMATIZATION_DETAILS = {"endpoint": URL_NLP_LEMMATIZE,
                          "method": LEMMATIZER_PREFERRED_METHOD

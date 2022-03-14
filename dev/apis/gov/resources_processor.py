@@ -34,26 +34,26 @@ def process_corpus() -> (dict, int):
         corpora_manager = CorporaManager()
 
         # 2. Prepare all folders/files
-        # corpora_manager.prepare_corpus_folders(download_corpora_details,
-                                               # textify_corpora_details,
-                                               # lemmatization_corpora_details)
-        # report['message'].append(f"Corpora folders preparation finished in {str(io.now() - t0)}")
-        # t1 = io.log(f"Corpora configuration done in {str(io.now() - t0)}")
+        corpora_manager.prepare_corpus_folders(download_corpora_details,
+                                               textify_corpora_details,
+                                               lemmatization_corpora_details)
+        report['message'].append(f"Corpora folders preparation finished in {str(io.now() - t0)}")
+        t1 = io.log(f"Corpora configuration done in {str(io.now() - t0)}")
 
         # 3. Download EURLEX Corpus
-        # corpora_manager.download_corpus(download_corpora_details, elastic_connection_details)
-        # report['message'].append(f"Corpora download finished in {str(io.now() - t1)}")
-        # t2 = io.log(f"Corpora download done in {str(io.now() - t1)}")
+        corpora_manager.download_corpus(download_corpora_details, elastic_connection_details)
+        report['message'].append(f"Corpora download finished in {str(io.now() - t1)}")
+        t2 = io.log(f"Corpora download done in {str(io.now() - t1)}")
 
         # 4. Textify Corpus
-        # corpora_manager.textify_corpus(download_corpora_details, textify_corpora_details)
-        # report['message'].append(f"Corpora textification finished in {str(io.now() - t2)}")
-        # t3 = io.log(f"Corpora textification done in {str(io.now() - t2)}")
+        corpora_manager.textify_corpus(download_corpora_details, textify_corpora_details)
+        report['message'].append(f"Corpora textification finished in {str(io.now() - t2)}")
+        t3 = io.log(f"Corpora textification done in {str(io.now() - t2)}")
 
         # 5. Lemmatize Corpus
         corpora_manager.lemmatize_corpora(lemmatization_corpora_details, elastic_connection_details)
-        report['message'].append(f"Corpora lemmatization finished")    # (f"Corpora lemmatization finished in {str(io.now() - t3)}")
-        # io.log(f"Corpora lemmatization done in {str(io.now() - t3)}")
+        report['message'].append(f"Corpora lemmatization finished in {str(io.now() - t3)}")
+        io.log(f"Corpora lemmatization done in {str(io.now() - t3)}")
 
         status_code = 200
     except Exception as ex:

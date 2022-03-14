@@ -34,11 +34,14 @@ class CorporaManager:
         self.textification_details = textification_details
         self.lemmatization_details = lemmatization_details
 
+        # Create folders needed
         os.makedirs(self.download_details.get('json_dir'), exist_ok=True)
-        io.drop_file(self.download_details.get('resource_metadata_file'))
-        io.drop_file(self.lemmatization_details.get('lemmatized_jsonl'))
         os.makedirs(self.download_details.get('corpora_dir'), exist_ok=True)
         os.makedirs(self.textification_details.get('textification_dir'), exist_ok=True)
+        # Delete existing files
+        io.drop_file(self.download_details.get('resource_metadata_file'))
+        io.drop_file(self.lemmatization_details.get('lemmatized_jsonl'))
+        # Create files needed
         with open(self.download_details.get('resource_metadata_file'), 'w+') as outfile:
             outfile.close()
         with open(self.lemmatization_details.get('lemmatized_jsonl'), 'w+') as outfile:
@@ -215,38 +218,39 @@ class CorporaManager:
                         bot = KeywordWorker(self.lemmatization_details).extract(content_file,
                                                                                 rsc_part=part_type,
                                                                                 rsc_lang=rsc_lang).bot
-                        date_time_now = io.now()
-                        date_time_now_str = io.datetime_to_string(date_time_now)
-                        lemmatized_document_dict = {
-                            "rsc_id": rsc_id,
-                            "part_id": str(part_id),
-                            "part_type": part_type,
-                            "timestamp": date_time_now_str,
-                            'terms': bot
-                        }
+                        for dict_lemmatized_term in bot:
+                            date_time_now = io.now()
+                            date_time_now_str = io.datetime_to_string(date_time_now)
+                            lemmatized_document_dict = {
+                                "rsc_id": rsc_id,
+                                "part_id": str(part_id),
+                                "part_type": part_type,
+                                "timestamp": date_time_now_str
+                            }
+                            lemmatized_document_dict = {**lemmatized_document_dict, **dict_lemmatized_term}
 
-                        # Create jsonl with lemmatized corpora
-                        with open(self.lemmatization_details.get('lemmatized_jsonl'), 'a+') as outfile:
-                            json.dump(lemmatized_document_dict, outfile)
-                            outfile.write('\n')
-                            outfile.close()
+                            # Create jsonl with lemmatized corpora
+                            with open(self.lemmatization_details.get('lemmatized_jsonl'), 'a+') as outfile:
+                                json.dump(lemmatized_document_dict, outfile)
+                                outfile.write('\n')
+                                outfile.close()
 
-                        lemmatized_document_dict = {
-                            "rsc_id": rsc_id,
-                            "part_id": str(part_id),
-                            "part_type": part_type,
-                            "timestamp": date_time_now,
-                            'terms': bot
-                        }
+                            lemmatized_document_dict = {
+                                "rsc_id": rsc_id,
+                                "part_id": str(part_id),
+                                "part_type": part_type,
+                                "timestamp": date_time_now
+                            }
+                            lemmatized_document_dict = {**lemmatized_document_dict, **dict_lemmatized_term}
 
-                        # Persist in Elasticsearch lemmatized corpora
-                        str_date = io.now().strftime("%Y%m%d")
-                        elastic_lemmas_index = self.lemmatization_details.get('elastic_lemmas_index') + f"-{str_date}"
-                        self.persistor.persist(index=elastic_lemmas_index,
-                                               content=lemmatized_document_dict)
+                            # Persist in Elasticsearch lemmatized corpora
+                            str_date = io.now().strftime("%Y%m%d")
+                            elastic_lemmas_index = self.lemmatization_details.get('elastic_lemmas_index') + f"-{str_date}"
+                            self.persistor.persist(index=elastic_lemmas_index,
+                                                   content=lemmatized_document_dict)
 
-                        io.log(f"-- The part with id: {part.get('id')} was successfully lemmatized in "
-                               f"{io.now() - t1} --")
+                            io.log(f"-- The part with id: {part.get('id')} was successfully lemmatized in "
+                                   f"{io.now() - t1} --")
                     else:
                         io.log(f"-- Part id: {part_id} already exists in database, lemmatization skipped in "
                                f"{io.now() - t1} --", level="i")
