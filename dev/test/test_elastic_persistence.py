@@ -75,6 +75,8 @@ class ElasticSearchTest(unittest.TestCase):
         Persists in ElasticPersistor a document in a given index.
         :return: self
         """
+
+        json_test = {"reference": "eng_cellar:819291ca-8c1c-11e9-9369-01aa75ed71a1_en", "rsc_id": "ac0f7d3b3cbf3011c7c7f69a1fa13a1a", "lang": "en", "timestamp": io.now(), "rsc_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=cellar:819291ca-8c1c-11e9-9369-01aa75ed71a1", "parts": [{"part_id": "127437452817427058292238049958489191295", "part_type": "body", "reference_link": {"document_type": "pdf", "document_path": "../../camss_sis_corpora\\pdf\\ac0f7d3b3cbf3011c7c7f69a1fa13a1a.pdf", "txt_path": "../../camss_sis_corpora/camss_sis_txt\\body\\127437452817427058292238049958489191295.txt"}}]}
         p: IPersistor = PersistenceFactory().new(crud.ELASTICSEARCH_DETAILS, PersistorType.ELASTIC)
 
         '''
@@ -143,9 +145,9 @@ class ElasticSearchTest(unittest.TestCase):
                           }
 
         str_date = io.now().strftime("%Y%m%d")
-        p.persist(index=f"sis-raw-{str_date}", content=doc_test_lem)
-        p.persist(index=f"sis-lem-{str_date}", content=doc_test_lem_2)
-        p.persist(index=f"sis-metadata-{str_date}", content=doc_test_lem_3)
+        # p.persist(index=f"sis-raw-{str_date}", content=doc_test_lem)
+        # p.persist(index=f"sis-lem-{str_date}", content=doc_test_lem_2)
+        p.persist(index=f"camss-test-{str_date}", content=json_test)
         return
 
     def test_0002_drop(self):

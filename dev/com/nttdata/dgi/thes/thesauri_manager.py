@@ -92,20 +92,28 @@ class ThesauriManager:
         for term in self.concept_details.get('terms'):
             json_terms = {'phrase': term, 'lang': self.concept_details.get('rsc_lang')}
             lemmatizer_response = requests.post(url=self.lemmatization_details.get('endpoint'), json=json_terms)
+
+            # Create jsonl with lemmatized terms
+            date_time_now = io.now()
+            date_time_now_str = io.datetime_to_string(date_time_now)
             lemmatized_document_dict = {
-                "timestamp": date_time_now,
+                "timestamp": date_time_now_str,
                 "term_id": io.hash(term),
                 "term": term,
                 "lemma": json.loads(lemmatizer_response.content)['unaccented-minus-stopwords']
             }
-
-            # Create jsonl with lemmatized terms
             with open(self.concept_details.get('lemmatized_jsonl'), 'a+') as outfile:
                 json.dump(lemmatized_document_dict, outfile)
                 outfile.write('\n')
                 outfile.close()
 
             # Persist in Elasticsearch terms
+            lemmatized_document_dict = {
+                "timestamp": date_time_now,
+                "term_id": io.hash(term),
+                "term": term,
+                "lemma": json.loads(lemmatizer_response.content)['unaccented-minus-stopwords']
+            }
             str_date = io.now().strftime("%Y%m%d")
             elastic_metadata_index = self.concept_details.get('elastic_terms_index') + f"-{str_date}"
             self.persistor.persist(index=elastic_metadata_index,

@@ -85,7 +85,7 @@ PREFERRED_LEMMATIZATION_MODE = "unaccented-minus-stopwords"
 # EIRA THESAURUS DETAILS
 EIRA_THESAURUS_NAME = "eira_thesaurus"
 EIRA_THESAURUS_FILE = EIRA_THESAURUS_NAME + ".rdf"
-TERM_LEMMATIZED_JSON = JSON_DIR + "camss_term_lemmatized.jsonl"
+TERM_LEMMATIZED_JSON = JSON_DIR + "/camss_term_lemmatized.jsonl"
 EIRA_THESAURUS_URL = "https://joinup.ec.europa.eu/sites/default/files/distribution/access_url/2021-03/d72a664c-70ea" \
                      "-4dd7-91ee-3768d44cc079/EIRA_SKOS.rdf"
 EIRA_THESAURUS_DETAILS = {"name": EIRA_THESAURUS_NAME,
@@ -146,7 +146,7 @@ RESOURCE_LEMMATIZED_JSON = JSON_DIR + "/camss_resource_lemmatized.jsonl"
 EURLEX_CORPORA_URL = "https://eur-lex.europa.eu/EURLexWebService"
 PAGE_NUMBER = 1
 RESULTS_NUMBER_BY_PAGE = 10
-MAX_DOWNLOAD_DOCUMENT = 20
+MAX_DOWNLOAD_DOCUMENT = 100
 EURLEX_CORPORA_QUERY_HEADERS = {"content-type": "application/soap+xml"}
 EURLEX_CORPORA_QUERY_BODY = f"""<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:sear="http://eur-lex.europa.eu/search">
     <soap:Header>
