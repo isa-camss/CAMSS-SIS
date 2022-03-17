@@ -26,7 +26,7 @@ class Search:
         self.clear_scroll = True
         return
 
-    def search_elastic(self):
+    def ask_elastic(self):
         # Query to Elasticsearch
         scan(client=Elasticsearch(self.client),
              query=self.query,

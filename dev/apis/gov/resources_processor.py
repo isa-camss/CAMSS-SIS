@@ -51,9 +51,9 @@ def process_corpus() -> (dict, int):
         t3 = io.log(f"Corpora textification done in {str(io.now() - t2)}")
 
         # 5. Lemmatize Corpus
-        corpora_manager.lemmatize_corpora(lemmatization_corpora_details, elastic_connection_details)
-        report['message'].append(f"Corpora lemmatization finished in {str(io.now() - t3)}")
-        io.log(f"Corpora lemmatization done in {str(io.now() - t3)}")
+        # corpora_manager.lemmatize_corpora(lemmatization_corpora_details, elastic_connection_details)
+        # report['message'].append(f"Corpora lemmatization finished in {str(io.now() - t3)}")
+        # io.log(f"Corpora lemmatization done in {str(io.now() - t3)}")
 
         status_code = 200
     except Exception as ex:

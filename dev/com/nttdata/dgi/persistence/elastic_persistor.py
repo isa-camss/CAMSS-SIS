@@ -1,5 +1,6 @@
 from elasticsearch import Elasticsearch
 from com.nttdata.dgi.persistence.persistor import Persistor, PersistorArgumentError
+from elasticsearch.helpers import scan
 
 
 class ElasticPersistorException(ValueError):
@@ -10,11 +11,31 @@ class ElasticPersistor(Persistor):
     persistor_details: dict
     elastic: Elasticsearch
     index: str
+    client: str
+    query: dict
+    scroll: str
+    index = str
+    raise_on_error = True
+    preserve_order = False
+    clear_scroll = True
 
-    def __init__(self, **persistor_details):
+    def __init__(self, **persistor_details,
+                 # elastic_host: str = None,
+                 # elastic_query: dict = None,
+                 # scroll_resources: str = None,
+                 # elastic_index: str = None
+                 ):
         super(ElasticPersistor, self).__init__()
+
         self.persistor_details = persistor_details
         self.__checkers()
+        # self.client = elastic_host
+        # self.query = elastic_query
+        # self.scroll: scroll_resources
+        # self.index = elastic_index
+        # self.raise_on_error = True
+        # self.preserve_order = False
+        # self.clear_scroll = True
         # Defaults to one ES host
         self.elastic = Elasticsearch(self.persistor_details.get("host"))
         return
@@ -126,4 +147,15 @@ class ElasticPersistor(Persistor):
             '''
             p.index(index=index, document=content, id=id_)
 
+        return self
+
+    def ask_elastic(self):
+        # Query to Elasticsearch
+        scan(client=Elasticsearch(self.client),
+             query=self.query,
+             scroll=self.scroll,
+             index=self.index,
+             raise_on_error=self.raise_on_error,
+             preserve_order=self.preserve_order,
+             clear_scroll=self.clear_scroll)
         return self

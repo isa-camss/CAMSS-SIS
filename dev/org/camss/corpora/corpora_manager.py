@@ -92,9 +92,12 @@ class CorporaManager:
                 reference_hash = io.hash(reference)
                 io.log(f"-- {num_documents_download}/{max_documents_download} Processing document "
                        f"reference: {reference} --")
+
                 result_documents = {'reference': reference,
-                                    'reference_hash': reference_hash,
+                                    'rsc_id': reference_hash,
                                     'lang': self.download_details.get('default_lang'),
+                                    'timestamp': io.datetime_to_string(io.now()),
+                                    'rsc_url': "",
                                     'parts': []}
 
                 # Access to the links for each result
@@ -119,35 +122,36 @@ class CorporaManager:
                                                          document_part,
                                                          str(part_hash_int16) + '.txt')
                             io.make_file_dirs(save_txt_path)
-                            document_dict = {'id': str(part_hash_int16),
+                            document_dict = {'part_id': str(part_hash_int16),
                                              'part_type': document_part,
-                                             'timestamp': io.datetime_to_string(io.now()),
-                                             'reference_link': {'document_type': document_type,
-                                                                'document_path': save_document_path,
-                                                                'txt_path': save_txt_path,
-                                                                'document_link': document_link
-                                                                }}
+                                             'part_location': {'document_type': document_type,
+                                                               'document_path': save_document_path,
+                                                               'txt_path': save_txt_path,
+                                                               }}
 
+                            result_documents['rsc_url'] = document_link
                             result_documents['parts'].append(document_dict)
                             io.log(f"---- Processed document part: {document_part} with id: {part_hash_int16} "
                                    f"from reference: {reference} ----")
+
+                            # Create jsonl with resource metadata
+                            with open(self.download_details.get('resource_metadata_file'), 'a+') as outfile:
+                                json.dump(result_documents, outfile)
+                                outfile.write('\n')
+                                outfile.close()
+
+                            # Persist in Elasticsearch resource metadata
+                            str_date = io.now().strftime("%Y%m%d")
+                            elastic_metadata_index = self.download_details.get(
+                                'elastic_metadata_index') + f"-{str_date}"
+                            self.persistor.persist(index=elastic_metadata_index,
+                                                   content=result_documents)
+                            num_documents_download += 1
+
                         except Exception as ex:
                             io.log(f"Error downloading document reference: {reference} with link: {document_link}. "
                                    f"Exception: {ex}", "w")
 
-                # Create jsonl with resource metadata
-                with open(self.download_details.get('resource_metadata_file'), 'a+') as outfile:
-                    json.dump(result_documents, outfile)
-                    outfile.write('\n')
-                    outfile.close()
-
-                # Persist in Elasticsearch resource metadata
-                str_date = io.now().strftime("%Y%m%d")
-                elastic_metadata_index = self.download_details.get('elastic_metadata_index') + f"-{str_date}"
-                self.persistor.persist(index=elastic_metadata_index,
-                                       content=result_documents)
-
-                num_documents_download += 1
             initial_page_number += 1
         return self
 
@@ -168,17 +172,17 @@ class CorporaManager:
                 # iterate each part of the parts (document)
                 for part in resource_dict['parts']:
                     part_type = part.get('part_type')
-                    document_type = part.get('reference_link').get('document_type')
-                    source_path = part.get('reference_link').get('document_path')
-                    target_path = part.get('reference_link').get('txt_path')
+                    document_type = part.get('part_location').get('document_type')
+                    source_path = part.get('part_location').get('document_path')
+                    target_path = part.get('part_location').get('txt_path')
                     if part_type == DocumentPartType.BODY.name.lower():
                         io.log(f"--Processing document with reference: {resource_dict.get('reference')} and part "
-                               f"document id: {part.get('id')}--")
+                               f"document id: {part.get('part_id')}--")
 
                         #  Textify Corpora
                         if document_type not in self.textification_details.get('exclude_extensions_type'):
                             textifier.textify_file(resource_file=source_path, target_file=target_path)
-                            io.log(f"---- The document with id: {part.get('id')} was successfully textified ----")
+                            io.log(f"---- The document with id: {part.get('part_id')} was successfully textified ----")
         return self
 
     def lemmatize_corpora(self, corpora_lemmatization_details: dict, connection_details: dict):
@@ -197,14 +201,14 @@ class CorporaManager:
                 line_value = line.strip()
                 dict_str = line_value.decode("UTF-8")
                 resource_dict = ast.literal_eval(dict_str)
-                rsc_id = resource_dict.get('reference_hash')
+                rsc_id = resource_dict.get('rsc_id')
                 rsc_lang = resource_dict.get('lang')
                 for part in resource_dict['parts']:
                     t1 = io.log(f"-- Processing resource id: {rsc_id}, part: {part.get('part_type')} "
-                                f"with id: {part.get('id')} --")
-                    part_id = part.get('id')
+                                f"with id: {part.get('part_id')} --")
+                    part_id = part.get('part_id')
                     part_type = part.get('part_type')
-                    textified_resource_file = part.get('reference_link').get('txt_path')
+                    textified_resource_file = part.get('part_location').get('txt_path')
                     content_file = io.file_to_str(textified_resource_file)
 
                     # exists, entry_id = self.exists(rsc_id, part_id, part_type)
@@ -245,12 +249,16 @@ class CorporaManager:
 
                             # Persist in Elasticsearch lemmatized corpora
                             str_date = io.now().strftime("%Y%m%d")
-                            elastic_lemmas_index = self.lemmatization_details.get('elastic_lemmas_index') + f"-{str_date}"
+                            elastic_lemmas_index = self.lemmatization_details.get(
+                                'elastic_lemmas_index') + f"-{str_date}"
                             self.persistor.persist(index=elastic_lemmas_index,
                                                    content=lemmatized_document_dict)
 
                             io.log(f"-- The part with id: {part.get('id')} was successfully lemmatized in "
                                    f"{io.now() - t1} --")
+
+                            # Create a register of lemmatized resource
+
                     else:
                         io.log(f"-- Part id: {part_id} already exists in database, lemmatization skipped in "
                                f"{io.now() - t1} --", level="i")
