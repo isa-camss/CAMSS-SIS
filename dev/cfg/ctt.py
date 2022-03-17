@@ -49,10 +49,10 @@ URL_SEARCHER = f'{BASE_URL}/{SEARCH_NAME}/{SEARCHER_SEARCH_ENDPOINT}'
 
 # ARTIFACTS PATH
 ARTIFACTS_DIR = "./arti"
-RDF_DIR = ARTIFACTS_DIR + "/camss_sis_rdf"
-JSON_DIR = ARTIFACTS_DIR + "/camss_sis_json"
-CORPORA_DIR = "../../camss_sis_corpora"
-TEXTIFICATION_DIR = CORPORA_DIR + "/camss_sis_txt"
+RDF_DIR = ARTIFACTS_DIR + "/rdf"
+JSON_DIR = ARTIFACTS_DIR + "/json"
+CORPORA_DIR = "../../corpora"
+TEXTIFICATION_DIR = CORPORA_DIR + "/txt"
 
 # ------------------------------------------- PROJECT LANGUAGES -------------------------------------------
 
@@ -137,8 +137,9 @@ EIRA_CONCEPTS_DETAILS = {"terms": EIRA_ABBS,
 # ------------------------------------------- CORPORA -----------------------------------------------------------------
 CORPORA_DOCUMENT_TYPE = "pdf"
 CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE = ["html", "txt"]
-RESOURCE_METADATA_JSON = JSON_DIR + "/camss_resource_metadata.jsonl"
-RESOURCE_LEMMATIZED_JSON = JSON_DIR + "/camss_resource_lemmatized.jsonl"
+RESOURCE_METADATA_JSON = JSON_DIR + "/camss_rsc_metadata.jsonl"
+RESOURCE_LEMMATIZED_JSON = JSON_DIR + "/camss_rsc_lemmatized.jsonl"
+RESOURCE_PROCESSED_JSON = JSON_DIR + "/camss_rsc_processed.jsonl"
 
 
 # EURLEX CORPORA DETAILS
@@ -246,8 +247,10 @@ MIN_TERM_SIZE = 1
 
 CORPORA_LEMMATIZATION_DETAILS = {
     "elastic_lemmas_index": crud.ELASTICSEARCH_DOCS_LEMMATIZED_INDEX,
+    "elastic_docs_processed_index": crud.ELASTICSEARCH_DOCS_PROCESSED_INDEX,
     "metadata_file": RESOURCE_METADATA_JSON,
-    "lemmatized_jsonl": RESOURCE_LEMMATIZED_JSON,
+    "lemmatized_file": RESOURCE_LEMMATIZED_JSON,
+    "processed_file": RESOURCE_PROCESSED_JSON,
     "corpus_path": TEXTIFICATION_DIR,
     "ops_metadata": "",
     "rsc_metadata": "",

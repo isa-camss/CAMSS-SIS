@@ -1,9 +1,10 @@
 ELASTICSEARCH_HOST = "http://localhost:9200"
 ELASTICSEARCH_USER = None
 ELASTICSEARCH_PASSWORD = None
-ELASTICSEARCH_DOCS_METADATA_INDEX = "camss-eurlex-docs-metadata"
 ELASTICSEARCH_TERMS_LEMMATIZED_INDEX = "camss-eira-terms"
+ELASTICSEARCH_DOCS_METADATA_INDEX = "camss-eurlex-docs-metadata"
 ELASTICSEARCH_DOCS_LEMMATIZED_INDEX = "camss-eurlex-docs-lemmatized"
+ELASTICSEARCH_DOCS_PROCESSED_INDEX = "camss-eurlex-docs-processed"
 
 ELASTICSEARCH_DETAILS = {"host": ELASTICSEARCH_HOST,
                          "user": ELASTICSEARCH_USER,
