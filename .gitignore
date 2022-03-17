@@ -145,4 +145,5 @@ dev/**/*.pkl
 dev/**/*.ttl
 dev/**/*.csv
 dev/**/*.trig
+dev/**/*.jsonl
 
