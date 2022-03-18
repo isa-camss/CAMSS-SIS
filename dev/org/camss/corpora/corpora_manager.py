@@ -158,7 +158,6 @@ class CorporaManager:
                         except Exception as ex:
                             io.log(f"Error downloading document reference: {reference} with link: {document_link}. "
                                    f"Exception: {ex}", "w")
-
             initial_page_number += 1
         return self
 
@@ -209,6 +208,8 @@ class CorporaManager:
                 dict_str = line_value.decode("UTF-8")
                 resource_dict = ast.literal_eval(dict_str)
                 rsc_id = resource_dict.get('rsc_id')
+                rsc_title = resource_dict.get('title')
+                rsc_url = resource_dict.get('rsc_url')
                 rsc_lang = resource_dict.get('lang')
                 for part in resource_dict['parts']:
                     t1 = io.log(f"-- Processing resource id: {rsc_id}, part: {part.get('part_type')} "
@@ -236,6 +237,8 @@ class CorporaManager:
                             # Create jsonl with lemmatized corpora
                             lemmatized_document_dict = {
                                 "rsc_id": rsc_id,
+                                "rsc_title": rsc_title,
+                                "rsc_url": rsc_url,
                                 "part_id": str(part_id),
                                 "part_type": part_type,
                                 "timestamp": date_time_now_str
@@ -248,13 +251,7 @@ class CorporaManager:
                                 outfile.close()
 
                             # Persist in Elasticsearch lemmatized corpora
-                            lemmatized_document_dict = {
-                                "rsc_id": rsc_id,
-                                "part_id": str(part_id),
-                                "part_type": part_type,
-                                "timestamp": date_time_now
-                            }
-                            # lemmatized_document_dict['timestamp'] = date_time_now
+                            lemmatized_document_dict['timestamp'] = date_time_now
                             lemmatized_document_dict = {**lemmatized_document_dict, **dict_lemmatized_term}
 
                             str_date = io.now().strftime("%Y%m%d")
@@ -280,12 +277,7 @@ class CorporaManager:
                             outfile.close()
 
                         # Persist in Elasticsearch processed corpora
-                        processed_document_dict = {
-                            "rsc_id": rsc_id,
-                            "part_id": str(part_id),
-                            "timestamp": date_time_now
-                        }
-                        # processed_document_dict['timestamp'] = date_time_now
+                        processed_document_dict['timestamp'] = date_time_now
                         str_date = io.now().strftime("%Y%m%d")
                         elastic_processed_index = self.lemmatization_details.get(
                             'elastic_docs_processed_index') + f"-{str_date}"
