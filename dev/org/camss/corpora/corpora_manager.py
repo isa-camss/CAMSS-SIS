@@ -92,12 +92,15 @@ class CorporaManager:
             # Extract and generate the identification for each object result
             for result in request_result:
                 reference = result.find('reference').text
+                expression_title = result.find('EXPRESSION_TITLE')
+                title_value = expression_title.find('VALUE').text
                 reference_hash = io.hash(reference)
                 io.log(f"-- {num_documents_download}/{max_documents_download} Processing document "
                        f"reference: {reference} --")
 
                 result_documents = {'reference': reference,
                                     'rsc_id': reference_hash,
+                                    'title': title_value,
                                     'lang': self.download_details.get('default_lang'),
                                     'timestamp': io.datetime_to_string(io.now()),
                                     'rsc_url': "",

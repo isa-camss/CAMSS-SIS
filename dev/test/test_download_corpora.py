@@ -40,22 +40,13 @@ class Corpora(unittest.TestCase):
     def test_004_skip_downloaded_resources(self):
         ask = Search()
         es = Elasticsearch("http://localhost:9200")
-        rsc_id_1 = "fbda9494e112388cda3039ffb0e2204c"
-        rsc_id_2 = "cccbea8ecc38bb0ebf4c4cdf15098920"
-        elastic_index = crud.ELASTICSEARCH_DOCS_LEMMATIZED_INDEX + "*"
-        query = {"query": {"bool": {"must":
-                                        {"match": {"rsc_id.keyword": rsc_id_2}}
-                                    }
-                           }
-                 }
-        rel = scan(client=es,
-                   query=query,
-                   scroll='1m',
-                   index=elastic_index,
-                   raise_on_error=True,
-                   preserve_order=False,
-                   clear_scroll=True)
+        rsc_id_1 = "5e24407a9fe058e62f84046a7d79139a"
+        rsc_id_2 = "3b0aabd7b44bbe11398d30f3518f989d"
+        elastic_index = crud.ELASTICSEARCH_DOCS_PROCESSED_INDEX + "*"
+        query = {"query": {
+            "term": {"rsc_id.keyword": rsc_id_2}}
+        }
+        result = es.count(index=elastic_index, body=query)['count']
 
-        result = list(rel)
         print(result)
         return self
