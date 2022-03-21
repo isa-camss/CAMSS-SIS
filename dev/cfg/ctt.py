@@ -51,7 +51,7 @@ URL_SEARCHER = f'{BASE_URL}/{SEARCH_NAME}/{SEARCHER_SEARCH_ENDPOINT}'
 ARTIFACTS_DIR = "./arti"
 RDF_DIR = ARTIFACTS_DIR + "/rdf"
 JSON_DIR = ARTIFACTS_DIR + "/json"
-CORPORA_DIR = "../../corpora"
+CORPORA_DIR = "../../corpora_sis"
 TEXTIFICATION_DIR = CORPORA_DIR + "/txt"
 
 # ------------------------------------------- PROJECT LANGUAGES -------------------------------------------
@@ -147,7 +147,7 @@ RESOURCE_PROCESSED_JSON = JSON_DIR + "/camss_rsc_processed.jsonl"
 EURLEX_CORPORA_URL = "https://eur-lex.europa.eu/EURLexWebService"
 PAGE_NUMBER = 1
 RESULTS_NUMBER_BY_PAGE = 10
-MAX_DOWNLOAD_DOCUMENT = 100
+MAX_DOWNLOAD_DOCUMENT = 20
 EURLEX_CORPORA_QUERY_HEADERS = {"content-type": "application/soap+xml"}
 EURLEX_CORPORA_QUERY_BODY = f"""<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:sear="http://eur-lex.europa.eu/search">
     <soap:Header>
@@ -299,14 +299,14 @@ EIRA_LEMMAS_THESAURUS_VIRTUOSO_PERSISTENCE_DETAILS = {
 MATCH_TERMS_JSON = JSON_DIR + "/match_terms.jsonl"
 CONCEPTS_TEST = ["public policy", "europe", "binding instrument", "legal act"]
 
-SEARCH_DETAILS = {"eira_concepts": CONCEPTS_TEST,  # EIRA_ABBS
-                  "elastic_query_details": {"client_host": crud.ELASTICSEARCH_HOST,
-                                            'query': queries.ELASTIC_QUERY,
-                                            "elastic_index": crud.ELASTICSEARCH_DOCS_LEMMATIZED_INDEX,
-                                            "scroll": "1m",
-                                            "raise_on_error": True,
-                                            "preserve_order": False,
-                                            "clear_scroll": True
-                                            },
-                  "match_terms_file": MATCH_TERMS_JSON
-                  }
+# SEARCH_DETAILS = {"eira_concepts": CONCEPTS_TEST,  # EIRA_ABBS
+                  # "elastic_query_details": {"client_host": crud.ELASTICSEARCH_HOST,
+                                            # 'query': queries.ELASTIC_QUERY,
+                                            # "elastic_index": crud.ELASTICSEARCH_DOCS_LEMMATIZED_INDEX,
+                                            # "scroll": "1m",
+                                            # "raise_on_error": True,
+                                            # "preserve_order": False,
+                                            # "clear_scroll": True
+                                            # },
+                  # "match_terms_file": MATCH_TERMS_JSON
+                  # }

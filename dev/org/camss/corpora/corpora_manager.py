@@ -150,9 +150,9 @@ class CorporaManager:
                             result_documents['timestamp'] = io.now()
                             str_date = io.now().strftime("%Y%m%d")
                             elastic_metadata_index = self.download_details.get(
-                                'elastic_metadata_index') + f"-{str_date}"
+                                 'elastic_metadata_index') + f"-{str_date}"
                             self.persistor.persist(index=elastic_metadata_index,
-                                                   content=result_documents)
+                                                    content=result_documents)
                             num_documents_download += 1
 
                         except Exception as ex:
@@ -283,11 +283,9 @@ class CorporaManager:
                             'elastic_docs_processed_index') + f"-{str_date}"
                         self.persistor.persist(index=elastic_processed_index,
                                                content=processed_document_dict)
-
                     else:
                         io.log(f"-- Part id: {part_id} already exists in database, lemmatization skipped in "
                                f"{io.now() - t1} --", level="i")
-
 
                 io.log(f"--- The resource id: {rsc_id} was successfully lemmatized in {io.now() - t0} ---")
                 current_line += 1

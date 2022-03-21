@@ -5,11 +5,8 @@
 # Author: SEMBU Team - NTTData Barcelona
 #######################################################
 import unittest
-import com.nttdata.dgi.util.io as io
-from elasticsearch import Elasticsearch
 from elasticsearch.helpers import scan
 import cfg.ctt as ctt
-import pandas as pd
 import json
 
 
@@ -57,7 +54,6 @@ class GetFromElasticTest(unittest.TestCase):
                 outfile.write('\n')
                 outfile.close()
 
-        # df = pd.DataFrame(term_match)
         return self
 
     def tearDown(self) -> None:

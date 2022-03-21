@@ -17,4 +17,5 @@ VIRTUOSO_EIRA_LOAD_RDF_FILE = {
     "password": "dba",
     # "graph": "http://eira.org/",
     "endpoint": "http://localhost:8890/sparql-graph-crud-auth?graph-uri=",
+    "query_endpoint": "http://localhost:8890/sparql"
     }
