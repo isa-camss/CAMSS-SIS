@@ -3,8 +3,9 @@ import unittest
 from SPARQLWrapper import SPARQLWrapper, JSON
 import cfg.ctt as ctt
 import cfg.queries as query
+import cfg.crud as crud
 import json
-
+import com.nttdata.dgi.util.io as io
 
 class GetFromVirtuosoTest(unittest.TestCase):
 
@@ -15,23 +16,30 @@ class GetFromVirtuosoTest(unittest.TestCase):
         return
 
     def test_001_search_lemmatized_concepts_in_virtuoso(self):
-        # query
         legal_query = query.EIRA_LEGAL_ABBS_QUERY
-
-        # Establish connection to virtuoso
-        virtuoso_connection = SPARQLWrapper("http://localhost:8890/sparql")
-
-        # Execute query
+        virtuoso_connection = SPARQLWrapper(crud.VIRTUOSO_EIRA_LOAD_RDF_FILE.get('query_endpoint'))
         virtuoso_connection.setQuery(legal_query)
-
-        # Format results
         virtuoso_connection.setReturnFormat(JSON)
-        qres = virtuoso_connection.query().convert()
+        virtuoso_response = virtuoso_connection.query().convert()
+        results_format = virtuoso_response['results']['bindings']
 
-        return qres
+        abbs_list = []
+        for item_list in results_format:
+            abb_value = item_list.get('Lemma').get('value')
+
+            # Create jsonl with lemmatized terms
+            date_time_now = io.now()
+            date_time_now_str = io.datetime_to_string(date_time_now)
+            lemmatized_document_dict = {
+                "timestamp": date_time_now_str,
+                "term_id": io.hash(abb_value),
+                "lemma": abb_value
+            }
+
+        return self
 
     def tearDown(self) -> None:
-        return
+        return self
 
 
 if __name__ == '__main__':
