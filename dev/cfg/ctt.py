@@ -146,8 +146,8 @@ RESOURCE_PROCESSED_JSON = JSON_DIR + "/camss_rsc_processed.jsonl"
 # EURLEX_DOCUMENT_NAME = "corpora.txt"
 EURLEX_CORPORA_URL = "https://eur-lex.europa.eu/EURLexWebService"
 PAGE_NUMBER = 1
-RESULTS_NUMBER_BY_PAGE = 10
-MAX_DOWNLOAD_DOCUMENT = 100
+RESULTS_NUMBER_BY_PAGE = 1
+MAX_DOWNLOAD_DOCUMENT = 2
 EURLEX_CORPORA_QUERY_HEADERS = {"content-type": "application/soap+xml"}
 EURLEX_CORPORA_QUERY_BODY = f"""<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:sear="http://eur-lex.europa.eu/search">
     <soap:Header>
@@ -217,8 +217,7 @@ SKOS_LEMMATIZER_REQUEST_DETAILS = {
 }
 
 SKOS_MAPPER_DETAILS = {"url": URL_SKOS_LEM,
-                       "body": SKOS_LEMMATIZER_REQUEST_DETAILS
-                       }
+                       "body": SKOS_LEMMATIZER_REQUEST_DETAILS}
 
 """
 Lemmatization provided via a lemmatization service endpoint...

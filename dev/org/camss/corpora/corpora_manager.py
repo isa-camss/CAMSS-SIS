@@ -124,6 +124,7 @@ class CorporaManager:
                             document_part_hash = io.hash(document_part)
                             # part_id: int16(md5(refrence) + md5(b64 contingut) + md5(part_type))
                             part_hash_int16 = io.gen_entry_id((reference_hash, content_hash, document_part_hash))
+                            # TODO: Check exist if part_has_int16 in processed index elastic
                             save_txt_path = os.path.join(self.download_details.get('textification_dir'),
                                                          document_part,
                                                          str(part_hash_int16) + '.txt')
@@ -137,9 +138,6 @@ class CorporaManager:
 
                             result_documents['rsc_url'] = document_link
                             result_documents['parts'].append(document_dict)
-                            io.log(f"---- Processed document part: {document_part} with id: {part_hash_int16} "
-                                   f"from reference: {reference} ----")
-
                             # Create jsonl with resource metadata
                             with open(self.download_details.get('resource_metadata_file'), 'a+') as outfile:
                                 json.dump(result_documents, outfile)
@@ -154,7 +152,8 @@ class CorporaManager:
                             self.persistor.persist(index=elastic_metadata_index,
                                                    content=result_documents)
                             num_documents_download += 1
-
+                            io.log(f"---- Processed document part: {document_part} with id: {part_hash_int16} "
+                                   f"from reference: {reference} ----")
                         except Exception as ex:
                             io.log(f"Error downloading document reference: {reference} with link: {document_link}. "
                                    f"Exception: {ex}", "w")
@@ -175,7 +174,7 @@ class CorporaManager:
                 dict_str = line_value.decode("UTF-8")
                 resource_dict = ast.literal_eval(dict_str)
 
-                # iterate each part of the parts (document)
+                # Iterate each part of the parts (document)
                 for part in resource_dict['parts']:
                     part_type = part.get('part_type')
                     document_type = part.get('part_location').get('document_type')
@@ -187,8 +186,12 @@ class CorporaManager:
 
                         #  Textify Corpora
                         if document_type not in self.textification_details.get('exclude_extensions_type'):
-                            textifier.textify_file(resource_file=source_path, target_file=target_path)
-                            io.log(f"---- The document with id: {part.get('part_id')} was successfully textified ----")
+                            try:
+                                textifier.textify_file(resource_file=source_path, target_file=target_path)
+                                io.log(f"---- The document with id: {part.get('part_id')} was successfully textified ----")
+                            except Exception as ex:
+                                log_message = "Error textify_file. Exception: {ex}"
+                                raise Exception(log_message)
         return self
 
     def lemmatize_corpora(self, corpora_lemmatization_details: dict, connection_details: dict):
@@ -211,6 +214,7 @@ class CorporaManager:
                 rsc_title = resource_dict.get('title')
                 rsc_url = resource_dict.get('rsc_url')
                 rsc_lang = resource_dict.get('lang')
+
                 for part in resource_dict['parts']:
                     t1 = io.log(f"-- Processing resource id: {rsc_id}, part: {part.get('part_type')} "
                                 f"with id: {part.get('part_id')} --")
@@ -219,9 +223,35 @@ class CorporaManager:
                     textified_resource_file = part.get('part_location').get('txt_path')
                     content_file = io.file_to_str(textified_resource_file)
 
-                    # exists, entry_id = self.exists(rsc_id, part_id, part_type)
-                    exists, entry_id = False, part_id
-                    if not exists:
+                    # Check if the resource is already processed
+                    index_processed = self.lemmatization_details.get("elastic_docs_processed_index") + "*"
+                    index_lemmatized = self.lemmatization_details.get("elastic_lemmas_index") + "*"
+                    field_key = "part_id"
+                    exists_processed = self.persistor.ask(index=index_processed,
+                                                          field_key=field_key,
+                                                          field_value=part_id)
+                    if exists_processed:
+                        io.log(f"-- Part id: {part_id} already exists in database, lemmatization skipped in "
+                               f"{io.now() - t1} --", level="i")
+                    else:
+                        """
+                        1. Check if part_id exists in lemmatization index, if True, it means that 
+                        the lemmatization was started but not ended, because the part id doesn't exists in
+                        processed index
+                        """
+                        exists_lemmatized = self.persistor.ask(index=index_lemmatized,
+                                                               field_key=field_key,
+                                                               field_value=part_id)
+                        if exists_lemmatized:
+                            query = {
+                                "query": {
+                                    "match": {
+                                        field_key: part_id}}
+                            }
+                            self.persistor.drop(index=index_lemmatized,
+                                                query=query)
+                            io.log(f"Deleted all documents in '{index_lemmatized}' with part id '{part_id}'")
+
                         '''
                         Analyse the content and keep the tuples (lemma, term, freq). 
                         *** LEMMATIZATION OCCURS HERE ***
@@ -251,6 +281,7 @@ class CorporaManager:
                                 outfile.close()
 
                             # Persist in Elasticsearch lemmatized corpora
+                            # The value of timestamp must be a datetime so elastic can parse its value
                             lemmatized_document_dict['timestamp'] = date_time_now
                             lemmatized_document_dict = {**lemmatized_document_dict, **dict_lemmatized_term}
 
@@ -259,9 +290,6 @@ class CorporaManager:
                                 'elastic_lemmas_index') + f"-{str_date}"
                             self.persistor.persist(index=elastic_lemmas_index,
                                                    content=lemmatized_document_dict)
-
-                            io.log(f"-- The part with id: {part_id.get('id')} was successfully lemmatized in "
-                                   f"{io.now() - t1} --")
 
                         # Create a register of successfully lemmatized resource
                         # Create jsonl with processed corpora
@@ -284,9 +312,8 @@ class CorporaManager:
                         self.persistor.persist(index=elastic_processed_index,
                                                content=processed_document_dict)
 
-                    else:
-                        io.log(f"-- Part id: {part_id} already exists in database, lemmatization skipped in "
-                               f"{io.now() - t1} --", level="i")
+                        io.log(f"-- The part with id: {part_id} was successfully lemmatized in "
+                               f"{io.now() - t1} --")
 
                 io.log(f"--- The resource id: {rsc_id} was successfully lemmatized in {io.now() - t0} ---")
                 current_line += 1
