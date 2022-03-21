@@ -288,6 +288,7 @@ class CorporaManager:
                         io.log(f"-- Part id: {part_id} already exists in database, lemmatization skipped in "
                                f"{io.now() - t1} --", level="i")
 
+
                 io.log(f"--- The resource id: {rsc_id} was successfully lemmatized in {io.now() - t0} ---")
                 current_line += 1
         return self
