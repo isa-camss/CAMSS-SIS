@@ -56,10 +56,9 @@ class Corpora(unittest.TestCase):
 
         persistor = PersistenceFactory().new(persistor_type=PersistorType.ELASTIC,
                                              persistor_details=crud.ELASTICSEARCH_DETAILS)
-        bool_exist = persistor.ask(index=elastic_index,
-                                   field_key="rsc_id",
-                                   field_value=rsc_id_3)
-        print(result)
+        query = {"query": {"match": {"part_id": rsc_id_3}}}
+        bool_exist = persistor.ask(index=elastic_index, query=query)
+        print(bool_exist)
 
         query_2 = {
             "query": {

@@ -182,6 +182,7 @@ DOWNLOAD_CORPORA_DETAILS = {"eurlex_details": EURLEX_COPORA_DETAILS,
                             "json_dir": JSON_DIR,
                             "corpora_dir": CORPORA_DIR,
                             "elastic_metadata_index": crud.ELASTICSEARCH_DOCS_METADATA_INDEX,
+                            "elastic_docs_processed_index": crud.ELASTICSEARCH_DOCS_PROCESSED_INDEX,
                             "resource_metadata_file": RESOURCE_METADATA_JSON,
                             "textification_dir": TEXTIFICATION_DIR
                             }

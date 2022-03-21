@@ -15,6 +15,9 @@ import pathlib as pl
 import unidecode
 import glob
 from tika import parser, language
+from com.nttdata.dgi.persistence.persistor_type import PersistorType
+from com.nttdata.dgi.persistence.persistence_factory import PersistenceFactory
+from com.nttdata.dgi.persistence.ipersistor import IPersistor
 
 
 def datetime_to_string(datetime_to_parse: datetime):
@@ -98,12 +101,43 @@ def log(message: str, level: str = None, condition: bool = True, logger: logging
     """
     if condition:
         _logger = logging.getLogger() if not logger else logger
-        if _logger.level == logging.getLevelName('INFO') or level == 'i':
-            _logger.info(message)
-        elif _logger.level == logging.getLevelName('WARNING') or level == 'w':
+        log_level = level if level else 'i'
+        log_dict = {"timestamp": now(), "log_type": log_level, "log_message": message}
+        persistor = PersistenceFactory().new(persistor_type=PersistorType.ELASTIC,
+                                             persistor_details={"host": "http://localhost:9200"})
+        str_date = now().strftime("%Y%m%d")
+        elastic_index = f"logs-{str_date}"
+
+        if _logger.level == logging.getLevelName('WARNING') or level == 'w':
             _logger.warning(message)
         elif _logger.level == logging.getLevelName('ERROR') or level == 'e':
             _logger.error(message)
+        else:
+            _logger.info(message)
+        persistor.persist(index=elastic_index, content=log_dict)
+    return now()
+
+
+def elog(message: str, index: str, level: str = None, condition: bool = True) -> datetime:
+    """
+    Logs a message
+    :param message: the text to print and log
+    :param level: info, warning or error
+    :param condition: skips the job if a specified condition is not met
+    :param logger: the logger used to print and save the execution events
+    @rtype: object
+    """
+    if condition:
+        log_level = level if level else 'i'
+        persistor = PersistenceFactory().new(persistor_type=PersistorType.ELASTIC,
+                                             persistor_details={"host": "http://localhost:9200"})
+        log_dict = {
+            "timestamp": now(),
+            "log_type": log_level,
+            "log_message": message
+        }
+        persistor.persist(index=index, content=log_dict)
+
     return now()
 
 

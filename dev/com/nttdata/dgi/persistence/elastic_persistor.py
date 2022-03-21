@@ -155,16 +155,16 @@ class ElasticPersistor(Persistor):
 
         1. The url of the ElasticPersistor host has been provided via the constructor
         2. If no argument -> Exception is raised
-        3. If only two argument -> the expected parameters are field key and the field value and the default index is
+        3. If only one argument -> the expected parameters is query and the default index is
             used, if it has been provided at construction time, otherwise an Exception is raised
-        4. The recommended option is to pass the index, the field key and the field value as named arguments in kwarg
+        4. The recommended option is to pass the index and the query value as named arguments in kwarg
 
         Usage:
             ask(field_key: str, field_value: str)     # The default index provided in the constructor is used
             ask(index="index-name", field_key="field_key_elastic", field_value="field_value_elastic")
         Example:
-            ask("rsc_id", "12123")
-            ask(index="camss*", field_key="rsc_id", field_value="12123")
+            ask("elastic-query")
+            ask(index="camss*", query="elastic-query")
         :return: bool
         """
 
@@ -177,16 +177,11 @@ class ElasticPersistor(Persistor):
         ''' 
         If args but no kwargs, args are taken, obviously, otherwise ... 
         '''
-        if args and len(args) == 2 and not kwargs:
+        if args and len(args) == 1 and not kwargs:
             if not self.index:
                 self.__exception_no_index()
 
-            query = {
-                "query": {
-                    "term": {f"{args[0]}": f"{args[1]}"}
-                }
-            }
-            num_occurrences = p.count(index=self.index, body=query).get('count')
+            num_occurrences = p.count(index=self.index, body=args[0]).get('count')
             if num_occurrences > 0:
                 ask_exists = True
             else:
@@ -203,22 +198,12 @@ class ElasticPersistor(Persistor):
             if not index:
                 self.__exception_no_index()
             '''
-            2. Prepare the ask query
+            2. Execute ask query
             '''
-            field_key = kwargs.get('field_key')
-            field_value = kwargs.get('field_value')
-
-            query = {
-                "query": {
-                    "term": {f"{field_key}": f"{field_value}"}
-                }
-            }
-            '''
-            3. Execute ask query
-            '''
+            query = kwargs.get('query')
             num_occurrences = p.count(index=index, body=query).get('count')
             '''
-            4. Check if occurrences are higher then 0
+            3. Check if occurrences are higher then 0
             '''
             if num_occurrences > 0:
                 ask_exists = True

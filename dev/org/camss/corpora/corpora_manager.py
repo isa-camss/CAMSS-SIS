@@ -98,14 +98,6 @@ class CorporaManager:
                 io.log(f"-- {num_documents_download}/{max_documents_download} Processing document "
                        f"reference: {reference} --")
 
-                result_documents = {'reference': reference,
-                                    'rsc_id': reference_hash,
-                                    'title': title_value,
-                                    'lang': self.download_details.get('default_lang'),
-                                    'timestamp': io.datetime_to_string(io.now()),
-                                    'rsc_url': "",
-                                    'parts': []}
-
                 # Access to the links for each result
                 for document in result.find_all('document_link'):
                     document_type = document['type'].lower()
@@ -124,36 +116,60 @@ class CorporaManager:
                             document_part_hash = io.hash(document_part)
                             # part_id: int16(md5(refrence) + md5(b64 contingut) + md5(part_type))
                             part_hash_int16 = io.gen_entry_id((reference_hash, content_hash, document_part_hash))
-                            # TODO: Check exist if part_has_int16 in processed index elastic
-                            save_txt_path = os.path.join(self.download_details.get('textification_dir'),
-                                                         document_part,
-                                                         str(part_hash_int16) + '.txt')
-                            io.make_file_dirs(save_txt_path)
-                            document_dict = {'part_id': str(part_hash_int16),
-                                             'part_type': document_part,
-                                             'part_location': {'document_type': document_type,
-                                                               'document_path': save_document_path,
-                                                               'txt_path': save_txt_path,
-                                                               }}
+                            index_processed = self.download_details.get("elastic_docs_processed_index") + "*"
+                            query = {"query": {"term": {"part_id": f"{part_hash_int16}"}}}
+                            exists_processed = self.persistor.ask(index=index_processed, query=query)
+                            if exists_processed:
+                                io.log(f"Skipping download resource part '{part_hash_int16}' "
+                                       f"from resource '{reference_hash}' because it already exists in "
+                                       f"index '{index_processed}'")
+                            else:
+                                save_txt_path = os.path.join(self.download_details.get('textification_dir'),
+                                                             document_part,
+                                                             str(part_hash_int16) + '.txt')
+                                io.make_file_dirs(save_txt_path)
+                                result_documents = {'reference': reference,
+                                                    'rsc_id': reference_hash,
+                                                    'title': title_value,
+                                                    'lang': self.download_details.get('default_lang'),
+                                                    'timestamp': io.datetime_to_string(io.now()),
+                                                    'rsc_url': document_link,
+                                                    'part_id': str(part_hash_int16),
+                                                    'part_type': document_part,
+                                                    'part_location': {'document_type': document_type,
+                                                                      'document_path': save_document_path,
+                                                                      'txt_path': save_txt_path,
+                                                                      }
+                                                    }
 
-                            result_documents['rsc_url'] = document_link
-                            result_documents['parts'].append(document_dict)
-                            # Create jsonl with resource metadata
-                            with open(self.download_details.get('resource_metadata_file'), 'a+') as outfile:
-                                json.dump(result_documents, outfile)
-                                outfile.write('\n')
-                                outfile.close()
+                                # Create jsonl with resource metadata
+                                with open(self.download_details.get('resource_metadata_file'), 'a+') as outfile:
+                                    json.dump(result_documents, outfile)
+                                    outfile.write('\n')
+                                    outfile.close()
 
-                            # Persist in Elasticsearch resource metadata
-                            result_documents['timestamp'] = io.now()
-                            str_date = io.now().strftime("%Y%m%d")
-                            elastic_metadata_index = self.download_details.get(
-                                'elastic_metadata_index') + f"-{str_date}"
-                            self.persistor.persist(index=elastic_metadata_index,
-                                                   content=result_documents)
-                            num_documents_download += 1
-                            io.log(f"---- Processed document part: {document_part} with id: {part_hash_int16} "
-                                   f"from reference: {reference} ----")
+                                query = {"query": {
+                                    "bool": {"must": [
+                                        {"term": {"rsc_id": f"{reference_hash}"}},
+                                        {"term": {"part_id": f"{part_hash_int16}"}}]}}}
+
+                                index_exist_metadata = self.download_details.get('elastic_metadata_index') + "*"
+                                exists_metadata = self.persistor.ask(index=index_exist_metadata, query=query)
+
+                                if exists_metadata:
+                                    io.log(f"Metadata from resource part '{part_hash_int16}' not persisted because it"
+                                           f"already exists in index: {index_exist_metadata}.")
+                                else:
+                                    # Persist in Elasticsearch resource metadata
+                                    result_documents['timestamp'] = io.now()
+                                    str_date = io.now().strftime("%Y%m%d")
+                                    elastic_metadata_index = self.download_details.get('elastic_metadata_index') + \
+                                                             f"-{str_date}"
+                                    self.persistor.persist(index=elastic_metadata_index,
+                                                           content=result_documents)
+                                    num_documents_download += 1
+                                io.log(f"---- Processed document part: {document_part} with id: {part_hash_int16} "
+                                       f"from reference: {reference} ----")
                         except Exception as ex:
                             io.log(f"Error downloading document reference: {reference} with link: {document_link}. "
                                    f"Exception: {ex}", "w")
@@ -173,25 +189,22 @@ class CorporaManager:
                 line_value = line.strip()
                 dict_str = line_value.decode("UTF-8")
                 resource_dict = ast.literal_eval(dict_str)
-
-                # Iterate each part of the parts (document)
-                for part in resource_dict['parts']:
-                    part_type = part.get('part_type')
-                    document_type = part.get('part_location').get('document_type')
-                    source_path = part.get('part_location').get('document_path')
-                    target_path = part.get('part_location').get('txt_path')
-                    if part_type == DocumentPartType.BODY.name.lower():
-                        io.log(f"--Processing document with reference: {resource_dict.get('reference')} and part "
-                               f"document id: {part.get('part_id')}--")
-
-                        #  Textify Corpora
-                        if document_type not in self.textification_details.get('exclude_extensions_type'):
-                            try:
-                                textifier.textify_file(resource_file=source_path, target_file=target_path)
-                                io.log(f"---- The document with id: {part.get('part_id')} was successfully textified ----")
-                            except Exception as ex:
-                                log_message = "Error textify_file. Exception: {ex}"
-                                raise Exception(log_message)
+                part_type = resource_dict.get('part_type')
+                part_id = resource_dict.get('part_id')
+                document_type = resource_dict.get('part_location').get('document_type')
+                source_path = resource_dict.get('part_location').get('document_path')
+                target_path = resource_dict.get('part_location').get('txt_path')
+                if part_type == DocumentPartType.BODY.name.lower():
+                    io.log(f"-- Processing document with reference: {resource_dict.get('reference')} and part "
+                           f"document id: {part_id}--")
+                    #  Textify Corpora
+                    if document_type not in self.textification_details.get('exclude_extensions_type'):
+                        try:
+                            textifier.textify_file(resource_file=source_path, target_file=target_path)
+                            io.log(f"---- The document with id: {part_id} was successfully textified ----")
+                        except Exception as ex:
+                            log_message = f"Error textify_file. Exception: {ex}"
+                            raise Exception(log_message)
         return self
 
     def lemmatize_corpora(self, corpora_lemmatization_details: dict, connection_details: dict):
@@ -214,82 +227,73 @@ class CorporaManager:
                 rsc_title = resource_dict.get('title')
                 rsc_url = resource_dict.get('rsc_url')
                 rsc_lang = resource_dict.get('lang')
+                part_id = resource_dict.get('part_id')
+                part_type = resource_dict.get('part_type')
 
-                for part in resource_dict['parts']:
-                    t1 = io.log(f"-- Processing resource id: {rsc_id}, part: {part.get('part_type')} "
-                                f"with id: {part.get('part_id')} --")
-                    part_id = part.get('part_id')
-                    part_type = part.get('part_type')
-                    textified_resource_file = part.get('part_location').get('txt_path')
-                    content_file = io.file_to_str(textified_resource_file)
+                t1 = io.log(f"-- Processing resource id: {rsc_id}, part: {part_type} with id: {part_id} --")
+                textified_resource_file = resource_dict.get('part_location').get('txt_path')
+                content_file = io.file_to_str(textified_resource_file)
 
-                    # Check if the resource is already processed
-                    index_processed = self.lemmatization_details.get("elastic_docs_processed_index") + "*"
-                    index_lemmatized = self.lemmatization_details.get("elastic_lemmas_index") + "*"
-                    field_key = "part_id"
-                    exists_processed = self.persistor.ask(index=index_processed,
-                                                          field_key=field_key,
-                                                          field_value=part_id)
-                    if exists_processed:
-                        io.log(f"-- Part id: {part_id} already exists in database, lemmatization skipped in "
-                               f"{io.now() - t1} --", level="i")
-                    else:
-                        """
-                        1. Check if part_id exists in lemmatization index, if True, it means that 
-                        the lemmatization was started but not ended, because the part id doesn't exists in
-                        processed index
-                        """
-                        exists_lemmatized = self.persistor.ask(index=index_lemmatized,
-                                                               field_key=field_key,
-                                                               field_value=part_id)
-                        if exists_lemmatized:
-                            query = {
-                                "query": {
-                                    "match": {
-                                        field_key: part_id}}
-                            }
-                            self.persistor.drop(index=index_lemmatized,
-                                                query=query)
-                            io.log(f"Deleted all documents in '{index_lemmatized}' with part id '{part_id}'")
+                # Check if the resource is already processed
+                index_processed = self.lemmatization_details.get("elastic_docs_processed_index") + "*"
+                index_lemmatized = self.lemmatization_details.get("elastic_lemmas_index") + "*"
+                query = {"query": {"term": {"part_id": f"{part_id}"}}}
+                exists_processed = self.persistor.ask(index=index_processed, query=query)
+                if exists_processed:
+                    io.log(f"-- Part id: {part_id} already exists in database, lemmatization skipped in "
+                            f"{io.now() - t1} --", level="i")
+                else:
+                    """
+                    1. Check if part_id exists in lemmatization index, if True, it means that 
+                    the lemmatization was started but not ended, because the part id doesn't exists in
+                    processed index
+                    """
+                    query = {"query": {"term": {"part_id": f"{part_id}"}}}
+                    exists_lemmatized = self.persistor.ask(index=index_lemmatized, query=query)
 
-                        '''
-                        Analyse the content and keep the tuples (lemma, term, freq). 
-                        *** LEMMATIZATION OCCURS HERE ***
-                        '''
+                    if exists_lemmatized:
+                        query = {"query": {"match": {"part_id": part_id}}}
+                        self.persistor.drop(index=index_lemmatized, query=query)
+                        io.log(f"Deleted all documents in '{index_lemmatized}' with part id '{part_id}'")
 
-                        bot = KeywordWorker(self.lemmatization_details).extract(content_file,
-                                                                                rsc_part=part_type,
-                                                                                rsc_lang=rsc_lang).bot
-                        for dict_lemmatized_term in bot:
-                            date_time_now = io.now()
-                            date_time_now_str = io.datetime_to_string(date_time_now)
+                    '''
+                    Analyse the content and keep the tuples (lemma, term, freq). 
+                    *** LEMMATIZATION OCCURS HERE ***
+                    '''
 
-                            # Create jsonl with lemmatized corpora
-                            lemmatized_document_dict = {
-                                "rsc_id": rsc_id,
-                                "rsc_title": rsc_title,
-                                "rsc_url": rsc_url,
-                                "part_id": str(part_id),
-                                "part_type": part_type,
-                                "timestamp": date_time_now_str
-                            }
-                            lemmatized_document_dict = {**lemmatized_document_dict, **dict_lemmatized_term}
+                    bot = KeywordWorker(self.lemmatization_details).extract(content_file,
+                                                                            rsc_part=part_type,
+                                                                            rsc_lang=rsc_lang).bot
+                    for dict_lemmatized_term in bot:
+                        date_time_now = io.now()
+                        date_time_now_str = io.datetime_to_string(date_time_now)
 
-                            with open(self.lemmatization_details.get('lemmatized_file'), 'a+') as outfile:
-                                json.dump(lemmatized_document_dict, outfile)
-                                outfile.write('\n')
-                                outfile.close()
+                        # Create jsonl with lemmatized corpora
+                        lemmatized_document_dict = {
+                            "rsc_id": rsc_id,
+                            "rsc_title": rsc_title,
+                            "rsc_url": rsc_url,
+                            "part_id": str(part_id),
+                            "part_type": part_type,
+                            "timestamp": date_time_now_str
+                        }
+                        lemmatized_document_dict = {**lemmatized_document_dict, **dict_lemmatized_term}
 
-                            # Persist in Elasticsearch lemmatized corpora
-                            # The value of timestamp must be a datetime so elastic can parse its value
-                            lemmatized_document_dict['timestamp'] = date_time_now
-                            lemmatized_document_dict = {**lemmatized_document_dict, **dict_lemmatized_term}
+                        with open(self.lemmatization_details.get('lemmatized_file'), 'a+') as outfile:
+                            json.dump(lemmatized_document_dict, outfile)
+                            outfile.write('\n')
+                            outfile.close()
 
-                            str_date = io.now().strftime("%Y%m%d")
-                            elastic_lemmas_index = self.lemmatization_details.get(
-                                'elastic_lemmas_index') + f"-{str_date}"
-                            self.persistor.persist(index=elastic_lemmas_index,
-                                                   content=lemmatized_document_dict)
+                        # Persist in Elasticsearch lemmatized corpora
+                        # The value of timestamp must be a datetime so elastic can parse its value
+                        lemmatized_document_dict['timestamp'] = date_time_now
+                        lemmatized_document_dict = {**lemmatized_document_dict, **dict_lemmatized_term}
+
+                        str_date = io.now().strftime("%Y%m%d")
+                        elastic_lemmas_index = self.lemmatization_details.get(
+                            'elastic_lemmas_index') + f"-{str_date}"
+                        self.persistor.persist(index=elastic_lemmas_index,
+                                               content=lemmatized_document_dict)
 
                         # Create a register of successfully lemmatized resource
                         # Create jsonl with processed corpora
