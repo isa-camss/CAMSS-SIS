@@ -1,9 +1,6 @@
 import unittest
-from com.nttdata.dgi.io.textify.textify import Textifier
 import cfg.ctt as ctt
 import com.nttdata.dgi.util.io as io
-import os
-import json
 import ast
 
 

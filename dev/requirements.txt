@@ -16,6 +16,8 @@ cymem==2.0.6
 cytoolz==0.11.2
 debugpy==1.5.1
 decorator==5.1.1
+elastic-transport==8.0.1
+elasticsearch==8.0.0
 en-core-web-lg @ https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.2.0/en_core_web_lg-3.2.0-py3-none-any.whl
 entrypoints==0.4
 executing==0.8.2

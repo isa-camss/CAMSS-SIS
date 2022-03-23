@@ -22,3 +22,6 @@ class Persistor (IPersistor):
 
     def select(self, *args, **kwargs):
         return self
+
+    def ask(self, *args, **kwargs):
+        return self

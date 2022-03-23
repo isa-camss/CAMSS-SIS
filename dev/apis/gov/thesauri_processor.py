@@ -24,16 +24,23 @@ def process_thesauri() -> (dict, int):
         # SKOS Lemmatizer variables
         skos_lemmatizer_details = ctt.SKOS_MAPPER_DETAILS
 
+        # Lematization variables
+        eira_terms_details = ctt.EIRA_CONCEPTS_DETAILS
+        lemmatization_details = ctt.LEMMATIZATION_DETAILS
+
         # Persistor variables
         virtuoso_connection_details = crud.VIRTUOSO_EIRA_LOAD_RDF_FILE
         eira_thesaurus_persistor_details = ctt.EIRA_THESAURUS_VIRTUOSO_PERSISTENCE_DETAILS
         eira_thesaurus_lemma_persistor_details = ctt.EIRA_LEMMAS_THESAURUS_VIRTUOSO_PERSISTENCE_DETAILS
+        elastic_connection_details = crud.ELASTICSEARCH_DETAILS
 
         # 1. Create ThesaurusManager
         thesauri_manager = ThesauriManager()
 
         # 2. Prepare all process folders/files
-        thesauri_manager.prepare_thesauri_folders(download_thesauri_details, skos_lemmatizer_details)
+        thesauri_manager.prepare_thesauri_folders(download_thesauri_details,
+                                                  skos_lemmatizer_details,
+                                                  eira_terms_details)
         report['message'].append(f"Thesauri folders preparation finished in {str(io.now() - t0)}")
         t1 = io.log(f"Thesauri configuration done in {str(io.now() - t0)}")
 
@@ -43,9 +50,9 @@ def process_thesauri() -> (dict, int):
         t2 = io.log(f"Thesauri download done in {str(io.now() - t1)}")
 
         # 4. SKOS Lemmatizer of downloaded Thesaurus
-        thesauri_manager.analyse(skos_lemmatizer_details)
-        # report['message'].append(f"Thesauri lemmatization finished in {str(io.now() - t2)}")
-        # t3 = io.log(f"Thesauri lemmatization done in {str(io.now() - t2)}")
+        thesauri_manager.analyse_thesauri(skos_lemmatizer_details)
+        report['message'].append(f"Thesauri lemmatization finished in {str(io.now() - t2)}")
+        t3 = io.log(f"Thesauri lemmatization done in {str(io.now() - t2)}")
 
         # 5. Persist original Thesaurus in Virtuoso
         thesauri_manager.persist_thesauri(virtuoso_connection_details,
@@ -58,9 +65,16 @@ def process_thesauri() -> (dict, int):
                                           eira_thesaurus_lemma_persistor_details)
 
         report = io.merge_dicts([report, thesauri_manager.persistor.report])
-        # report['message'].append(f"Persistence finished in {str(io.now() - t3)}")
-        # io.log(f"Thesauri persistence done in {str(io.now() - t3)}")
+        report['message'].append(f"Persistence finished in {str(io.now() - t3)}")
+        t4 = io.log(f"Thesauri persistence done in {str(io.now() - t3)}")
+
+        # 7. Lemmatize EIRA terms
+        thesauri_manager.lemmatize_terms(eira_terms_details, elastic_connection_details, lemmatization_details)
+        report['message'].append(f"Terms lemmatization finished in {str(io.now() - t4)}")
+        io.log(f"Terms lemmatization done in {str(io.now() - t4)}")
+
         status_code = 200
+
     except Exception as ex:
         status_code = 555
         exception_message = f"Exception: {ex}"

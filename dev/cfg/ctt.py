@@ -1,5 +1,6 @@
 import cfg.credentials as cred
 import cfg.queries as queries
+import cfg.crud as crud
 
 # PROJECT CONFIG
 PROJECT_NAME = 'camss-sis'
@@ -53,14 +54,13 @@ JSON_DIR = ARTIFACTS_DIR + "/json"
 CORPORA_DIR = "../../corpora"
 TEXTIFICATION_DIR = CORPORA_DIR + "/txt"
 
-
 # ------------------------------------------- PROJECT LANGUAGES -------------------------------------------
 
 # The default language needs to be set compulsorily. Basic functionality would not work without it (e.g.,
 # Taxonomy lemmatization, amongst other).
 DEFAULT_LANGUAGE = "en"
 
-# ------------------------------------------- THESAURUS ---------------------------------------------------------------
+# ------------------------------------------- LANGUAGE MODELS ----------------------------------------------------
 # Default four language models
 MAIN_DEFAULT_LANGUAGE_MODEL = {"en": "en_core_web_lg"}
 
@@ -68,6 +68,7 @@ DEFAULT_LANGUAGE_MODELS = {"en": "en_core_web_lg"}
 
 # The languages allowed for a specific project
 PROJECT_LANGUAGES = ["en"]
+DEFAULT_LANG = "en"
 
 # The lemmatizer returns four possible combinations of modes. The options are:
 # accented-minus-stopwords,
@@ -80,27 +81,73 @@ PROJECT_LANGUAGES = ["en"]
 PREFERRED_LEMMATIZATION_MODE = "unaccented-minus-stopwords"
 
 # ------------------------------------------- THESAURUS ---------------------------------------------------------------
+# EIRA ------------------------
 # EIRA THESAURUS DETAILS
 EIRA_THESAURUS_NAME = "eira_thesaurus"
 EIRA_THESAURUS_FILE = EIRA_THESAURUS_NAME + ".rdf"
+TERM_LEMMATIZED_JSON = JSON_DIR + "/camss_term_lemmatized.jsonl"
 EIRA_THESAURUS_URL = "https://joinup.ec.europa.eu/sites/default/files/distribution/access_url/2021-03/d72a664c-70ea" \
                      "-4dd7-91ee-3768d44cc079/EIRA_SKOS.rdf"
 EIRA_THESAURUS_DETAILS = {"name": EIRA_THESAURUS_NAME,
                           "url": EIRA_THESAURUS_URL,
-                          "path": RDF_DIR + "/" + EIRA_THESAURUS_FILE}
+                          "path": RDF_DIR + "/" + EIRA_THESAURUS_FILE
+                          }
+# ABBS PER EIRA VIEW
+EIRA_LEGAL_SPECIFICATIONS = ["public policy", "interoperable digital public services implementation",
+                             "public policy cycle", "binding instrument", "non-binding instrument", "legal act",
+                             "legislation catalogue", "legal interoperability agreement",
+                             "legislation on data information and knowledge exchange", "legal authority",
+                             "shared legal framework", "legal agreements", "international treaties"
+                             ]
 
+EIRA_ORGANISATIONAL_SPECIFICATIONS = ["interoperability strategy", "interoperability framework",
+                                      "interoperability governance", "interoperability organisation authority",
+                                      "interoperability skill", "organisational interoperability agreement",
+                                      "public service provider", "exchange of business information"]
+
+EIRA_SEMANTIC_SPECIFICATIONS = ["data policy", "representation", "data set catalogue", "data set", "data",
+                                "descriptive metada policy", "master data policy", "open data policy",
+                                "base registry data policy", "data portability policy", "reference data policy",
+                                "data entity", "core data model", "data syntax", "data model", "controlled vocabulary",
+                                "shared knowledge base", "data mapping", "ontologies catalogue", "ontology",
+                                "data owner", "semantic interoperability agreement", "data mapping",
+                                "data mapping catalogue", "semantic agreement", "security policy", "privacy policy"
+                                ]
+
+EIRA_TECHNICAL_SPECIFICATIONS = ["machine to machine interface", "human interface",
+                                 "interoperable european solution service", "interoperable european solution component",
+                                 "access management service", "access management component", "audit service",
+                                 "audit component", "interoperable european solution", "data transformation service",
+                                 "data transformation component", "data validation service",
+                                 "data validation component", "service discovery service",
+                                 "service discovery component", "orchestration service", "orchestration component",
+                                 "technical specification", "technical interoperability agreement", "shared platform",
+                                 "conformance testing service", "conformance testing component",
+                                 "conformance test report", "conformance test scenario", "technical agreement"
+                                 ]
+CAMSS_SIS_DISCOVERIES = ["interoperability certificate"]
+
+EIRA_ABBS = EIRA_LEGAL_SPECIFICATIONS + EIRA_ORGANISATIONAL_SPECIFICATIONS + CAMSS_SIS_DISCOVERIES
+EIRA_CONCEPTS_DETAILS = {"terms": EIRA_ABBS,
+                         "rsc_lang": DEFAULT_LANG,
+                         "elastic_terms_index": crud.ELASTICSEARCH_TERMS_LEMMATIZED_INDEX,
+                         "json_dir": JSON_DIR,
+                         "lemmatized_jsonl": TERM_LEMMATIZED_JSON
+                         }
 # ------------------------------------------- CORPORA -----------------------------------------------------------------
 CORPORA_DOCUMENT_TYPE = "pdf"
 CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE = ["html", "txt"]
-RESOURCE_METADATA_JSON = JSON_DIR + "/resource_metadata.jsonl"
-RESOURCE_LEMMATIZED_JSON = JSON_DIR + "/resource_lemmatized.jsonl"
+RESOURCE_METADATA_JSON = JSON_DIR + "/camss_rsc_metadata.jsonl"
+RESOURCE_LEMMATIZED_JSON = JSON_DIR + "/camss_rsc_lemmatized.jsonl"
+RESOURCE_PROCESSED_JSON = JSON_DIR + "/camss_rsc_processed.jsonl"
+
 
 # EURLEX CORPORA DETAILS
 # EURLEX_DOCUMENT_NAME = "corpora.txt"
 EURLEX_CORPORA_URL = "https://eur-lex.europa.eu/EURLexWebService"
 PAGE_NUMBER = 1
-RESULTS_NUMBER_BY_PAGE = 10
-MAX_DOWNLOAD_DOCUMENT = 20
+RESULTS_NUMBER_BY_PAGE = 1
+MAX_DOWNLOAD_DOCUMENT = 2
 EURLEX_CORPORA_QUERY_HEADERS = {"content-type": "application/soap+xml"}
 EURLEX_CORPORA_QUERY_BODY = f"""<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope" xmlns:sear="http://eur-lex.europa.eu/search">
     <soap:Header>
@@ -134,6 +181,8 @@ DOWNLOAD_CORPORA_DETAILS = {"eurlex_details": EURLEX_COPORA_DETAILS,
                             "download_types": CORPORA_DOCUMENT_TYPE,
                             "json_dir": JSON_DIR,
                             "corpora_dir": CORPORA_DIR,
+                            "elastic_metadata_index": crud.ELASTICSEARCH_DOCS_METADATA_INDEX,
+                            "elastic_docs_processed_index": crud.ELASTICSEARCH_DOCS_PROCESSED_INDEX,
                             "resource_metadata_file": RESOURCE_METADATA_JSON,
                             "textification_dir": TEXTIFICATION_DIR
                             }
@@ -143,8 +192,8 @@ TEXTIFICATION_CORPORA_DETAILS = {"corpus_dir": CORPORA_DIR,
                                  "exclude_extensions_type": CORPORA_EXCLUDE_TEXTIFICATION_DOCUMENT_TYPE,
                                  "textification_lang": True}
 # ------------------------------------------- LEMMATIZATION ----------------------------------------------------------
+# THESAURUS LEMMATIZATION -------------------
 # EIRA THESAURUS LEMMATIZATION DETAILS
-
 LEMMATIZATION_FUNCTIONS = ["md5lemma", "lemma"]
 EIRA_MD5_NAME = "eira_thesaurus.md5lemmas.rdf"
 EIRA_THESAURUS_MD5_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get("path"),
@@ -155,8 +204,11 @@ EIRA_LEMMA_NAME = "eira_thesaurus.lemmas.rdf"
 EIRA_THESAURUS_LEMMA_DETAILS = {"source": EIRA_THESAURUS_DETAILS.get("path"),
                                 "target": RDF_DIR + "/" + EIRA_LEMMA_NAME,
                                 "function": LEMMATIZATION_FUNCTIONS[1]}
+
+# SKOS MAPPER
 LABELS = ['<title', '<preflabel', '<altlabel', '<hiddenlabel', '<literal', '<literalform',
           '<skos:preflabel', '<skos:altlabel', '<skos:hiddenlabel']
+
 SKOS_LEMMATIZER_REQUEST_DETAILS = {
     "endpoint": URL_NLP_LEMMATIZE,
     "labels": LABELS,
@@ -166,22 +218,19 @@ SKOS_LEMMATIZER_REQUEST_DETAILS = {
 }
 
 SKOS_MAPPER_DETAILS = {"url": URL_SKOS_LEM,
-                       "body": SKOS_LEMMATIZER_REQUEST_DETAILS
-                       }
+                       "body": SKOS_LEMMATIZER_REQUEST_DETAILS}
 
-# SKOS MAPPER
 """
 Lemmatization provided via a lemmatization service endpoint...
 """
 LEMMATIZER_ENDPOINT = "http://localhost:5000/camss-sis/v1/lemmatize"
 LEMMATIZER_PREFERRED_METHOD = "unaccented-minus-stopwords"
-DEFAULT_LANG = "en"
 
 LEMMATIZATION_DETAILS = {"endpoint": URL_NLP_LEMMATIZE,
                          "method": LEMMATIZER_PREFERRED_METHOD
                          }
 
-# CORPORA LEMMATIZATION
+# CORPORA LEMMATIZATION -------------------
 """
 KEY TERM CONFIGURATION...remember a 'Key Term' has been convened as a Term that is included in at least one 
 controlled vocabularies of the Thesauri. A 'Key Word' is a collocation from the corpus that IS NOT present in
@@ -197,9 +246,11 @@ MIN_RSC_BODY_TERM_FREQUENCY = 2
 MIN_TERM_SIZE = 1
 
 CORPORA_LEMMATIZATION_DETAILS = {
-    "index": "eurlex-docs",
-    "metadata_file":RESOURCE_METADATA_JSON,
-    "lemmatized_jsonl": RESOURCE_LEMMATIZED_JSON,
+    "elastic_lemmas_index": crud.ELASTICSEARCH_DOCS_LEMMATIZED_INDEX,
+    "elastic_docs_processed_index": crud.ELASTICSEARCH_DOCS_PROCESSED_INDEX,
+    "metadata_file": RESOURCE_METADATA_JSON,
+    "lemmatized_file": RESOURCE_LEMMATIZED_JSON,
+    "processed_file": RESOURCE_PROCESSED_JSON,
     "corpus_path": TEXTIFICATION_DIR,
     "ops_metadata": "",
     "rsc_metadata": "",
@@ -212,7 +263,8 @@ CORPORA_LEMMATIZATION_DETAILS = {
     "rsc_part_types": [],
     "def_lang": DEFAULT_LANGUAGE,
     "min_tf": MIN_RSC_TERM_FREQUENCY,  # Number of times a Term must occur in a resource to be included in the KR Tree
-    "min_tf_body": MIN_RSC_BODY_TERM_FREQUENCY,  # Number of times a Term must occur in a resource to be included in the KR Tree
+    "min_tf_body": MIN_RSC_BODY_TERM_FREQUENCY,
+    # Number of times a Term must occur in a resource to be included in the KR Tree
     "min_term_len": MIN_TERM_SIZE  # 1-gram terms found in the document are to be considered terms, otherwise
     # relevant terms like 3G, 4G and 5G would be discarded.
 }
@@ -232,6 +284,7 @@ STORE_DETAILS = {
         "database": "accelerators"
     }
 }
+
 EIRA_THESAURUS_VIRTUOSO_PERSISTENCE_DETAILS = {
     "location": EIRA_THESAURUS_DETAILS.get("path"),
     "graph_name": "http://data.europa.eu/dr8/"
@@ -241,3 +294,19 @@ EIRA_LEMMAS_THESAURUS_VIRTUOSO_PERSISTENCE_DETAILS = {
     "location": RDF_DIR + "/" + EIRA_LEMMA_NAME,
     "graph_name": "http://data.europa.eu/dr8/eira_lemmas/"
 }
+
+# ------------------------------------------- SEARCH -------------------------------------------------------------
+MATCH_TERMS_JSON = JSON_DIR + "/match_terms.jsonl"
+CONCEPTS_TEST = ["public policy", "europe", "binding instrument", "legal act"]
+
+SEARCH_DETAILS = {"eira_concepts": CONCEPTS_TEST,  # EIRA_ABBS
+                  "elastic_query_details": {"client_host": crud.ELASTICSEARCH_HOST,
+                                            'query': queries.ELASTIC_QUERY,
+                                            "elastic_index": crud.ELASTICSEARCH_DOCS_LEMMATIZED_INDEX,
+                                            "scroll": "1m",
+                                            "raise_on_error": True,
+                                            "preserve_order": False,
+                                            "clear_scroll": True
+                                            },
+                  "match_terms_file": MATCH_TERMS_JSON
+                  }

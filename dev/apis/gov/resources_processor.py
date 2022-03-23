@@ -41,7 +41,7 @@ def process_corpus() -> (dict, int):
         t1 = io.log(f"Corpora configuration done in {str(io.now() - t0)}")
 
         # 3. Download EURLEX Corpus
-        corpora_manager.download_corpus(download_corpora_details)
+        corpora_manager.download_corpus(download_corpora_details, elastic_connection_details)
         report['message'].append(f"Corpora download finished in {str(io.now() - t1)}")
         t2 = io.log(f"Corpora download done in {str(io.now() - t1)}")
 

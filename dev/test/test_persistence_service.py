@@ -1,5 +1,5 @@
 #######################################################
-# 99990_test_persistence_service.py
+# test_persistence_service.py
 # Tests CRUD operations via the Persistence Service
 # Created on:      25-feb-2022 13:26:59
 # Author: SEMBU Team - NTTData Barcelona
@@ -40,7 +40,6 @@ class PersistenceServiceTest(unittest.TestCase):
         res = requests.post(url=persistor_endpoint, json=json_in)
         assert res.ok
         return
-
 
 if __name__ == '__main__':
     unittest.main()
