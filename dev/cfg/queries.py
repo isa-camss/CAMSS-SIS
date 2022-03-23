@@ -10,23 +10,3 @@ EIRA_ABBS_QUERY = '''
         ?o skos:prefLabel ?Lemma
         FILTER (contains(STR(?s), "http://data.europa.eu/dr8/view/%s"))
     }'''
-
-EIRA_LEGAL_ABBS_QUERY = '''
-    select distinct ?Lemma
-    from <http://data.europa.eu/dr8/eira_lemmas/>
-    where {
-        ?s ?p skos:Collection.
-        ?s skos:member ?o.
-        ?o skos:prefLabel ?Lemma
-        FILTER (contains(STR(?s), "http://data.europa.eu/dr8/view/LegalView"))
-    }'''
-
-EIRA_ORGANISATIONAL_ABBS_QUERY = '''
-    select distinct ?Lemma
-    from <http://data.europa.eu/dr8/eira_lemmas/>
-    where {
-        ?s ?p skos:Collection.
-        ?s skos:member ?o.
-        ?o skos:prefLabel ?Lemma
-        FILTER (contains(STR(?s), "http://data.europa.eu/dr8/view/OrganisationalView"))
-    }'''

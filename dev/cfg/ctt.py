@@ -48,7 +48,7 @@ URL_RESOURCES_INDEXATION = f'{BASE_URL}/{GOVERNORS_NAME}/{GOV_INDEXATION_ENDPOIN
 URL_SEARCHER = f'{BASE_URL}/{SEARCH_NAME}/{SEARCHER_SEARCH_ENDPOINT}'
 
 # ARTIFACTS PATH
-ARTIFACTS_DIR = "../arti"
+ARTIFACTS_DIR = "./arti"
 RDF_DIR = ARTIFACTS_DIR + "/rdf"
 JSON_DIR = ARTIFACTS_DIR + "/json"
 CORPORA_DIR = "../../corpora_sis"
@@ -126,19 +126,16 @@ EIRA_TECHNICAL_SPECIFICATIONS = ["machine to machine interface", "human interfac
                                  "conformance test report", "conformance test scenario", "technical agreement"
                                  ]
 CAMSS_SIS_DISCOVERIES = ["interoperability certificate"]
-
-EIRA_VIEWS_LIST = [{"view": "legal", "skos_collection": "LegalView"},
-                   {"view": "organisational", "skos_collection": "OrganisationalView"},
-                   {"view": "semantic", "skos_collection": "SemanticView"},
-                   {"view": "semantic", "skos_collection": "TechnicalView"}]
-
 EIRA_ABBS = EIRA_LEGAL_SPECIFICATIONS + EIRA_ORGANISATIONAL_SPECIFICATIONS + CAMSS_SIS_DISCOVERIES
-EIRA_CONCEPTS_DETAILS = {"terms": EIRA_ABBS,
+
+EIRA_VIEWS_DETAILS = [{"view": "legal", "skos_collection": "LegalView"},
+                      {"view": "organisational", "skos_collection": "OrganisationalView"}]
+
+EIRA_CONCEPTS_DETAILS = {"vocabulary_details": EIRA_VIEWS_DETAILS,
                          "rsc_lang": DEFAULT_LANG,
                          "elastic_terms_index": crud.ELASTICSEARCH_TERMS_LEMMATIZED_INDEX,
                          "json_dir": JSON_DIR,
                          "lemmatized_jsonl": TERM_LEMMATIZED_JSON,
-                         "skos_collection": "",
                          "query_terms": queries.EIRA_ABBS_QUERY
                          }
 # ------------------------------------------- CORPORA -----------------------------------------------------------------

@@ -58,20 +58,22 @@ def process_thesauri() -> (dict, int):
         thesauri_manager.persist_thesauri(virtuoso_connection_details,
                                           eira_thesaurus_persistor_details)
 
-        report = io.merge_dicts([report, thesauri_manager.persistor.report])
+        # report = io.merge_dicts([report, thesauri_manager.virtuoso_persistor.report])
 
         # 6. Persist the lemmatized skos in Virtuoso
         thesauri_manager.persist_thesauri(virtuoso_connection_details,
                                           eira_thesaurus_lemma_persistor_details)
 
-        report = io.merge_dicts([report, thesauri_manager.persistor.report])
+        # report = io.merge_dicts([report, thesauri_manager.virtuoso_persistor.report])
         report['message'].append(f"Persistence finished in {str(io.now() - t3)}")
         t4 = io.log(f"Thesauri persistence done in {str(io.now() - t3)}")
 
-        # 7. Lemmatize EIRA terms
-        thesauri_manager.lemmatize_terms(eira_terms_details, elastic_connection_details, lemmatization_details)
-        report['message'].append(f"Terms lemmatization finished in {str(io.now() - t4)}")
-        io.log(f"Terms lemmatization done in {str(io.now() - t4)}")
+        # 7. Lemmatize custom terms
+        thesauri_manager.persist_thesauri_lemmatized_concepts(eira_terms_details,
+                                                              virtuoso_connection_details,
+                                                              elastic_connection_details)
+        report['message'].append(f"Eira terms persistence finished in {str(io.now() - t4)}")
+        io.log(f"Eira terms persistence done in {str(io.now() - t4)}")
 
         status_code = 200
 
