@@ -55,3 +55,7 @@ class VirtuosoPersistor(Persistor):
         thesaurus_graph = args[1]
         self.__load(lemmatized_thesaurus, thesaurus_graph)
         return self
+
+    def search_vituoso(self):
+        return self
+

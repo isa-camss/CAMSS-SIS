@@ -48,7 +48,7 @@ URL_RESOURCES_INDEXATION = f'{BASE_URL}/{GOVERNORS_NAME}/{GOV_INDEXATION_ENDPOIN
 URL_SEARCHER = f'{BASE_URL}/{SEARCH_NAME}/{SEARCHER_SEARCH_ENDPOINT}'
 
 # ARTIFACTS PATH
-ARTIFACTS_DIR = "./arti"
+ARTIFACTS_DIR = "../arti"
 RDF_DIR = ARTIFACTS_DIR + "/rdf"
 JSON_DIR = ARTIFACTS_DIR + "/json"
 CORPORA_DIR = "../../corpora_sis"
@@ -127,12 +127,19 @@ EIRA_TECHNICAL_SPECIFICATIONS = ["machine to machine interface", "human interfac
                                  ]
 CAMSS_SIS_DISCOVERIES = ["interoperability certificate"]
 
+EIRA_VIEWS_LIST = [{"view": "legal", "skos_collection": "LegalView"},
+                   {"view": "organisational", "skos_collection": "OrganisationalView"},
+                   {"view": "semantic", "skos_collection": "SemanticView"},
+                   {"view": "semantic", "skos_collection": "TechnicalView"}]
+
 EIRA_ABBS = EIRA_LEGAL_SPECIFICATIONS + EIRA_ORGANISATIONAL_SPECIFICATIONS + CAMSS_SIS_DISCOVERIES
 EIRA_CONCEPTS_DETAILS = {"terms": EIRA_ABBS,
                          "rsc_lang": DEFAULT_LANG,
                          "elastic_terms_index": crud.ELASTICSEARCH_TERMS_LEMMATIZED_INDEX,
                          "json_dir": JSON_DIR,
-                         "lemmatized_jsonl": TERM_LEMMATIZED_JSON
+                         "lemmatized_jsonl": TERM_LEMMATIZED_JSON,
+                         "skos_collection": "",
+                         "query_terms": queries.EIRA_ABBS_QUERY
                          }
 # ------------------------------------------- CORPORA -----------------------------------------------------------------
 CORPORA_DOCUMENT_TYPE = "pdf"
@@ -299,7 +306,7 @@ EIRA_LEMMAS_THESAURUS_VIRTUOSO_PERSISTENCE_DETAILS = {
 MATCH_TERMS_JSON = JSON_DIR + "/match_terms.jsonl"
 CONCEPTS_TEST = ["public policy", "europe", "binding instrument", "legal act"]
 
-# SEARCH_DETAILS = {"eira_concepts": CONCEPTS_TEST,  # EIRA_ABBS
+# EIRA_SEARCH_DETAILS = {"eira_concepts": CONCEPTS_TEST,  # EIRA_ABBS
                   # "elastic_query_details": {"client_host": crud.ELASTICSEARCH_HOST,
                                             # 'query': queries.ELASTIC_QUERY,
                                             # "elastic_index": crud.ELASTICSEARCH_DOCS_LEMMATIZED_INDEX,
@@ -310,3 +317,5 @@ CONCEPTS_TEST = ["public policy", "europe", "binding instrument", "legal act"]
                                             # },
                   # "match_terms_file": MATCH_TERMS_JSON
                   # }
+
+VIRTUOSO_SEARCH_DETAILS = {}

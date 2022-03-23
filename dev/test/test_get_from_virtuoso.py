@@ -7,6 +7,7 @@ import cfg.crud as crud
 import json
 import com.nttdata.dgi.util.io as io
 
+
 class GetFromVirtuosoTest(unittest.TestCase):
 
     def __init__(self, *args, **kwargs):
@@ -23,20 +24,35 @@ class GetFromVirtuosoTest(unittest.TestCase):
         virtuoso_response = virtuoso_connection.query().convert()
         results_format = virtuoso_response['results']['bindings']
 
-        abbs_list = []
+        for
         for item_list in results_format:
             abb_value = item_list.get('Lemma').get('value')
 
             # Create jsonl with lemmatized terms
             date_time_now = io.now()
             date_time_now_str = io.datetime_to_string(date_time_now)
-            lemmatized_document_dict = {
+            terms_document_dict = {
                 "timestamp": date_time_now_str,
-                "term_id": io.hash(abb_value),
+                "lemma_id": io.hash(abb_value),
                 "lemma": abb_value
             }
+            with open(ctt.EIRA_CONCEPTS_DETAILS.get('lemmatized_jsonl'), 'a+') as outfile:
+                json.dump(terms_document_dict, outfile)
+                outfile.write('\n')
+                outfile.close()
+
+            terms_document_dict['timestamp'] = date_time_now
+            str_date = io.now().strftime("%Y%m%d")
+            elastic_terms_index = self.lemmatization_details.get(
+                'elastic_lemmas_index') + f"-{str_date}"
 
         return self
+
+    def test_001_dynamic_query(self):
+        for view in ctt.EIRA_VIEWS_LIST:
+            print(view)
+        return self
+
 
     def tearDown(self) -> None:
         return self
