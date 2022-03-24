@@ -60,7 +60,7 @@ class VirtuosoPersistor(Persistor):
         self.__load(lemmatized_thesaurus, thesaurus_graph)
         return self
 
-    def search_vituoso(self, *args, **kwargs) -> dict:
+    def search(self, *args, **kwargs) -> dict:
         if self.virtuoso_client is None:
             message_text = "Search could not be executed because Virtuoso client is None"
             io.log(message_text, "e")

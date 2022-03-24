@@ -101,7 +101,7 @@ class ThesauriManager:
             skos_collection = concept.get('skos_collection')
             query_view_concepts = self.concept_details.get('query_terms') % skos_collection
 
-            virtuoso_response = self.virtuoso_persistor.search_vituoso(query=query_view_concepts)
+            virtuoso_response = self.virtuoso_persistor.search(query=query_view_concepts)
             results_format = virtuoso_response['results']['bindings']
 
             for item_list in results_format:
@@ -129,14 +129,13 @@ class ThesauriManager:
                                                content=terms_document_dict)
         return self
 
-    def lemmatize_custome_terms(self, concept_details: dict, connection_details: dict, lemmatization_details: dict):
+    def lemmatize_custom_terms(self, concept_details: dict, connection_details: dict, lemmatization_details: dict):
         self.concept_details = concept_details
-        self.persistor_details = connection_details
+        self.elastic_persistor_details = connection_details
         self.lemmatization_details = lemmatization_details
         self.elastic_persistor = PersistenceFactory().new(persistor_type=PersistorType.ELASTIC,
-                                                          persistor_details=self.persistor_details)
+                                                          persistor_details=self.elastic_persistor_details)
 
-        date_time_now = io.now()
         for term in self.concept_details.get('terms'):
             json_terms = {'phrase': term, 'lang': self.concept_details.get('rsc_lang')}
             lemmatizer_response = requests.post(url=self.lemmatization_details.get('endpoint'), json=json_terms)
