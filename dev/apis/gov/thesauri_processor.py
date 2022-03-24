@@ -68,7 +68,7 @@ def process_thesauri() -> (dict, int):
         report['message'].append(f"Persistence finished in {str(io.now() - t3)}")
         t4 = io.log(f"Thesauri persistence done in {str(io.now() - t3)}")
 
-        # 7. Lemmatize custom terms
+        # 7. Persist lemmatized Eira terms in Elasticsearch
         thesauri_manager.persist_thesauri_lemmatized_concepts(eira_terms_details,
                                                               virtuoso_connection_details,
                                                               elastic_connection_details)

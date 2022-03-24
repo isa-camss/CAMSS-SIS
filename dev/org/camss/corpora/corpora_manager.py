@@ -241,7 +241,7 @@ class CorporaManager:
                 exists_processed = self.persistor.ask(index=index_processed, query=query)
                 if exists_processed:
                     io.log(f"-- Part id: {part_id} already exists in database, lemmatization skipped in "
-                            f"{io.now() - t1} --", level="i")
+                           f"{io.now() - t1} --", level="i")
                 else:
                     """
                     1. Check if part_id exists in lemmatization index, if True, it means that 
