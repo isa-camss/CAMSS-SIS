@@ -302,17 +302,3 @@ EIRA_LEMMAS_THESAURUS_VIRTUOSO_PERSISTENCE_DETAILS = {
 # ------------------------------------------- SEARCH -------------------------------------------------------------
 MATCH_TERMS_JSON = JSON_DIR + "/match_terms.jsonl"
 CONCEPTS_TEST = ["public policy", "europe", "binding instrument", "legal act"]
-
-# EIRA_SEARCH_DETAILS = {"eira_concepts": CONCEPTS_TEST,  # EIRA_ABBS
-                  # "elastic_query_details": {"client_host": crud.ELASTICSEARCH_HOST,
-                                            # 'query': queries.ELASTIC_QUERY,
-                                            # "elastic_index": crud.ELASTICSEARCH_DOCS_LEMMATIZED_INDEX,
-                                            # "scroll": "1m",
-                                            # "raise_on_error": True,
-                                            # "preserve_order": False,
-                                            # "clear_scroll": True
-                                            # },
-                  # "match_terms_file": MATCH_TERMS_JSON
-                  # }
-
-VIRTUOSO_SEARCH_DETAILS = {}

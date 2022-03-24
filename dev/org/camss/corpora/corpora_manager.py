@@ -308,16 +308,16 @@ class CorporaManager:
                             outfile.write('\n')
                             outfile.close()
 
-                        # Persist in Elasticsearch processed corpora
-                        processed_document_dict['timestamp'] = date_time_now
-                        str_date = io.now().strftime("%Y%m%d")
-                        elastic_processed_index = self.lemmatization_details.get(
-                            'elastic_docs_processed_index') + f"-{str_date}"
-                        self.persistor.persist(index=elastic_processed_index,
-                                               content=processed_document_dict)
+                    # Persist in Elasticsearch processed corpora
+                    processed_document_dict['timestamp'] = date_time_now
+                    str_date = io.now().strftime("%Y%m%d")
+                    elastic_processed_index = self.lemmatization_details.get(
+                        'elastic_docs_processed_index') + f"-{str_date}"
+                    self.persistor.persist(index=elastic_processed_index,
+                                           content=processed_document_dict)
 
-                        io.log(f"-- The part with id: {part_id} was successfully lemmatized in "
-                               f"{io.now() - t1} --")
+                    io.log(f"-- The part with id: {part_id} was successfully lemmatized in "
+                           f"{io.now() - t1} --")
 
                 io.log(f"--- The resource id: {rsc_id} was successfully lemmatized in {io.now() - t0} ---")
                 current_line += 1
