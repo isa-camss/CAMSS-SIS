@@ -11,3 +11,6 @@ class IPersistor:
 
     def ask(self, *args, **kwargs) -> bool:
         return False
+
+    def search(self, *args, **kwargs) -> dict:
+        return False

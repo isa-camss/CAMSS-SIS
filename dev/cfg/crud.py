@@ -1,7 +1,10 @@
 ELASTICSEARCH_HOST = "http://localhost:9200"
 ELASTICSEARCH_USER = None
 ELASTICSEARCH_PASSWORD = None
+
+# EIRA INDEX
 ELASTICSEARCH_TERMS_LEMMATIZED_INDEX = "camss-eira-terms"
+#EURLEX INDEX
 ELASTICSEARCH_DOCS_METADATA_INDEX = "camss-eurlex-docs-metadata"
 ELASTICSEARCH_DOCS_LEMMATIZED_INDEX = "camss-eurlex-docs-lemmatized"
 ELASTICSEARCH_DOCS_PROCESSED_INDEX = "camss-eurlex-docs-processed"
@@ -17,4 +20,5 @@ VIRTUOSO_EIRA_LOAD_RDF_FILE = {
     "password": "dba",
     # "graph": "http://eira.org/",
     "endpoint": "http://localhost:8890/sparql-graph-crud-auth?graph-uri=",
+    "query_endpoint": "http://localhost:8890/sparql"
     }

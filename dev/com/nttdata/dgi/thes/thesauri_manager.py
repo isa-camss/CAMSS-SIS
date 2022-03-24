@@ -10,17 +10,22 @@ import os
 class ThesauriManager:
     thesauri_details: list  # List of dicts with thesaurus url and path to save it
     skos_lemmatizer_details: dict
-    persistor: IPersistor
-    persistor_details: dict
+    virtuoso_persistor: IPersistor
+    elastic_persistor: IPersistor
+    virtuoso_persistor_details: dict
+    elastic_persistor_details: dict
     concept_details: dict
     lemmatization_details: dict
 
     def __init__(self, list_thesauri_details: list = None,
-                 dict_skos_lemmatizer_details: dict = None, connection_details: dict = None,
+                 dict_skos_lemmatizer_details: dict = None,
+                 virtuoso_connection_details: dict = None,
+                 elastic_connection_details: dict = None,
                  concepts_details: dict = None, lemmatization_details: dict = None):
         self.thesauri_details = list_thesauri_details
         self.skos_lemmatizer_details = dict_skos_lemmatizer_details
-        self.persistor_details = connection_details
+        self.virtuoso_persistor_details = virtuoso_connection_details
+        self.elastic_persistor_details = elastic_connection_details
         self.concept_details = concepts_details
         self.lemmatization_details = lemmatization_details
 
@@ -45,7 +50,7 @@ class ThesauriManager:
             # Create the needed folders
             io.make_file_dirs(lemmatized_thesaurus.get('target'))
 
-        # Prepare folder for Lemmatized terms
+        # Prepare folder for thesauri lemmatized concepts
         # Create the needed folders
         os.makedirs(self.concept_details.get('json_dir'), exist_ok=True)
         # Drop existing files
@@ -74,21 +79,63 @@ class ThesauriManager:
                              f'Response content: {skos_mapper_response.content}'))
         return self
 
-    def persist_thesauri(self, connection_details: dict, thesaurus_details: dict):
-        self.persistor_details = connection_details
-        self.persistor = PersistenceFactory().new(persistor_type=PersistorType.VIRTUOSO,
-                                                  persistor_details=self.persistor_details)
-        self.persistor.persist(thesaurus_details.get('location'), thesaurus_details.get('graph_name'))
+    def persist_thesauri(self, virtuoso_connection_details: dict, thesaurus_details: dict):
+        self.virtuoso_persistor_details = virtuoso_connection_details
+        self.virtuoso_persistor = PersistenceFactory().new(persistor_type=PersistorType.VIRTUOSO,
+                                                           persistor_details=self.virtuoso_persistor_details)
+        self.virtuoso_persistor.persist(thesaurus_details.get('location'), thesaurus_details.get('graph_name'))
         return self
 
-    def lemmatize_terms(self, concept_details: dict, connection_details: dict, lemmatization_details: dict):
+    def persist_thesauri_lemmatized_concepts(self, concept_details: dict,
+                                             virtuoso_connection_details: dict,
+                                             elastic_connection_details: dict):
         self.concept_details = concept_details
-        self.persistor_details = connection_details
-        self.lemmatization_details = lemmatization_details
-        self.persistor = PersistenceFactory().new(persistor_type=PersistorType.ELASTIC,
-                                                  persistor_details=self.persistor_details)
+        self.virtuoso_persistor_details = virtuoso_connection_details
+        self.elastic_persistor_details = elastic_connection_details
+        self.virtuoso_persistor = PersistenceFactory().new(persistor_type=PersistorType.VIRTUOSO,
+                                                           persistor_details=self.virtuoso_persistor_details)
+        self.elastic_persistor = PersistenceFactory().new(persistor_type=PersistorType.ELASTIC,
+                                                          persistor_details=self.elastic_persistor_details)
+        for concept in self.concept_details.get('vocabulary_details'):
+            view_type = concept.get('view')
+            skos_collection = concept.get('skos_collection')
+            query_view_concepts = self.concept_details.get('query_terms') % skos_collection
 
-        date_time_now = io.now()
+            virtuoso_response = self.virtuoso_persistor.search(query=query_view_concepts)
+            results_format = virtuoso_response['results']['bindings']
+
+            for item_list in results_format:
+                abb_value = item_list.get('Lemma').get('value')
+
+                # Create jsonl with lemmatized terms
+                date_time_now = io.now()
+                date_time_now_str = io.datetime_to_string(date_time_now)
+                terms_document_dict = {
+                    "timestamp": date_time_now_str,
+                    "eira_view": view_type + " " + "view",
+                    "lemma_id": io.hash(abb_value),
+                    "lemma": abb_value
+                }
+                with open(self.concept_details.get('lemmatized_jsonl'), 'a+') as outfile:
+                    json.dump(terms_document_dict, outfile)
+                    outfile.write('\n')
+                    outfile.close()
+
+                terms_document_dict['timestamp'] = date_time_now
+                str_date = io.now().strftime("%Y%m%d")
+                elastic_eira_terms_index = self.concept_details.get(
+                    'elastic_terms_index') + f"-{view_type}-view-{str_date}"
+                self.elastic_persistor.persist(index=elastic_eira_terms_index,
+                                               content=terms_document_dict)
+        return self
+
+    def lemmatize_custom_terms(self, concept_details: dict, connection_details: dict, lemmatization_details: dict):
+        self.concept_details = concept_details
+        self.elastic_persistor_details = connection_details
+        self.lemmatization_details = lemmatization_details
+        self.elastic_persistor = PersistenceFactory().new(persistor_type=PersistorType.ELASTIC,
+                                                          persistor_details=self.elastic_persistor_details)
+
         for term in self.concept_details.get('terms'):
             json_terms = {'phrase': term, 'lang': self.concept_details.get('rsc_lang')}
             lemmatizer_response = requests.post(url=self.lemmatization_details.get('endpoint'), json=json_terms)
@@ -116,7 +163,6 @@ class ThesauriManager:
             }
             str_date = io.now().strftime("%Y%m%d")
             elastic_metadata_index = self.concept_details.get('elastic_terms_index') + f"-{str_date}"
-            self.persistor.persist(index=elastic_metadata_index,
-                                   content=lemmatized_document_dict)
-
+            self.elastic_persistor.persist(index=elastic_metadata_index,
+                                           content=lemmatized_document_dict)
         return self

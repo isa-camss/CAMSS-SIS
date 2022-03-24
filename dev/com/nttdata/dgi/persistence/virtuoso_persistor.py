@@ -2,6 +2,7 @@ import requests
 from requests.auth import HTTPDigestAuth
 from com.nttdata.dgi.persistence.persistor import Persistor
 import com.nttdata.dgi.util.io as io
+from SPARQLWrapper import SPARQLWrapper, JSON
 
 
 class VirtuosoPersistor(Persistor):
@@ -10,6 +11,7 @@ class VirtuosoPersistor(Persistor):
     user: str
     password: str
     report: dict
+    virtuoso_enpoint: str
 
     def __init__(self, **persistor_details):
         super(VirtuosoPersistor, self).__init__()
@@ -17,9 +19,11 @@ class VirtuosoPersistor(Persistor):
         self.url = self.persistor_details.get("endpoint")
         self.user = self.persistor_details.get("user")
         self.password = self.persistor_details.get("password")
+        self.virtuoso_endpoint = self.persistor_details.get("query_endpoint")
         self.report = {"message": [],
                        "warning": [],
                        "error": []}
+        self.virtuoso_client = SPARQLWrapper(self.virtuoso_endpoint) if self.virtuoso_endpoint is not None else None
 
     def __load(self, lemmatized_thesaurus: str, thesaurus_graph: str):
         t0 = io.now()
@@ -55,3 +59,21 @@ class VirtuosoPersistor(Persistor):
         thesaurus_graph = args[1]
         self.__load(lemmatized_thesaurus, thesaurus_graph)
         return self
+
+    def search(self, *args, **kwargs) -> dict:
+        if self.virtuoso_client is None:
+            message_text = "Search could not be executed because Virtuoso client is None"
+            io.log(message_text, "e")
+            raise (Exception(message_text))
+        else:
+            if kwargs and kwargs.get('query') is not None:
+                query = kwargs.get('query')
+                self.virtuoso_client.setQuery(query)
+                self.virtuoso_client.setReturnFormat(JSON)
+                virtuoso_response = self.virtuoso_client.query().convert()
+            else:
+                message_text = "Search could not be executed because query is not provided in the method"
+                io.log(message_text, "e")
+                raise (Exception(message_text))
+        return virtuoso_response
+
