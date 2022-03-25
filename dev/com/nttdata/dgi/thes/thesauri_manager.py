@@ -105,28 +105,41 @@ class ThesauriManager:
             results_format = virtuoso_response['results']['bindings']
 
             for item_list in results_format:
-                abb_value = item_list.get('Lemma').get('value')
+                lemma_value = item_list.get('Lemma').get('value')
+                lemma_id = io.hash(lemma_value)
 
-                # Create jsonl with lemmatized terms
-                date_time_now = io.now()
-                date_time_now_str = io.datetime_to_string(date_time_now)
-                terms_document_dict = {
-                    "timestamp": date_time_now_str,
-                    "eira_view": view_type + " " + "view",
-                    "lemma_id": io.hash(abb_value),
-                    "lemma": abb_value
-                }
-                with open(self.concept_details.get('lemmatized_jsonl'), 'a+') as outfile:
-                    json.dump(terms_document_dict, outfile)
-                    outfile.write('\n')
-                    outfile.close()
-
-                terms_document_dict['timestamp'] = date_time_now
-                str_date = io.now().strftime("%Y%m%d")
                 elastic_eira_terms_index = self.concept_details.get(
-                    'elastic_terms_index') + f"-{view_type}-view-{str_date}"
-                self.elastic_persistor.persist(index=elastic_eira_terms_index,
-                                               content=terms_document_dict)
+                    'elastic_terms_index') + "*"
+                query = {"query": {"term": {"lemma_id.keyword": lemma_id}}}
+
+                abb_exist = self.elastic_persistor.ask(index=elastic_eira_terms_index, query=query)
+
+                if abb_exist:
+                    io.log(f"Skipping persistence of the lemma '{lemma_id}' because it already exists in")
+                else:
+
+                    # Create jsonl with lemmatized terms
+                    date_time_now = io.now()
+                    date_time_now_str = io.datetime_to_string(date_time_now)
+                    terms_document_dict = {
+                        "timestamp": date_time_now_str,
+                        "eira_view": view_type + " " + "view",
+                        "lemma_id": lemma_id,
+                        "lemma": lemma_value
+                    }
+                    with open(self.concept_details.get('lemmatized_jsonl'), 'a+') as outfile:
+                        json.dump(terms_document_dict, outfile)
+                        outfile.write('\n')
+                        outfile.close()
+
+                    str_date = io.now().strftime("%Y%m%d")
+                    elastic_eira_terms_index_at_date = elastic_eira_terms_index + f"-{view_type}-view-{str_date}"
+                    terms_document_dict['timestamp'] = date_time_now
+                    self.elastic_persistor.persist(index=elastic_eira_terms_index_at_date,
+                                                   content=terms_document_dict)
+                    io.log(f"The lemma '{lemma_id}' from {view_type} view "
+                           f"was succesfully persisted in the '{elastic_eira_terms_index}' index of elasticsearch")
+            io.log("The lemmas of the processed controlled vocabularies, were correctly persisted in elasticsearch")
         return self
 
     def lemmatize_custom_terms(self, concept_details: dict, connection_details: dict, lemmatization_details: dict):
