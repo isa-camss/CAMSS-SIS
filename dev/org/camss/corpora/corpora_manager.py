@@ -295,18 +295,18 @@ class CorporaManager:
                         self.persistor.persist(index=elastic_lemmas_index,
                                                content=lemmatized_document_dict)
 
-                        # Create a register of successfully lemmatized resource
-                        # Create jsonl with processed corpora
-                        processed_document_dict = {
-                            "rsc_id": rsc_id,
-                            "part_id": str(part_id),
-                            "timestamp": date_time_now_str
-                        }
+                    # Create a register of successfully lemmatized resource
+                    # Create jsonl with processed corpora
+                    processed_document_dict = {
+                        "rsc_id": rsc_id,
+                        "part_id": str(part_id),
+                        "timestamp": date_time_now_str
+                    }
 
-                        with open(self.lemmatization_details.get('processed_file'), 'a+') as outfile:
-                            json.dump(processed_document_dict, outfile)
-                            outfile.write('\n')
-                            outfile.close()
+                    with open(self.lemmatization_details.get('processed_file'), 'a+') as outfile:
+                        json.dump(processed_document_dict, outfile)
+                        outfile.write('\n')
+                        outfile.close()
 
                     # Persist in Elasticsearch processed corpora
                     processed_document_dict['timestamp'] = date_time_now
