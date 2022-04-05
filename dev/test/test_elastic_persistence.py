@@ -184,6 +184,23 @@ class ElasticSearchTest(unittest.TestCase):
 
         return
 
+    def test_003_insert_elastic_reindex(self):
+        p: IPersistor = PersistenceFactory().new(crud.ELASTICSEARCH_DETAILS, PersistorType.ELASTIC)
+        json_test = {
+            "rsc_id": "35a310f69c8baa4af45edcde46555e32",
+            "rsc_title": "Council Decision2014/512/CFSP of 31 July 2014 concerning restrictive measures in view of Russia's actions destabilising the situation in Ukraine Council Decision2014/512/CFSP of 31 July 2014 concerning restrictive measures in view of Russia's actions destabilising the situation in Ukraine Council Decision2014/512/CFSP of 31 July 2014 concerning restrictive measures in view of Russia's actions destabilising the situation in Ukraine Council Decision2014/512/CFSP of 31 July 2014 concerning restrictive measures in view of Russia's actions destabilising the situation in Ukraine Council Decision2014/512/CFSP of 31 July 2014 concerning restrictive measures in view of Russia's actions destabilising the situation in Ukraine Council Decision2014/512/CFSP of 31 July 2014 concerning restrictive measures in view of Russia's actions destabilising the situation in Ukraine Council Decision2014/512/CFSP of 31 July 2014 concerning restrictive measures in view of Russia's actions destabilising the situation in Ukraine Council Decision2014/512/CFSP of 31 July 2014 concerning restrictive measures in view of Russia's actions destabilising the situation in Ukraine Council Decision2014/512/CFSP of 31 July 2014 concerning restrictive measures in view of Russia's actions destabilising the situation in Ukraine",
+            "rsc_url": "https://eur-lex.europa.eu/legal-content/EN/TXT/PDF/?uri=cellar:9ea0fc6c-18c2-11e4-933d-01aa75ed71a1",
+            "part_id": "266453443138747428135201608734109039700",
+            "part_type": "body",
+            "timestamp": "2022-03-21T19:18:29.789533",
+            "lemma_id": "7c5e7427892dc0404c0f407afe6c5435",
+            "lemma": "type include weapon test",
+            "term": "types including weapons test",
+            "freq": 3}
+
+        p.persist(index=f"test-camss-eurlex-docs-lemmatized-2022032", content=json_test)
+        return
+
     def tearDown(self) -> None:
         return
 
